@@ -4,6 +4,7 @@ import Error from "../Pages/ErrorPage/Error";
 import Home from "../Pages/Home/Home";
 import Login from "../Pages/Login/Login";
 import Register from "../Pages/Register/Register";
+import ResetPass from "../Pages/ResetPassword/ResetPass";
 
 const router = createBrowserRouter([
     {
@@ -25,7 +26,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "/auth/reset-password/initiate",
-                element: <></>
+                element: <ResetPass></ResetPass>
             },
             {
                 path: "/reset-password/:token",
