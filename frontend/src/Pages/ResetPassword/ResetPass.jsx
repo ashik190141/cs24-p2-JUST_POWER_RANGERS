@@ -2,14 +2,14 @@ import { useNavigate } from "react-router-dom";
 
 
 const ResetPass = () => {
-    let goto = useNavigate();
+    let navigate = useNavigate();
 
     let verifyOTP =(e) =>{
         e.preventDefault();
         let otp = e.target.otp.value;
         console.log(otp);
         ///auth/reset-password/confirm
-        goto('/auth/login');
+        navigate('/auth/login');
 
 
     }

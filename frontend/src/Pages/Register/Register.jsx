@@ -1,41 +1,64 @@
 
-// import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineMail } from 'react-icons/ai';
 import { RiLockPasswordFill } from 'react-icons/ri';
-// import { BsFillPersonFill } from 'react-icons/bs';
+import { BsFillPersonFill } from 'react-icons/bs';
 import { useState } from "react";
 import { FaEyeSlash, FaEye } from 'react-icons/fa';
-// import Swal from 'sweetalert2';
+import Swal from 'sweetalert2';
 import Lottie from "lottie-react";
 import animation from '../../assets/Registration/SignUpAnimation.json'
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form"
+import { useNavigate } from 'react-router';
 
 const Register = () => {
 
     let [showPassword, setShowPassword] = useState(false);
+    let navigate = useNavigate();
 
 
     const { register, handleSubmit, formState: { errors }, } = useForm();
     const onSubmit = (data) => {
         console.log(data);
+        ///auth/create
+        // axios.post('http://localhost:8000/auth/create', data)
+        //    .then(res => {
+        //         console.log(res);
+
+        //         // navigate('/login');
+        //     })
+        //    .catch(err => {
+        //         Swal.fire({
+        //             icon: 'error',
+        //             title: err.response.data.message,
+        //             showConfirmButton: false,
+        //             timer: 1500
+        //         })
+        //     })
+        Swal.fire({
+            icon:'success',
+            title: "User Created Successfully",
+            showConfirmButton: false,
+            timer: 1500
+        });
+        navigate('/');
     };
 
     return (
-        <div className="flex flex-col md:flex-row gap-5 px-2 justify-center items-center mt-5">
+        <div className="w-full md:w-10/12 mx-auto flex flex-col md:flex-row gap-5 px-2 justify-center items-center mt-5">
             <Helmet>
                 <title>Dust Service | Register</title>
             </Helmet>
             <div className="bg-gray-400 w-full md:w-5/12 text-center p-10 rounded-lg">
-                <h2 className="text-3xl font-bold mb-2">Register Now!</h2>
+                <h2 className="text-3xl font-bold mb-2">Create New User!</h2>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="relative">
                         <p className="text-left text-lg font-semibold">User Name</p>
-                        {/* <BsFillPersonFill className="absolute bottom-4 left-2"></BsFillPersonFill> */}
+                        <BsFillPersonFill className="absolute bottom-4 left-2"></BsFillPersonFill>
                         <input className="w-full p-2 pl-7 text-black rounded-lg my-1"
                             type="text"
                             {...register("name", { required: true })}
-                            placeholder="Type your name"
+                            placeholder="Type User name"
                         />
                         {errors?.name && <span className='text-red-600'>Name is required</span>}
                     </div>
@@ -46,7 +69,7 @@ const Register = () => {
                         <input className="w-full p-2 pl-7 text-black rounded-lg my-1"
                             type="email"
                             {...register("email", { required: true })}
-                            placeholder="Type your email"
+                            placeholder="Type User email"
                         />
                         {errors?.email && <span className='text-red-600'>Email is required</span>}
                     </div>
@@ -59,7 +82,7 @@ const Register = () => {
                             {...register("password", {
                                 required: true
                             })}
-                            placeholder="Type your password"
+                            placeholder="Type User password"
                         />
                         {errors.password?.type === "required" && (
                             <span className='text-red-600'>Password is required</span>
@@ -68,7 +91,7 @@ const Register = () => {
                     </div>
                     <hr className="my-2" />
                     <button
-                        className="bg-gradient-to-r from-violet-500 to-fuchsia-500 w-full py-2 text-white font-semibold text-lg rounded-xl" type="submit">
+                        className="bg-green-800 w-full py-2 text-white font-semibold text-lg rounded-xl" type="submit">
                         Register</button>
 
                 </form>
