@@ -17,15 +17,16 @@ const router = createBrowserRouter([
         children:[
             {
                 path: "/",
-                element: <Profile></Profile>
+                element: <PrivateRoutes><Profile></Profile></PrivateRoutes>
             },
             {
                 path: "/auth/login",
                 element: <Login></Login>
             },
             {
+                //This will be Admin Route
                 path: "/auth/create",
-                element: <Register></Register>
+                element: <PrivateRoutes><Register></Register></PrivateRoutes>
             },
             {
                 path: "/auth/reset-password/initiate",
