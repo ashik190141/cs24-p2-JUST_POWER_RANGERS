@@ -3,7 +3,7 @@ import useAuth from "./useAuth";
 import useAxiosPublic from "./useAxiosPublic";
 
 
-//check admin
+//check StsManager
 const IsStsManager = () => {
     const { user } = useAuth();
     let axiosPublic = useAxiosPublic();

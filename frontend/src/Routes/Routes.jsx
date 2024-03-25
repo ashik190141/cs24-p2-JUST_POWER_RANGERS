@@ -7,6 +7,7 @@ import ResetPass from "../Pages/ResetPassword/ResetPass";
 import Dashboard from "../Pages/Dashboard/Dashboard";
 import Profile from "../Pages/Profile/Profile";
 import AboutUs from "../Pages/AboutUs/AboutUs";
+import PrivateRoutes from "./PrivateRoutes";
 
 const router = createBrowserRouter([
     {
@@ -38,7 +39,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/dashboard",
-        element: <Dashboard></Dashboard>
+        element: <PrivateRoutes><Dashboard></Dashboard></PrivateRoutes>
     }
 ]);
 

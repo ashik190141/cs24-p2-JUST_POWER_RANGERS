@@ -7,14 +7,17 @@ import Footer from '../../Components/Footer';
 // @ts-ignore
 import IsAdmin from '../../Hooks/IsAdmin';
 import IsStsManager from '../../Hooks/IsStsManager';
+import IsLandManager from '../../Hooks/IsLandManager';
 
 
 
 const Dashboard = () => {
     let [isAdmin] = IsAdmin();
     let [isStsManager] = IsStsManager();
+    let [isLandManager] = IsLandManager();
     // console.log(isAdmin);
-    console.log(isStsManager);
+    // console.log(isStsManager);
+    console.log(isLandManager);
 
 
     return (
@@ -81,6 +84,27 @@ const Dashboard = () => {
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
                                         to='got-married' ><GiLovers></GiLovers>Got Married</NavLink>
+                                </li>
+                            </ul>
+                        </>
+                    }
+                    {
+                        isLandManager && <>
+                            <ul className='flex flex-col mt-10 px-6 space-y-3'>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='edit-biodata' >
+                                        <FaEdit></FaEdit> Land Manager</NavLink>
+                                </li>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='view-bio-data' >
+                                        <FaEye></FaEye> Truct Data</NavLink>
+                                </li>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='my-req-contacts' >
+                                        <FaUser></FaUser> Land Data</NavLink>
                                 </li>
                             </ul>
                         </>

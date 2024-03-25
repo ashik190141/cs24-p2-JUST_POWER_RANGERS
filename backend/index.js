@@ -103,6 +103,21 @@ async function run() {
       }
       res.send({ stsManager });
     });
+    
+    // ===============================Check Land Manager===================================
+    app.get('/users/landmanager/:email', verifyToken, async (req, res) => {
+      let userEmail = req.params.email;
+      if (userEmail !== req.decoded.email) {
+        return res.status(403).send({ message: 'forbidded access' })
+      }
+      let query = { email: userEmail };
+      let user = await usersCollection.findOne(query);
+      let LandManager = false;
+      if (user) {
+        LandManager = user?.role == 'LandManager'
+      }
+      res.send({ LandManager });
+    });
 
     // verifyToken, verifyAdmin,
     app.post("/auth/create", verifyToken, verifyAdmin, async (req, res) => {
