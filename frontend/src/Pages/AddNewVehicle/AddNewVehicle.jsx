@@ -49,7 +49,7 @@ const AddNewVehicle = () => {
                             {/* "fualCostUnloaded":80 */}
                             <div className="flex-1">
                                 <label className="label">
-                                    <span className="label-text">Reg No.</span>
+                                    <span className="label-text text-xl font-semibold">Reg No.*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -60,7 +60,7 @@ const AddNewVehicle = () => {
                             </div>
                             <div className="flex-1">
                                 <label className="label">
-                                    <span className="label-text">Truck Type*</span>
+                                    <span className="label-text text-xl font-semibold">Truck Type*</span>
                                 </label>
                                 <select defaultValue="default"
                                     {...register('type', { required: true })}
@@ -76,7 +76,7 @@ const AddNewVehicle = () => {
                         <div className="flex gap-10 my-5">
                             <div className="flex-1">
                                 <label className="label">
-                                    <span className="label-text">Truck Capacity*</span>
+                                    <span className="label-text text-xl font-semibold">Truck Capacity*</span>
                                 </label>
                                 <select defaultValue="default"
                                     {...register('capacity', { required: true })}
@@ -90,7 +90,7 @@ const AddNewVehicle = () => {
                             </div>
                             <div className="flex-1">
                                 <label className="label">
-                                    <span className="label-text">Fual Cost (Loaded)*</span>
+                                    <span className="label-text text-xl font-semibold">Fual Cost (Loaded)*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -102,7 +102,7 @@ const AddNewVehicle = () => {
                         </div>
                         <div className="mb-8">
                             <label className="label">
-                                <span className="label-text">Fual Cost (UnLoaded)*</span>
+                                <span className="label-text text-xl font-semibold">Fual Cost (UnLoaded)*</span>
                             </label>
                             <input
                                 type="text"

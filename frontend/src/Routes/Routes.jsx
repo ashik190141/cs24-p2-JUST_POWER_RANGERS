@@ -12,6 +12,7 @@ import Home from "../Pages/Home/Home";
 import AdminHome from "../Pages/AdminHome/AdminHome";
 import SystemAdminRoute from "./SystemAdminRoute";
 import AddNewVehicle from "../Pages/AddNewVehicle/AddNewVehicle";
+import AddNewSts from "../Pages/AddNewSts/AddNewSts";
 
 const router = createBrowserRouter([
     {
@@ -64,6 +65,11 @@ const router = createBrowserRouter([
                 //This will be Admin Route
                 path: "add-vehicle",
                 element: <SystemAdminRoute><AddNewVehicle></AddNewVehicle></SystemAdminRoute>
+            },
+            {
+                //This will be Admin Route
+                path: "create-sts",
+                element: <SystemAdminRoute><AddNewSts></AddNewSts></SystemAdminRoute>
             },
         ]
     }
