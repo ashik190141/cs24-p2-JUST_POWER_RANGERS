@@ -38,43 +38,43 @@ async function run() {
   try {
     await client.connect();
     // Send a ping to confirm a successful connection
-      
-      const usersCollection = client.db("DNCC").collection("user");
 
-    //Verify Token
-    // const verifyToken = async (req, res, next) => {
-        console.log(req?.cookie);
-    //   let token = req?.cookies?.token;
-    //   // console.log("Value of token in middleware: ", token);
-    //   if (!token) {
-    //     return res.status(401).send({ message: "Not Authorized" });
-    //   }
-    //   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    //     if (err) {
-    //       console.log(err);
-    //       return res.status(401).send({ message: "UnAuthorized" });
-    //     }
-    //     console.log("value in the token", decoded);
-    //     req.user = decoded;
-    //     next();
-    //   });
-    // };
+    const usersCollection = client.db("DNCC").collection("user");
+    const resetPasswordOTPCollection = client.db("DNCC").collection("reset");
 
-    //Verify Admin
-    // const verifyAdmin = async (req, res, next) => {
-    //   const email = req.decoded.email;
-    //   const query = { email: email };
-    //   const user = await usersCollection.findOne(query);
-    //   const isAdmin = user?.role === "admin";
-    //   if (!isAdmin) {
-    //     return res.status(403).send({ message: "forbidden access" });
-    //   }
-    //   next();
-    // };
+
+    const verifyAdmin = async (req, res, next) => {
+      const email = req.decoded.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      const isAdmin = user?.role === "admin";
+      if (!isAdmin) {
+        return res.status(403).send({ message: "forbidden access" });
+      }
+      next();
+    };
+
+    const verifyToken = async (req, res, next) => {
+      console.log(req?.cookie);
+      let token = req?.cookies?.token;
+      // console.log("Value of token in middleware: ", token);
+      if (!token) {
+        return res.status(401).send({ message: "Not Authorized" });
+      }
+      jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+          console.log(err);
+          return res.status(401).send({ message: "UnAuthorized" });
+        }
+        console.log("value in the token", decoded);
+        req.user = decoded;
+        next();
+      });
+    };
 
 
     // verifyToken, verifyAdmin,
-    app.post("/auth/create", async (req, res) => {
+    app.post("/auth/create", verifyToken, verifyAdmin, async (req, res) => {
       const user = req.body;
 
       const userEmail = { email: user.email };
@@ -107,23 +107,23 @@ async function run() {
         return res.status(401).json({ message: "Invalid email or password" });
       }
 
-        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
-          expiresIn: process.env.EXPIRES_IN,
-        });
-
-        res
-          .cookie("token", token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-          })
-          .json({
-            success: true,
-            message: "Login successful",
-            token,
-          });
+      const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
+        expiresIn: process.env.EXPIRES_IN,
       });
-    
+
+      res
+        .cookie("token", token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+        })
+        .json({
+          success: true,
+          message: "Login successful",
+          token,
+        });
+    });
+
     app.post("/auth/reset-password/initiate", async (req, res) => {
       const user = req.body;
       const otp = Math.floor(100000 + Math.random() * 900000);
@@ -141,14 +141,14 @@ async function run() {
           const sendOTP = await resetPasswordOTPCollection.insertOne(resetInfo);
           res.json({
             result: true,
-            message:"send otp successfully",
+            message: "send otp successfully",
             data: sendOTP,
           });
         }
       } else {
         res.json({
           result: false,
-          message:`${user.email} does not exist`
+          message: `${user.email} does not exist`
         })
       }
     });
@@ -224,7 +224,6 @@ async function run() {
         return res.json({ message: `${information.email} Do Not Valid Email` });
       }
     });
-    
 
     await client.db("admin").command({ ping: 1 });
     console.log(
