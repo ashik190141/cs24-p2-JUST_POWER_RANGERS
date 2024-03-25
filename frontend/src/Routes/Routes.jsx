@@ -9,6 +9,9 @@ import Profile from "../Pages/Profile/Profile";
 import AboutUs from "../Pages/AboutUs/AboutUs";
 import PrivateRoutes from "./PrivateRoutes";
 import Home from "../Pages/Home/Home";
+import AdminHome from "../Pages/AdminHome/AdminHome";
+import SystemAdminRoute from "./SystemAdminRoute";
+import AddNewVehicle from "../Pages/AddNewVehicle/AddNewVehicle";
 
 const router = createBrowserRouter([
     {
@@ -44,8 +47,23 @@ const router = createBrowserRouter([
         children:[
             {
                 //This will be Admin Route
-                path: "auth/create",
-                element: <PrivateRoutes><Register></Register></PrivateRoutes>
+                path: "admin-home",
+                element: <SystemAdminRoute><AdminHome></AdminHome></SystemAdminRoute>
+            },
+            {
+                //This will be Admin Route
+                path: "create-user",
+                element: <SystemAdminRoute><Register></Register></SystemAdminRoute>
+            },
+            {
+                //This will be Admin Route
+                path: "admin-home",
+                element: <SystemAdminRoute><AdminHome></AdminHome></SystemAdminRoute>
+            },
+            {
+                //This will be Admin Route
+                path: "add-vehicle",
+                element: <SystemAdminRoute><AddNewVehicle></AddNewVehicle></SystemAdminRoute>
             },
         ]
     }

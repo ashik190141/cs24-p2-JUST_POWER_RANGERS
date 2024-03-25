@@ -9,15 +9,14 @@ import Lottie from "lottie-react";
 import animation from '../../assets/Registration/SignUpAnimation.json'
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form"
-import { useNavigate } from 'react-router';
 import useAxiosPublic from '../../Hooks/useAxiosPublic';
 
 const Register = () => {
 
     let [showPassword, setShowPassword] = useState(false);
-    let navigate = useNavigate();
+
     let axiosPublic = useAxiosPublic();
-    const { register, handleSubmit, formState: { errors }, } = useForm();
+    const { register, handleSubmit, formState: { errors },reset } = useForm();
 
     
     const onSubmit = (data) => {
@@ -38,7 +37,7 @@ const Register = () => {
                         showConfirmButton: false,
                         timer: 1500
                     });
-                    navigate('/dashboard');
+                    reset();
                 }
                 else {
                     Swal.fire({

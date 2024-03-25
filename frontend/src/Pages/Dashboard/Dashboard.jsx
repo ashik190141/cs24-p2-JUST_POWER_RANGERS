@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { FaEdit, FaEye, FaHeart, FaHome, FaPlaceOfWorship, FaTasks, FaTruck, FaUser, FaUsers} from 'react-icons/fa';
+import { FaEdit, FaEye, FaHeart, FaHome, FaMale, FaPlaceOfWorship, FaTasks, FaTruck, FaUser, FaUsers} from 'react-icons/fa';
 import { GiLovers } from "react-icons/gi";
 import Navbar from '../../Components/Navbar';
 import Footer from '../../Components/Footer';
@@ -39,12 +39,12 @@ const Dashboard = () => {
                                 </li>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
-                                        to='auth/create' >
-                                        <FaUsers></FaUsers>Add New User</NavLink>
+                                        to='create-user' >
+                                        <FaMale></FaMale>Add New User</NavLink>
                                 </li>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
-                                        to='create-vehicle' >
+                                        to='add-vehicle' >
                                         <FaTruck></FaTruck>Add Vehicle</NavLink>
                                 </li>
                                 <li >
@@ -57,7 +57,7 @@ const Dashboard = () => {
                                 </li>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
-                                        to='manage-user' ><FaUser></FaUser>Manage User</NavLink>
+                                        to='manage-user' ><FaUsers></FaUsers>Manage User</NavLink>
                                 </li>
                             </ul>
                         </>
@@ -114,7 +114,7 @@ const Dashboard = () => {
                     }
 
                 </div>
-                <div className="flex-1 bg-gray-200 overflow-y-scroll">
+                <div className="flex-1 bg-gray-200">
                     <Outlet></Outlet>
                 </div>
 

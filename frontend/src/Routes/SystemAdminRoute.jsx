@@ -8,6 +8,7 @@ const SystemAdminRoute = ({ children }) => {
     const { user, loading } = useAuth();
     const location = useLocation();
     let [isAdmin, isAdminLoading] = IsAdmin();
+    console.log(isAdmin);
 
     if (loading || isAdminLoading) {
         return <div className="flex justify-center items-center min-h-[600px]">
@@ -15,7 +16,7 @@ const SystemAdminRoute = ({ children }) => {
         </div>
     }
 
-    if (user && isAdmin === "Admin") {
+    if (user && isAdmin) {
         return children;
     }
     return <Navigate to="/auth/login" state={{ from: location }} replace></Navigate>
