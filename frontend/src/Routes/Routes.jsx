@@ -13,6 +13,7 @@ import AdminHome from "../Pages/AdminHome/AdminHome";
 import SystemAdminRoute from "./SystemAdminRoute";
 import AddNewVehicle from "../Pages/AddNewVehicle/AddNewVehicle";
 import AddNewSts from "../Pages/AddNewSts/AddNewSts";
+import ManageUser from "../Pages/ManageUsers/ManageUsers";
 
 const router = createBrowserRouter([
     {
@@ -70,6 +71,11 @@ const router = createBrowserRouter([
                 //This will be Admin Route
                 path: "create-sts",
                 element: <SystemAdminRoute><AddNewSts></AddNewSts></SystemAdminRoute>
+            },
+            {
+                //This will be Admin Route
+                path: "manage-user",
+                element: <SystemAdminRoute><ManageUser></ManageUser></SystemAdminRoute>
             },
         ]
     }
