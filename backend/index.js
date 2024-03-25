@@ -42,6 +42,8 @@ async function run() {
     const usersCollection = client.db("DNCC").collection("user");
     const resetPasswordOTPCollection = client.db("DNCC").collection("reset");
 
+
+    // ===============================Verify Token ===================================
     const verifyToken = async (req, res, next) => {
       let token = req?.cookies?.token;
       console.log("Value of token in middleware: ", token);
@@ -59,6 +61,7 @@ async function run() {
       });
     };
 
+    // ===============================Verify Admin👇===================================
     const verifyAdmin = async (req, res, next) => {
       const email = req.decoded?.email;
       const query = { email: email };
@@ -103,7 +106,7 @@ async function run() {
       }
       res.send({ stsManager });
     });
-    
+
     // ===============================Check Land Manager===================================
     app.get('/users/landmanager/:email', verifyToken, async (req, res) => {
       let userEmail = req.params.email;
@@ -119,7 +122,7 @@ async function run() {
       res.send({ LandManager });
     });
 
-    // verifyToken, verifyAdmin,
+    // ===============================Create New User 👇===================================
     app.post("/auth/create", verifyToken, verifyAdmin, async (req, res) => {
       const user = req.body;
       const userEmail = { email: user.email };
@@ -138,7 +141,7 @@ async function run() {
       }
     });
 
-    //Auth Login
+    // ===============================Login User👇===================================
     app.post("/auth/login", async (req, res) => {
       const { email, password } = req.body;
       const user = await usersCollection.findOne({ email });
@@ -167,7 +170,7 @@ async function run() {
         });
     });
 
-    // **********************Logout*********************
+    // ===============================Logout User👇====================================
     app.get("/auth/logout", (req, res) => {
       res.clearCookie("token");
       res.json({
@@ -176,7 +179,7 @@ async function run() {
       });
     });
 
-
+    // ===============================Reset Password Initiate👇===================================
     app.post("/auth/reset-password/initiate", async (req, res) => {
       const user = req.body;
       const otp = Math.floor(100000 + Math.random() * 900000);
@@ -206,6 +209,7 @@ async function run() {
       }
     });
 
+    // ===============================Reset Password Confirm👇===================================
     app.put("/auth/reset-password/confirm", async (req, res) => {
       const userInfo = req.body;
       const query = { email: userInfo.email };
@@ -237,6 +241,7 @@ async function run() {
       }
     });
 
+    // ===============================Change Password👇===================================
     app.put("/auth/change-password", async (req, res) => {
       const information = req.body;
       // const user = req.body;
@@ -295,5 +300,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log("port no", port);
+  console.log("DNCC Server Running at", port);
 });
