@@ -9,39 +9,45 @@ import Lottie from "lottie-react";
 import animation from '../../assets/Registration/SignUpAnimation.json'
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form"
-import { useNavigate } from 'react-router';
+// import { useNavigate } from 'react-router';
+import useAxiosPublic from '../../Hooks/useAxiosPublic';
 
 const Register = () => {
 
     let [showPassword, setShowPassword] = useState(false);
-    let navigate = useNavigate();
-
-
+    // let navigate = useNavigate();
+    let axiosPublic = useAxiosPublic();
     const { register, handleSubmit, formState: { errors }, } = useForm();
-    const onSubmit = (data) => {
-        console.log(data);
-        ///auth/create
-        // axios.post('http://localhost:8000/auth/create', data)
-        //    .then(res => {
-        //         console.log(res);
 
-        //         // navigate('/login');
-        //     })
-        //    .catch(err => {
-        //         Swal.fire({
-        //             icon: 'error',
-        //             title: err.response.data.message,
-        //             showConfirmButton: false,
-        //             timer: 1500
-        //         })
-        //     })
-        Swal.fire({
-            icon:'success',
-            title: "User Created Successfully",
-            showConfirmButton: false,
-            timer: 1500
-        });
-        navigate('/');
+    
+    const onSubmit = (data) => {
+        let newUser = {
+            name: data.name,
+            email: data.email,
+            password: data.password
+        }
+
+        axiosPublic.post('/auth/create', newUser)
+            .then(res => {
+                if (res.data.acknowledged == true) {
+                    Swal.fire({
+                        position: "top-middle",
+                        icon: "success",
+                        title: 'User created successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: res.data.msg,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            });
+
     };
 
     return (

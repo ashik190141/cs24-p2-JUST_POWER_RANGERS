@@ -42,22 +42,9 @@ async function run() {
     const usersCollection = client.db("DNCC").collection("user");
     const resetPasswordOTPCollection = client.db("DNCC").collection("reset");
 
-
-    const verifyAdmin = async (req, res, next) => {
-      const email = req.decoded.email;
-      const query = { email: email };
-      const user = await usersCollection.findOne(query);
-      const isAdmin = user?.role === "admin";
-      if (!isAdmin) {
-        return res.status(403).send({ message: "forbidden access" });
-      }
-      next();
-    };
-
     const verifyToken = async (req, res, next) => {
-      console.log(req?.cookie);
       let token = req?.cookies?.token;
-      // console.log("Value of token in middleware: ", token);
+      console.log("Value of token in middleware: ", token);
       if (!token) {
         return res.status(401).send({ message: "Not Authorized" });
       }
@@ -67,16 +54,25 @@ async function run() {
           return res.status(401).send({ message: "UnAuthorized" });
         }
         console.log("value in the token", decoded);
-        req.user = decoded;
+        req.decoded = decoded;
         next();
       });
     };
 
+    const verifyAdmin = async (req, res, next) => {
+      const email = req.decoded?.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      const isAdmin = user?.role === "Admin";
+      if (!isAdmin) {
+        return res.status(403).send({ message: "forbidden access" });
+      }
+      next();
+    };
 
     // verifyToken, verifyAdmin,
     app.post("/auth/create", verifyToken, verifyAdmin, async (req, res) => {
       const user = req.body;
-
       const userEmail = { email: user.email };
       const findUser = await usersCollection.findOne(userEmail);
       if (findUser) {
