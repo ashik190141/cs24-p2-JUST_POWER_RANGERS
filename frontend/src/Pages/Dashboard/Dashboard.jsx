@@ -4,8 +4,19 @@ import { GiLovers } from "react-icons/gi";
 import { MdOutlineWorkspacePremium } from "react-icons/md";
 import Navbar from '../../Components/Navbar';
 import Footer from '../../Components/Footer';
+// @ts-ignore
+import IsAdmin from '../../Hooks/IsAdmin';
+import IsStsManager from '../../Hooks/IsStsManager';
+
+
 
 const Dashboard = () => {
+    let [isAdmin] = IsAdmin();
+    let [isStsManager] = IsStsManager();
+    // console.log(isAdmin);
+    console.log(isStsManager);
+
+
     return (
         <div className='max-w-screen-2xl mx-auto min-h-screen sm:px-4 md:px-0 bg-white'>
             <Navbar></Navbar>
@@ -16,58 +27,64 @@ const Dashboard = () => {
                         <p className='text-xl'>Web App</p>
                     </div>
 
-                    <>
-                        <ul className='menu flex flex-col mt-10 px-6 space-y-3'>
-                            <li >
-                                <NavLink className='flex items-center font-bold gap-2'
-                                    to='admin-home' >
-                                    <FaHome></FaHome>Admin Home</NavLink>
-                            </li>
-                            <li >
-                                <NavLink className='flex items-center font-bold gap-2'
-                                    to='manage-user' >
-                                    <FaUsers></FaUsers>Manage Users</NavLink>
-                            </li>
-                            <li >
-                                <NavLink className='flex items-center font-bold gap-2'
-                                    to='approve-con-request' >
-                                    <FaVoicemail></FaVoicemail>Approve Cont. Request</NavLink>
-                            </li>
-                            <li >
-                                <NavLink className='flex items-center font-bold gap-2'
-                                    to='approve-premium' ><MdOutlineWorkspacePremium />Approve Premium</NavLink>
-                            </li>
-                            <li >
-                                <NavLink className='flex items-center font-bold gap-2'
-                                    to='success-story' ><FaWineBottle></FaWineBottle>Success Story</NavLink>
-                            </li>
-                        </ul>
-                        <ul className='flex flex-col mt-10 px-6 space-y-3'>
-                            <li >
-                                <NavLink className='flex items-center font-bold gap-2'
-                                    to='edit-biodata' >
-                                    <FaEdit></FaEdit> Edit Bio-Data</NavLink>
-                            </li>
-                            <li >
-                                <NavLink className='flex items-center font-bold gap-2'
-                                    to='view-bio-data' >
-                                    <FaEye></FaEye> View Bio-Data</NavLink>
-                            </li>
-                            <li >
-                                <NavLink className='flex items-center font-bold gap-2'
-                                    to='my-req-contacts' >
-                                    <FaUser></FaUser> My Req. Contacts</NavLink>
-                            </li>
-                            <li >
-                                <NavLink className='flex items-center font-bold gap-2'
-                                    to='favorites' ><FaHeart></FaHeart> Favorites</NavLink>
-                            </li>
-                            <li >
-                                <NavLink className='flex items-center font-bold gap-2'
-                                    to='got-married' ><GiLovers></GiLovers>Got Married</NavLink>
-                            </li>
-                        </ul>
-                    </>
+                    {
+                        isAdmin && <>
+                            <ul className='menu flex flex-col mt-10 px-6 space-y-3'>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='admin-home' >
+                                        <FaHome></FaHome>Admin Home</NavLink>
+                                </li>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='manage-user' >
+                                        <FaUsers></FaUsers>Manage Users</NavLink>
+                                </li>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='approve-con-request' >
+                                        <FaVoicemail></FaVoicemail>Approve Cont. Request</NavLink>
+                                </li>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='approve-premium' ><MdOutlineWorkspacePremium />Approve Premium</NavLink>
+                                </li>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='success-story' ><FaWineBottle></FaWineBottle>Success Story</NavLink>
+                                </li>
+                            </ul>
+                        </>
+                    }
+                    {
+                        isStsManager && <>
+                            <ul className='flex flex-col mt-10 px-6 space-y-3'>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='edit-biodata' >
+                                        <FaEdit></FaEdit> Edit Bio-Data</NavLink>
+                                </li>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='view-bio-data' >
+                                        <FaEye></FaEye> View Bio-Data</NavLink>
+                                </li>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='my-req-contacts' >
+                                        <FaUser></FaUser> My Req. Contacts</NavLink>
+                                </li>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='favorites' ><FaHeart></FaHeart> Favorites</NavLink>
+                                </li>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='got-married' ><GiLovers></GiLovers>Got Married</NavLink>
+                                </li>
+                            </ul>
+                        </>
+                    }
 
                 </div>
                 <div className="flex-1 bg-gray-200 overflow-y-scroll">

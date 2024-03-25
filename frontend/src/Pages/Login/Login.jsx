@@ -36,11 +36,18 @@ const Login = () => {
             Swal.fire({
                 position: "top-middle",
                 icon: "success",
-                title: "Login Successfully",
+                title: res.data.message,
                 showConfirmButton: false,
                 timer: 1500
               });
             navigate('/dashboard');
+        }).catch(err=>{
+            Swal.fire({
+                icon: 'error',
+                title: err.response.data.message,
+                showConfirmButton: false,
+                timer: 1500
+            })
         })
     }
 

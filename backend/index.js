@@ -70,6 +70,40 @@ async function run() {
       next();
     };
 
+
+    // ===============================Check Admin👇===================================
+    app.get('/users/admin/:email', verifyToken, async (req, res) => {
+      console.log("Admin Hitted");
+      let userEmail = req.params.email;
+      if (userEmail !== req.decoded.email) {
+        return res.status(403).send({ message: 'forbidded access' })
+      }
+      let query = { email: userEmail };
+      let user = await usersCollection.findOne(query);
+      let admin = false;
+      console.log(user)
+      if (user) {
+        admin = user?.role == 'Admin'
+      }
+      res.send({ admin });
+    });
+
+
+    // ===============================Check Sts Manager===================================
+    app.get('/users/stsmanager/:email', verifyToken, async (req, res) => {
+      let userEmail = req.params.email;
+      if (userEmail !== req.decoded.email) {
+        return res.status(403).send({ message: 'forbidded access' })
+      }
+      let query = { email: userEmail };
+      let user = await usersCollection.findOne(query);
+      let stsManager = false;
+      if (user) {
+        stsManager = user?.role == 'StsManager'
+      }
+      res.send({ stsManager });
+    });
+
     // verifyToken, verifyAdmin,
     app.post("/auth/create", verifyToken, verifyAdmin, async (req, res) => {
       const user = req.body;
@@ -92,12 +126,10 @@ async function run() {
     //Auth Login
     app.post("/auth/login", async (req, res) => {
       const { email, password } = req.body;
-
       const user = await usersCollection.findOne({ email });
       if (!user) {
         return res.status(401).json({ message: "Invalid email or password" });
       }
-
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         return res.status(401).json({ message: "Invalid email or password" });
