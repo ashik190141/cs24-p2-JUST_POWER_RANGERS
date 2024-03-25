@@ -3,27 +3,45 @@ import { RiLockPasswordFill } from 'react-icons/ri';
 import { useState } from "react";
 import { FaEyeSlash, FaEye } from 'react-icons/fa';
 import Lottie from "lottie-react";
-// import Swal from 'sweetalert2';
+import Swal from 'sweetalert2';
 import animation from '../../assets/Login/loginAnimation.json'
 import { Helmet } from "react-helmet-async";
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import useAxiosPublic from '../../Hooks/useAxiosPublic';
+
 
 
 
 const Login = () => {
     let [showPassword, setShowPassword] = useState(false);
     let navigate = useNavigate();
-    // let location = useLocation();
-    // let from = location.state?.from?.pathname || '/';
+    let axiosPublic = useAxiosPublic();
     const { register, handleSubmit, formState: { errors }, } = useForm();
 
 
-    let handleLogin = (e) => {
+    let handleLogin =(e) => {
         e.preventDefault();
         let email = e.target.email.value;
         let password = e.target.password.value;
-        console.log(email, password);
+        let loginInfo = {
+            email, 
+            password
+        }
+
+        axiosPublic.post('/auth/login', loginInfo)
+        .then(res => {
+            console.log(res.data);
+            localStorage.setItem("user", JSON.stringify(loginInfo));
+            Swal.fire({
+                position: "top-middle",
+                icon: "success",
+                title: "Login Successfully",
+                showConfirmButton: false,
+                timer: 1500
+              });
+            navigate('/dashboard');
+        })
     }
 
     const resetPasswrod = (data) => {
