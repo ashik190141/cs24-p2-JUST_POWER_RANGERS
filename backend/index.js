@@ -167,6 +167,16 @@ async function run() {
         });
     });
 
+    // **********************Logout*********************
+    app.get("/auth/logout", (req, res) => {
+      res.clearCookie("token");
+      res.json({
+        success: true,
+        message: "Logout successful",
+      });
+    });
+
+
     app.post("/auth/reset-password/initiate", async (req, res) => {
       const user = req.body;
       const otp = Math.floor(100000 + Math.random() * 900000);
