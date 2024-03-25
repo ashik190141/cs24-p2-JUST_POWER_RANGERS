@@ -57,9 +57,31 @@ const Login = () => {
 
     const resetPasswrod = (data) => {
         console.log(data);
-        ///auth/reset-password/initiate  
-        navigate('/auth/reset-password/initiate');
-    };
+        let email = data.resetEmail;
+        let info = {
+            email
+        }
+        axiosPublic.post('/auth/reset-password/initiate', info)
+            .then(res => {
+                console.log(res.data);
+                if (res.data.result) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: res.data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    navigate('/auth/reset-password/initiate');
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: res.data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            })
+    }
 
 
     return (

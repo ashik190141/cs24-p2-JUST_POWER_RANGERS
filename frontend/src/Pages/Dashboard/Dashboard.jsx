@@ -1,7 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { FaEdit, FaEye, FaHeart, FaHome, FaUser, FaUsers, FaVoicemail, FaWineBottle } from 'react-icons/fa';
+import { FaEdit, FaEye, FaHeart, FaHome, FaPlaceOfWorship, FaTasks, FaTruck, FaUser, FaUsers} from 'react-icons/fa';
 import { GiLovers } from "react-icons/gi";
-import { MdOutlineWorkspacePremium } from "react-icons/md";
 import Navbar from '../../Components/Navbar';
 import Footer from '../../Components/Footer';
 // @ts-ignore
@@ -40,21 +39,25 @@ const Dashboard = () => {
                                 </li>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
-                                        to='manage-user' >
-                                        <FaUsers></FaUsers>Manage Users</NavLink>
+                                        to='auth/create' >
+                                        <FaUsers></FaUsers>Add New User</NavLink>
                                 </li>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
-                                        to='approve-con-request' >
-                                        <FaVoicemail></FaVoicemail>Approve Cont. Request</NavLink>
+                                        to='create-vehicle' >
+                                        <FaTruck></FaTruck>Add Vehicle</NavLink>
                                 </li>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
-                                        to='approve-premium' ><MdOutlineWorkspacePremium />Approve Premium</NavLink>
+                                        to='approve-premium' ><FaTasks />Add New Role</NavLink>
                                 </li>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
-                                        to='success-story' ><FaWineBottle></FaWineBottle>Success Story</NavLink>
+                                        to='create-sts' ><FaPlaceOfWorship></FaPlaceOfWorship>Add New STS</NavLink>
+                                </li>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='manage-user' ><FaUser></FaUser>Manage User</NavLink>
                                 </li>
                             </ul>
                         </>
