@@ -7,6 +7,8 @@ import ResetPass from "../Pages/ResetPassword/ResetPass";
 import Dashboard from "../Pages/Dashboard/Dashboard";
 import Profile from "../Pages/Profile/Profile";
 import AboutUs from "../Pages/AboutUs/AboutUs";
+import PrivateRoutes from "./PrivateRoutes";
+import Home from "../Pages/Home/Home";
 
 const router = createBrowserRouter([
     {
@@ -16,15 +18,15 @@ const router = createBrowserRouter([
         children:[
             {
                 path: "/",
-                element: <Profile></Profile>
+                element: <Home></Home>
+            },
+            {
+                path: "/profile",
+                element: <PrivateRoutes><Profile></Profile></PrivateRoutes>
             },
             {
                 path: "/auth/login",
                 element: <Login></Login>
-            },
-            {
-                path: "/auth/create",
-                element: <Register></Register>
             },
             {
                 path: "/auth/reset-password/initiate",
@@ -38,7 +40,14 @@ const router = createBrowserRouter([
     },
     {
         path: "/dashboard",
-        element: <Dashboard></Dashboard>
+        element: <PrivateRoutes><Dashboard></Dashboard></PrivateRoutes>,
+        children:[
+            {
+                //This will be Admin Route
+                path: "auth/create",
+                element: <PrivateRoutes><Register></Register></PrivateRoutes>
+            },
+        ]
     }
 ]);
 

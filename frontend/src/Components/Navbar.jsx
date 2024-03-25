@@ -1,11 +1,17 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import img from '../../public/logo.png'
+import useAuth from "../Hooks/useAuth";
+import useLogout from "../Hooks/useLogout";
 
 const Navbar = () => {
-    let items  = <>
-    <li><NavLink to={'/'}>Profile</NavLink></li>
-    <li><NavLink to={'/about-us'}>About Us</NavLink></li>
-    <li><NavLink to={'/dashboard'}>Dashboard</NavLink></li>
+    let { user } = useAuth();
+    let { logout } = useLogout();
+
+    let items = <>
+        <li><NavLink to={'/'}>Home</NavLink></li>
+        <li><NavLink to={'/profile'}>Profile</NavLink></li>
+        <li><NavLink to={'/about-us'}>About Us</NavLink></li>
+        <li><NavLink to={'/dashboard'}>Dashboard</NavLink></li>
     </>
     return (
         <div className="navbar bg-[#092111] text-white">
@@ -28,9 +34,15 @@ const Navbar = () => {
                     {items}
                 </ul>
             </div>
-            <div className="navbar-end">
-                <button className="bg-red-900 px-4 py-2 rounded-md text-white cursor-pointer hover:scale-105">Logout</button>
-            </div>
+            {
+                user ? <div className="navbar-end">
+                    <button className="bg-red-900 px-4 py-2 rounded-md text-white cursor-pointer hover:scale-105" onClick={() => logout()}>Logout</button>
+                </div> : <div className="navbar-end">
+                    <Link to={"/auth/login"}>
+                        <button className="bg-green-900 px-4 py-2 rounded-md text-white cursor-pointer hover:scale-105">Login</button>
+                    </Link>
+                </div>
+            }
         </div>
     );
 };

@@ -9,46 +9,79 @@ import { Helmet } from "react-helmet-async";
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import useAxiosPublic from '../../Hooks/useAxiosPublic';
+import useAuth from '../../Hooks/useAuth';
 
 
 
 
 const Login = () => {
     let [showPassword, setShowPassword] = useState(false);
+    let { setLoading, setUser } = useAuth();
     let navigate = useNavigate();
     let axiosPublic = useAxiosPublic();
     const { register, handleSubmit, formState: { errors }, } = useForm();
 
 
-    let handleLogin =(e) => {
+    let handleLogin = (e) => {
         e.preventDefault();
         let email = e.target.email.value;
         let password = e.target.password.value;
         let loginInfo = {
-            email, 
+            email,
             password
         }
-
+        setLoading(true);
         axiosPublic.post('/auth/login', loginInfo)
-        .then(res => {
-            console.log(res.data);
-            localStorage.setItem("user", JSON.stringify(loginInfo));
-            Swal.fire({
-                position: "top-middle",
-                icon: "success",
-                title: "Login Successfully",
-                showConfirmButton: false,
-                timer: 1500
-              });
-            navigate('/dashboard');
-        })
+            .then(res => {
+                console.log(res.data);
+                setUser(loginInfo);
+                localStorage.setItem("user", JSON.stringify(loginInfo));
+                Swal.fire({
+                    position: "top-middle",
+                    icon: "success",
+                    title: res.data.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                setLoading(false);
+                navigate('/dashboard');
+            }).catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: err.response.data.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            })
     }
 
     const resetPasswrod = (data) => {
         console.log(data);
-        ///auth/reset-password/initiate  
-        navigate('/auth/reset-password/initiate');
-    };
+        let email = data.resetEmail;
+        let info = {
+            email
+        }
+        axiosPublic.post('/auth/reset-password/initiate', info)
+            .then(res => {
+                console.log(res.data);
+                if (res.data.result) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: res.data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    navigate('/auth/reset-password/initiate');
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: res.data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            })
+    }
 
 
     return (

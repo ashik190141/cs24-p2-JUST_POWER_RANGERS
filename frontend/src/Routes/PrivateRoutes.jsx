@@ -6,6 +6,7 @@ import useAuth from "../Hooks/useAuth";
 
 const PrivateRoutes = ({ children }) => {
     let { user, loading } = useAuth();
+    console.log(user);
     let location = useLocation();
     if (loading) {
         return <div className="flex justify-center items-center min-h-[600px]">
@@ -15,7 +16,7 @@ const PrivateRoutes = ({ children }) => {
     if(user){
         return children;
     }
-    return <Navigate to='/login' state={{from: location}} replace></Navigate>
+    return <Navigate to='/' state={{from: location}} replace></Navigate>
 };
 PrivateRoutes.propTypes = {
     children: PropTypes.node,
