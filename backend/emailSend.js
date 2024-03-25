@@ -1,8 +1,7 @@
 const Mailgen = require("mailgen");
 const nodeMailer = require("nodemailer");
 
-
-const sendEmailForResetPassword = async (req, res, user,otp) => {
+const sendEmailForResetPassword = async (req, res, user, otp) => {
   let config = {
     service: "gmail",
     auth: {
@@ -48,8 +47,66 @@ const sendEmailForResetPassword = async (req, res, user,otp) => {
   transporter
     .sendMail(message)
     .then(() => {
+      res.json({
+        result: true,
+        message: "send otp successfully",
+        data: sendOTP,
+      });
+    })
+    .catch((error) => {
+      return res.status(501).json({ error });
+    });
+};
+
+const sendEmailForRegistration = async (req, res, user) => {
+  console.log(req.body);
+  let config = {
+    service: "gmail",
+    auth: {
+      user: `nusratnuhin253@gmail.com`,
+      pass: `cjjqjpzoxpygwrad`,
+    },
+  };
+
+  let transporter = nodeMailer.createTransport(config);
+
+  let mailGenerator = new Mailgen({
+    theme: "default",
+    product: {
+      name: "Dust Master",
+      link: "https://mailgen.js/",
+    },
+  });
+
+  let response = {
+    body: {
+      intro: "Please, Verify Your Email",
+      table: {
+        data: [
+          {
+            email: user.email,
+            password: user.password,
+          },
+        ],
+      },
+      outro: "You can not login without the given information",
+    },
+  };
+
+  let mail = mailGenerator.generate(response);
+
+  let message = {
+    from: `nusratnuhin253@gmail.com`,
+    to: user.email,
+    subject: "Please Verify your email for login",
+    html: mail,
+  };
+
+  transporter
+    .sendMail(message)
+    .then(() => {
       return res.status(201).json({
-        result : true,
+        result: true,
         msg: "You should receive your email",
       });
     })
@@ -59,5 +116,6 @@ const sendEmailForResetPassword = async (req, res, user,otp) => {
 };
 
 module.exports = {
-    sendEmailForResetPassword
-}
+  sendEmailForResetPassword,
+  sendEmailForRegistration,
+};

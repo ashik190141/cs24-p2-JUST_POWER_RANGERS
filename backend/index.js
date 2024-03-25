@@ -2,6 +2,8 @@ let cookieParser = require('cookie-parser')
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const Mailgen = require("mailgen");
+const nodeMailer = require("nodemailer");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -16,15 +18,14 @@ app.use(cors(
 app.use(express.json());
 app.use(cookieParser());
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
-const { sendEmailForResetPassword } = require("./emailSend");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 //This is for Ashik
-// const uri =
-//   `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.nhg2oh1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+const uri =
+  `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.nhg2oh1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 //This is for Shojib
-const uri =
-  `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.oglq0ui.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+// const uri =
+//   `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.oglq0ui.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -41,6 +42,8 @@ async function run() {
 
     const usersCollection = client.db("DNCC").collection("user");
     const resetPasswordOTPCollection = client.db("DNCC").collection("reset");
+    const vehiclesCollection = client.db("DNCC").collection("vehicles");
+    const stsCollection = client.db("DNCC").collection("sts");
 
     const verifyToken = async (req, res, next) => {
       let token = req?.cookies?.token;
@@ -71,8 +74,9 @@ async function run() {
     };
 
     // verifyToken, verifyAdmin,
-    app.post("/auth/create", verifyToken, verifyAdmin, async (req, res) => {
+    app.post("/auth/create", async (req, res) => {
       const user = req.body;
+      const plainPassword = user.password;
       const userEmail = { email: user.email };
       const findUser = await usersCollection.findOne(userEmail);
       if (findUser) {
@@ -85,7 +89,61 @@ async function run() {
         user.role = "unassigned";
 
         const result = await usersCollection.insertOne(user);
-        res.send(result);
+        if (result.insertedId) {
+          let config = {
+            service: "gmail",
+            auth: {
+              user: `${process.env.email}`,
+              pass: `${process.env.password}`,
+            },
+          };
+
+          let transporter = nodeMailer.createTransport(config);
+
+          let mailGenerator = new Mailgen({
+            theme: "default",
+            product: {
+              name: "Dust Master",
+              link: "https://mailgen.js/",
+            },
+          });
+
+          let response = {
+            body: {
+              intro: "Please, Verify Your Email",
+              table: {
+                data: [
+                  {
+                    email: user.email,
+                    password: plainPassword,
+                  },
+                ],
+              },
+              outro: "You can not login without the given information",
+            },
+          };
+
+          let mail = mailGenerator.generate(response);
+
+          let message = {
+            from: `${process.env.email}`,
+            to: user.email,
+            subject: "Check Email For Login",
+            html: mail,
+          };
+
+          transporter
+            .sendMail(message)
+            .then(() => {
+              return res.json({
+                result: true,
+                message: "check your email",
+              });
+            })
+            .catch((error) => {
+              return res.status(501).json({ error });
+            });
+        }
       }
     });
 
@@ -134,18 +192,66 @@ async function run() {
             email: user.email,
             otp: otp,
           };
-          const sendOTP = await resetPasswordOTPCollection.insertOne(resetInfo);
-          res.json({
-            result: true,
-            message: "send otp successfully",
-            data: sendOTP,
+          let config = {
+            service: "gmail",
+            auth: {
+              user: `${process.env.email}`,
+              pass: `${process.env.password}`,
+            },
+          };
+
+          let transporter = nodeMailer.createTransport(config);
+
+          let mailGenerator = new Mailgen({
+            theme: "default",
+            product: {
+              name: "",
+              link: "",
+            },
           });
+
+          let response = {
+            body: {
+              intro: "Please, Verify Your Email",
+              table: {
+                data: [
+                  {
+                    description: "Please Verify your email with the given otp",
+                    OTP: resetInfo.otp,
+                  },
+                ],
+              },
+              outro: "You can not change your password without the given otp",
+            },
+          };
+
+          let mail = mailGenerator.generate(response);
+
+          let message = {
+            from: `${process.env.email}`,
+            to: resetInfo.email,
+            subject: "Reset Your Password",
+            html: mail,
+          };
+
+          transporter
+            .sendMail(message)
+            .then(() => {
+              res.json({
+                result: true,
+                message: "send otp successfully",
+                data: sendOTP,
+              });
+            })
+            .catch((error) => {
+              return res.status(501).json({ error });
+            });
         }
       } else {
         res.json({
           result: false,
-          message: `${user.email} does not exist`
-        })
+          message: `${user.email} does not exist`,
+        });
       }
     });
 
@@ -166,7 +272,9 @@ async function run() {
         };
         const result = await usersCollection.updateOne(query, updatedPassword);
         if (result.modifiedCount > 0) {
-          const deleteResetInfo = await resetPasswordOTPCollection.deleteOne(query);
+          const deleteResetInfo = await resetPasswordOTPCollection.deleteOne(
+            query
+          );
           if (deleteResetInfo.deletedCount > 0) {
             res.json({ message: "Successfully updated your password" });
           } else {
@@ -182,7 +290,6 @@ async function run() {
 
     app.put("/auth/change-password", async (req, res) => {
       const information = req.body;
-      // const user = req.body;
       const query = { email: information.email };
       const findUser = await usersCollection.findOne(query);
 
@@ -220,6 +327,56 @@ async function run() {
         return res.json({ message: `${information.email} Do Not Valid Email` });
       }
     });
+
+    // User Management Endpoints
+    // admin access
+    app.get("/users", async (req, res) => {
+      const result = await usersCollection.find().toArray();
+      res.send(result);
+    });
+
+    // admin access
+    app.get("/users/:userId", async (req, res) => {
+      const id = req.params.userId;
+      const query = { _id: new ObjectId(id) };
+      const result = await usersCollection.findOne(query);
+      res.send(result);
+    });
+
+    // admin access
+    app.delete("/users/:userId", async (req, res) => {
+      const id = req.params.userId;
+      const query = { _id: new ObjectId(id) };
+      const result = await usersCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // admin access
+    app.post("/create-vehicles", async (req, res) => {
+      const vehicles = req.body;
+      const result = await vehiclesCollection.insertOne(vehicles);
+      if (result.insertedId) {
+        res.json({
+          result: true,
+          message: "Vehicles Added Successfully"
+        })
+      }
+    });
+
+    // admin access
+    app.post("/create-sts", async (req, res) => {
+      const stsInfo = req.body;
+      stsInfo.manager = false;
+      const result = await stsCollection.insertOne(stsInfo);
+      if (result.insertedId) {
+        res.json({
+          result: true,
+          message: "STS Added Successfully",
+        });
+      }
+    });
+
+    
 
     await client.db("admin").command({ ping: 1 });
     console.log(
