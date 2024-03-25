@@ -29,14 +29,15 @@ const Register = () => {
 
         axiosPublic.post('/auth/create', newUser)
             .then(res => {
-                if (res.data.acknowledged == true) {
+                console.log(res.data);
+                if (res.data.result == true) {
                     Swal.fire({
                         position: "top-middle",
                         icon: "success",
-                        title: 'User created successfully',
+                        title: res.data.message,
                         showConfirmButton: false,
                         timer: 1500
-                    })
+                    });
                     navigate('/dashboard');
                 }
                 else {

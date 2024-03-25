@@ -144,7 +144,7 @@ async function run() {
     // });
     
     // verifyToken, verifyAdmin,
-    app.post("/auth/create", async (req, res) => {
+    app.post("/auth/create",verifyToken, verifyAdmin, async (req, res) => {
       const user = req.body;
       const plainPassword = user.password;
       const userEmail = { email: user.email };
