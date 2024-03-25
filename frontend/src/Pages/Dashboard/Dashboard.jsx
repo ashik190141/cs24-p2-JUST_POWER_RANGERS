@@ -1,13 +1,11 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { FaEdit, FaEye, FaHeart, FaHome, FaSignOutAlt, FaUser, FaUsers, FaVoicemail, FaWineBottle } from 'react-icons/fa';
+import { FaEdit, FaEye, FaHeart, FaHome, FaUser, FaUsers, FaVoicemail, FaWineBottle } from 'react-icons/fa';
 import { GiLovers } from "react-icons/gi";
 import { MdOutlineWorkspacePremium } from "react-icons/md";
-import useAuth from '../../Hooks/useAuth';
 import Navbar from '../../Components/Navbar';
 import Footer from '../../Components/Footer';
 
 const Dashboard = () => {
-    let { Logout } = useAuth()
     return (
         <div className='max-w-screen-2xl mx-auto min-h-screen sm:px-4 md:px-0 bg-white'>
             <Navbar></Navbar>
@@ -43,9 +41,6 @@ const Dashboard = () => {
                                 <NavLink className='flex items-center font-bold gap-2'
                                     to='success-story' ><FaWineBottle></FaWineBottle>Success Story</NavLink>
                             </li>
-                            <li >
-                                <NavLink onClick={() => Logout().then().catch()} className='flex items-center font-bold gap-2' ><FaSignOutAlt></FaSignOutAlt> Logout</NavLink>
-                            </li>
                         </ul>
                         <ul className='flex flex-col mt-10 px-6 space-y-3'>
                             <li >
@@ -70,9 +65,6 @@ const Dashboard = () => {
                             <li >
                                 <NavLink className='flex items-center font-bold gap-2'
                                     to='got-married' ><GiLovers></GiLovers>Got Married</NavLink>
-                            </li>
-                            <li >
-                                <NavLink onClick={() => Logout().then().catch()} className='flex items-center font-bold gap-2' ><FaSignOutAlt></FaSignOutAlt> Logout</NavLink>
                             </li>
                         </ul>
                     </>
