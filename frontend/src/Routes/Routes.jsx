@@ -1,10 +1,12 @@
 import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "../Layout/MainLayout";
 import Error from "../Pages/ErrorPage/Error";
-import Home from "../Pages/Home/Home";
 import Login from "../Pages/Login/Login";
 import Register from "../Pages/Register/Register";
 import ResetPass from "../Pages/ResetPassword/ResetPass";
+import Dashboard from "../Pages/Dashboard/Dashboard";
+import Profile from "../Pages/Profile/Profile";
+import AboutUs from "../Pages/AboutUs/AboutUs";
 
 const router = createBrowserRouter([
     {
@@ -14,7 +16,7 @@ const router = createBrowserRouter([
         children:[
             {
                 path: "/",
-                element: <Home></Home>
+                element: <Profile></Profile>
             },
             {
                 path: "/auth/login",
@@ -29,19 +31,15 @@ const router = createBrowserRouter([
                 element: <ResetPass></ResetPass>
             },
             {
-                path: "/reset-password/:token",
-                element: <></>
-            },
-            {
-                path: "/dashboard",
-                element: <></>
-            },
-            {
-                path: "/profile",
-                element: <></>
+                path: "/about-us",
+                element: <AboutUs></AboutUs>
             }
         ]
     },
+    {
+        path: "/dashboard",
+        element: <Dashboard></Dashboard>
+    }
 ]);
 
 export default router;
