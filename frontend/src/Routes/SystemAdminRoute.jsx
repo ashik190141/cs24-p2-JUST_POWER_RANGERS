@@ -1,24 +1,24 @@
 import { Navigate, useLocation } from "react-router-dom";
 import PropTypes from 'prop-types';
 import useAuth from "../Hooks/useAuth";
-import useCheckRoles from "../Hooks/useCheckRoles";
+import IsAdmin from "../Hooks/IsAdmin";
 
 
 const SystemAdminRoute = ({ children }) => {
-    const {user, loading} = useAuth();
-    const [isRole, isRoleLoading] = useCheckRoles();
+    const { user, loading } = useAuth();
     const location = useLocation();
+    let [isAdmin, isAdminLoading] = IsAdmin();
 
-    if (loading || isRoleLoading) {
+    if (loading || isAdminLoading) {
         return <div className="flex justify-center items-center min-h-[600px]">
-        <span className="loading loading-spinner loading-lg"></span>
-    </div>
+            <span className="loading loading-spinner loading-lg"></span>
+        </div>
     }
 
-    if (user && isRole ==="SystemAdmin") {
+    if (user && isAdmin === "Admin") {
         return children;
     }
-    return <Navigate to="/" state={{ from: location }} replace></Navigate>
+    return <Navigate to="/auth/login" state={{ from: location }} replace></Navigate>
 };
 SystemAdminRoute.propTypes = {
     children: PropTypes.node,

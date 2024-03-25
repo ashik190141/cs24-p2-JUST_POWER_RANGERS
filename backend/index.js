@@ -46,6 +46,8 @@ async function run() {
     const stsCollection = client.db("DNCC").collection("sts");
     const stsLeavingCollection = client.db("DNCC").collection("stsLeaving");
 
+
+    // ===============================Verify Token ===================================
     const verifyToken = async (req, res, next) => {
       let token = req?.cookies?.token;
       console.log("Value of token in middleware: ", token);
@@ -63,6 +65,7 @@ async function run() {
       });
     };
 
+    // ===============================Verify Admin👇===================================
     const verifyAdmin = async (req, res, next) => {
       const email = req.decoded?.email;
       const query = { email: email };
@@ -74,6 +77,73 @@ async function run() {
       next();
     };
 
+    // ===============================Check Admin👇===================================
+    app.get('/users/admin/:email', verifyToken, async (req, res) => {
+      console.log("Admin Hitted");
+      let userEmail = req.params.email;
+      if (userEmail !== req.decoded.email) {
+        return res.status(403).send({ message: 'forbidded access' })
+      }
+      let query = { email: userEmail };
+      let user = await usersCollection.findOne(query);
+      let admin = false;
+      console.log(user)
+      if (user) {
+        admin = user?.role == 'Admin'
+      }
+      res.send({ admin });
+    });
+
+
+    // ===============================Check Sts Manager===================================
+    app.get('/users/stsmanager/:email', verifyToken, async (req, res) => {
+      let userEmail = req.params.email;
+      if (userEmail !== req.decoded.email) {
+        return res.status(403).send({ message: 'forbidded access' })
+      }
+      let query = { email: userEmail };
+      let user = await usersCollection.findOne(query);
+      let stsManager = false;
+      if (user) {
+        stsManager = user?.role == 'StsManager'
+      }
+      res.send({ stsManager });
+    });
+
+    // ===============================Check Land Manager===================================
+    app.get('/users/landmanager/:email', verifyToken, async (req, res) => {
+      let userEmail = req.params.email;
+      if (userEmail !== req.decoded.email) {
+        return res.status(403).send({ message: 'forbidded access' })
+      }
+      let query = { email: userEmail };
+      let user = await usersCollection.findOne(query);
+      let LandManager = false;
+      if (user) {
+        LandManager = user?.role == 'LandManager'
+      }
+      res.send({ LandManager });
+    });
+
+    // ===============================Create New User 👇===================================
+    // app.post("/auth/create", verifyToken, verifyAdmin, async (req, res) => {
+    //   const user = req.body;
+    //   const userEmail = { email: user.email };
+    //   const findUser = await usersCollection.findOne(userEmail);
+    //   if (findUser) {
+    //     return res.json({ msg: `${user.email} is already registered` });
+    //   } else {
+    //     const userPassword = user.password;
+    //     const salt = await bcrypt.genSalt(10);
+    //     const hashedPassword = await bcrypt.hash(userPassword, salt);
+    //     user.password = hashedPassword;
+    //     user.role = "unassigned";
+
+    //     const result = await usersCollection.insertOne(user);
+    //     res.send(result);
+    //   }
+    // });
+    
     // verifyToken, verifyAdmin,
     app.post("/auth/create", async (req, res) => {
       const user = req.body;
@@ -148,15 +218,14 @@ async function run() {
       }
     });
 
-    //Auth Login
+
+    // ===============================Login User👇===================================
     app.post("/auth/login", async (req, res) => {
       const { email, password } = req.body;
-
       const user = await usersCollection.findOne({ email });
       if (!user) {
         return res.status(401).json({ message: "Invalid email or password" });
       }
-
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         return res.status(401).json({ message: "Invalid email or password" });
@@ -179,6 +248,44 @@ async function run() {
         });
     });
 
+    // ===============================Logout User👇====================================
+    app.get("/auth/logout", (req, res) => {
+      res.clearCookie("token");
+      res.json({
+        success: true,
+        message: "Logout successful",
+      });
+    });
+
+    // ===============================Reset Password Initiate👇===================================
+    // app.post("/auth/reset-password/initiate", async (req, res) => {
+    //   const user = req.body;
+    //   const otp = Math.floor(100000 + Math.random() * 900000);
+
+    //   const query = { email: user.email };
+    //   const findUser = await usersCollection.findOne(query);
+
+    //   if (findUser) {
+    //     const res = sendEmailForResetPassword(user, otp);
+    //     if (res.result) {
+    //       const resetInfo = {
+    //         email: user.email,
+    //         otp: otp,
+    //       };
+    //       const sendOTP = await resetPasswordOTPCollection.insertOne(resetInfo);
+    //       res.json({
+    //         result: true,
+    //         message: "send otp successfully",
+    //         data: sendOTP,
+    //       });
+    //     }
+    //   } else {
+    //     res.json({
+    //       result: false,
+    //       message: `${user.email} does not exist`
+    //     })
+    //   }
+    // });
     app.post("/auth/reset-password/initiate", async (req, res) => {
       const user = req.body;
       const otp = Math.floor(100000 + Math.random() * 900000);
@@ -256,6 +363,7 @@ async function run() {
       }
     });
 
+    // ===============================Reset Password Confirm👇===================================
     app.put("/auth/reset-password/confirm", async (req, res) => {
       const userInfo = req.body;
       const query = { email: userInfo.email };
@@ -485,5 +593,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log("port no", port);
+  console.log("DNCC Server Running at", port);
 });
