@@ -6,8 +6,8 @@ const sendEmailForResetPassword = async (req, res, user,otp) => {
   let config = {
     service: "gmail",
     auth: {
-      user: "nusratnuhin253@gmail.com",
-      pass: "cjjqjpzoxpygwrad",
+      user: `${process.env.email}`,
+      pass: `${process.env.password}`,
     },
   };
 
@@ -39,7 +39,7 @@ const sendEmailForResetPassword = async (req, res, user,otp) => {
   let mail = mailGenerator.generate(response);
 
   let message = {
-    from: "nusratnuhin253@gmail.com",
+    from: `${process.env.email}`,
     to: user.email,
     subject: "Reset Your Password",
     html: mail,
