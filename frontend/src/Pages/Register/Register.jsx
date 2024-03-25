@@ -50,6 +50,7 @@ const Register = () => {
 
     };
 
+    
     return (
         <div className="w-full md:w-10/12 mx-auto flex flex-col md:flex-row gap-5 px-2 justify-center items-center mt-5">
             <Helmet>
