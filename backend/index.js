@@ -44,6 +44,7 @@ async function run() {
     const resetPasswordOTPCollection = client.db("DNCC").collection("reset");
     const vehiclesCollection = client.db("DNCC").collection("vehicles");
     const stsCollection = client.db("DNCC").collection("sts");
+    const stsLeavingCollection = client.db("DNCC").collection("stsLeaving");
 
     const verifyToken = async (req, res, next) => {
       let token = req?.cookies?.token;
@@ -343,12 +344,50 @@ async function run() {
       res.send(result);
     });
 
+    // admin access and own user
+    app.put("/users/:userId", async (req, res) => {
+      const id = req.params.userId;
+      const query = { _id: new ObjectId(id) };
+      const userUpdatedInfo = req.body;
+      const updatedDoc = {
+        $set: {
+          name: userUpdatedInfo.name,
+        },
+      };
+      const result = await usersCollection.updateOne(query, updatedDoc);
+      if (result.modifiedCount > 0) {
+        res.json({
+          result: true,
+          message: "Update User Information Successfully",
+        });
+      }
+    });
+
     // admin access
     app.delete("/users/:userId", async (req, res) => {
       const id = req.params.userId;
       const query = { _id: new ObjectId(id) };
       const result = await usersCollection.deleteOne(query);
       res.send(result);
+    });
+
+    //admin access
+    app.put("/users/:userId/roles", async (req, res) => {
+      const id = req.params.userId;
+      const query = { _id: new ObjectId(id) };
+      const updatedRoleInfo = req.body;
+      const updatedDoc = {
+        $set: {
+          role: updatedRoleInfo.role,
+        },
+      };
+      const result = await usersCollection.updateOne(query, updatedDoc);
+      if (result.modifiedCount > 0) {
+        res.json({
+          result: true,
+          message: "Update User Role Successfully",
+        });
+      }
     });
 
     // admin access
@@ -358,8 +397,8 @@ async function run() {
       if (result.insertedId) {
         res.json({
           result: true,
-          message: "Vehicles Added Successfully"
-        })
+          message: "Vehicles Added Successfully",
+        });
       }
     });
 
@@ -376,7 +415,58 @@ async function run() {
       }
     });
 
-    
+    //sts manager
+    app.post("/create-entry-vehicles-leaving", async (req, res) => {
+      const stsVehicleLeavingInfo = req.body;
+      const result = await stsLeavingCollection.insertOne(
+        stsVehicleLeavingInfo
+      );
+      if (result.insertedId) {
+        res.json({
+          result: true,
+          message: "Vehicles Leaving From STS Added Successfully",
+        });
+      }
+    });
+
+    //landfill manager
+    app.post("/create-truck-dumping", async (req, res) => {
+      const truckDumpingInfo = req.body;
+      const result = await stsLeavingCollection.insertOne(truckDumpingInfo);
+      if (result.insertedId) {
+        res.json({
+          result: true,
+          message: "Dumping Truck Information Added Successfully",
+        });
+      }
+    });
+
+    //profile management endpoints
+    app.get("/profile", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await usersCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    //update login user info
+    app.put("/profile", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const updatedUserInfo = req.body;
+      const updatedDoc = {
+        $set: {
+          name: updatedUserInfo.name,
+        },
+      };
+      const result = await usersCollection.updateOne(query, updatedDoc);
+      if (result.modifiedCount > 0) {
+        res.json({
+          result: true,
+          message: "Update User Role Successfully",
+        });
+      }
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
