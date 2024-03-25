@@ -14,6 +14,7 @@ import SystemAdminRoute from "./SystemAdminRoute";
 import AddNewVehicle from "../Pages/AddNewVehicle/AddNewVehicle";
 import AddNewSts from "../Pages/AddNewSts/AddNewSts";
 import ManageUser from "../Pages/ManageUsers/ManageUsers";
+import UserDetails from "../Pages/UserDetails/UserDetails";
 
 const router = createBrowserRouter([
     {
@@ -76,6 +77,12 @@ const router = createBrowserRouter([
                 //This will be Admin Route
                 path: "manage-user",
                 element: <SystemAdminRoute><ManageUser></ManageUser></SystemAdminRoute>
+            },
+            {
+                //This will be Admin Route
+                path: "users/:id",
+                element: <SystemAdminRoute><UserDetails></UserDetails></SystemAdminRoute>,
+                loader: ({params})=> fetch(`http://localhost:5000/users/${params.id}`)
             },
         ]
     }

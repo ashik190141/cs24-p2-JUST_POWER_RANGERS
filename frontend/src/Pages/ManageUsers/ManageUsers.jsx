@@ -81,7 +81,7 @@ const ManageUser = () => {
                             </td>
                             <td className="p-4 border-b border-blue-gray-50">
                                 <button className="bg-green-600 text-white rounded-md px-4 py-2"
-                                    onClick={() => navigate(`/users/${item?._id}`)}>
+                                    onClick={() => navigate(`/dashboard/users/${item?._id}`)}>
                                     See Details</button>
                             </td>
                             <th className="p-4 border-b border-blue-gray-50">
