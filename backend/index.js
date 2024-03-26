@@ -45,6 +45,7 @@ async function run() {
     const vehiclesCollection = client.db("DNCC").collection("vehicles");
     const stsCollection = client.db("DNCC").collection("sts");
     const stsLeavingCollection = client.db("DNCC").collection("stsLeaving");
+    const landfillCollection = client.db("DNCC").collection("landfill");
 
 
     // ===============================Verify Token ===================================
@@ -510,15 +511,37 @@ async function run() {
       }
     });
 
-    // admin access
-    app.post("/create-sts", async (req, res) => {
-      const stsInfo = req.body;
-      stsInfo.manager = false;
-      const result = await stsCollection.insertOne(stsInfo);
+    //admin access
+    app.post("/create-landfill", async (req, res) => {
+      const landfillInfo = req.body;
+      landfillInfo.manager = [];
+      const result = await landfillCollection.insertOne(landfillInfo);
       if (result.insertedId) {
         res.json({
           result: true,
-          message: "STS Added Successfully",
+          message: "Landfill Created Successfully",
+        });
+      }
+    });
+
+    // admin access
+    app.post("/create-sts", async (req, res) => {
+      const stsInfo = req.body;
+      const query = { wardNumber : stsInfo.wardNumber};
+      const isExist = await stsCollection.findOne(query);
+      if (!isExist) {
+        stsInfo.manager = [];
+        const result = await stsCollection.insertOne(stsInfo);
+        if (result.insertedId) {
+          res.json({
+            result: true,
+            message: "STS Added Successfully",
+          });
+        } 
+      } else {
+        res.json({
+          result: false,
+          message: "Ward Number Already Exist",
         });
       }
     });
