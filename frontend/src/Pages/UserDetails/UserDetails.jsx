@@ -6,7 +6,7 @@ const UserDetails = () => {
     console.log(user);
     return (
         <div>
-            <p>Hi! I am {user?.name} </p>
+            <p>Hi! I am {user?.userName} </p>
         </div>
     );
 };

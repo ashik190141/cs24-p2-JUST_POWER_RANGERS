@@ -71,7 +71,7 @@ const ManageUser = () => {
                         allUser?.map((item, index) => <tr key={item?._id}>
                             <th className="p-4 border-b border-blue-gray-50">{index + 1}</th>
                             <td className=" border-b border-blue-gray-50">
-                                {item?.name}
+                                {item?.userName}
                             </td>
                             <td className="p-4 border-b border-blue-gray-50">
                                 {item?.email}

@@ -44,7 +44,7 @@ const Login = () => {
                     timer: 1500
                 });
                 setLoading(false);
-                navigate('/dashboard');
+                navigate('/');
             }).catch(err => {
                 Swal.fire({
                     icon: 'error',

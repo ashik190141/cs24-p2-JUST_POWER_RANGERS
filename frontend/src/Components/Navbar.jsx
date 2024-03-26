@@ -9,9 +9,13 @@ const Navbar = () => {
 
     let items = <>
         <li><NavLink to={'/'}>Home</NavLink></li>
-        <li><NavLink to={'/profile'}>Profile</NavLink></li>
+        {
+            user? <li><NavLink to={'/profile'}>Profile</NavLink></li> : <></>
+        }
         <li><NavLink to={'/about-us'}>About Us</NavLink></li>
-        <li><NavLink to={'/dashboard'}>Dashboard</NavLink></li>
+        {
+            user? <li><NavLink to={'/dashboard'}>Dashboard</NavLink></li> : <></>
+        }
     </>
     return (
         <div className="navbar bg-[#092111] text-white">

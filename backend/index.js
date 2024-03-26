@@ -33,6 +33,55 @@ const distance = (lat1, lon1, lat2, lon2) => {
   return d;
 };
 
+function findNearestTime(data) {
+  const current = new Date();
+  let currentHours = current.getHours();
+  let currentMinutes = current.getMinutes();
+
+  if (currentHours < 10) {
+    currentHours = "0" + currentHours;
+  }
+
+  if (currentMinutes < 10) {
+    currentMinutes = "0" + currentMinutes;
+  }
+
+  const currentTime = parseInt(currentHours) * 60 + parseInt(currentMinutes);
+
+  let nearestTime = Infinity;
+  let nearestIndex = -1;
+
+  data.forEach((item, index) => {
+    const [arrivalHours, arrivalMinutes] = item.arrival.split(":");
+    const arrivalTime = parseInt(arrivalHours) * 60 + parseInt(arrivalMinutes);
+
+    const [departureHours, departureMinutes] = item.departure.split(":");
+    const departureTime =
+      parseInt(departureHours) * 60 + parseInt(departureMinutes);
+
+    const timeDifferenceArrival = Math.abs(arrivalTime - currentTime);
+    const timeDifferenceDeparture = Math.abs(departureTime - currentTime);
+
+    const minTimeDifference = Math.min(
+      timeDifferenceArrival,
+      timeDifferenceDeparture
+    );
+
+    if (minTimeDifference < nearestTime) {
+      nearestTime = minTimeDifference;
+      nearestIndex = index;
+    }
+  });
+
+  return data[nearestIndex];
+}
+
+let today = new Date();
+let dd = today.getDate();
+let mm = today.getMonth() + 1;
+let yyyy = today.getFullYear();
+let currentDate = `${dd}/${mm}/${yyyy}`;
+
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 //This is for Ashik
 // const uri =
@@ -62,6 +111,7 @@ async function run() {
     const stsLeavingCollection = client.db("DNCC").collection("stsLeaving");
     const landfillCollection = client.db("DNCC").collection("landfill");
     const truckDumpingCollection = client.db("DNCC").collection("truckDumping");
+    const rolesCollection = client.db("DNCC").collection("roles");
 
 
     // ===============================Verify Token ===================================
@@ -159,19 +209,18 @@ async function run() {
     // });
 
     // verifyToken, verifyAdmin,
-    app.post("/auth/create", verifyToken, verifyAdmin, async (req, res) => {
+    app.post("/users", verifyToken, verifyAdmin, async (req, res) => {
       const user = req.body;
       const plainPassword = user.password;
       const userEmail = { email: user.email };
       const findUser = await usersCollection.findOne(userEmail);
       if (findUser) {
-        return res.json({ msg: `${user.email} is already registered` });
+        return res.json({ message: `${user.email} is already registered` });
       } else {
         const userPassword = user.password;
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(userPassword, salt);
         user.password = hashedPassword;
-        user.role = "unassigned";
 
         const result = await usersCollection.insertOne(user);
         if (result.insertedId) {
@@ -222,7 +271,7 @@ async function run() {
             .then(() => {
               return res.json({
                 result: true,
-                message: "check your email",
+                message: "User Created Successfully",
               });
             })
             .catch((error) => {
@@ -459,12 +508,41 @@ async function run() {
     });
 
     // admin access
+    // app.get("/users/:userId", async (req, res) => {
+    //   const id = req.params.userId;
+    //   const query = { _id: new ObjectId(id) };
+    //   const result = await usersCollection.findOne(query);
+    //   res.send(result);
+    // });
+
+    // admin access
+    // app.get("/users/roles", async (req, res) => {
+    //   const allRoles = await rolesCollection.find().toArray();
+    //   const availableRoles = allRoles.filter(role => role.allocate > 0)
+    //   res.send(availableRoles);
+    // })
+    // admin access
     app.get("/users/:userId", async (req, res) => {
-      const id = req.params.userId;
-      const query = { _id: new ObjectId(id) };
-      const result = await usersCollection.findOne(query);
-      res.send(result);
+      try {
+        const userId = req.params.userId; // Corrected: Define userId variable
+        if (userId === "roles") {
+          const allRoles = await rolesCollection.find().toArray();
+          const availableRoles = allRoles.filter(role => role.allocate > 0)
+          res.send(availableRoles);
+        }else{
+          const query = { _id: new ObjectId(userId) };
+          const result = await usersCollection.findOne(query);
+          if (!result) {
+            return res.status(404).send("User not found");
+          }
+          res.send(result);
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        res.status(500).send("Internal Server Error");
+      }
     });
+
 
     // admin access
     app.delete("/users/:userId", async (req, res) => {
@@ -644,6 +722,89 @@ async function run() {
         });
       }
     });
+
+    //Dashboard Monitoring
+    app.get("/dashboard", async (req, res) => {
+      const allVehicles = await vehiclesCollection.find().toArray();
+      let result = [];
+      for (let i = 0; i < allVehicles.length; i++) {
+        const vehicleNum = allVehicles[i].vehicleRegNum;
+
+        // truck fuel cost
+        const vehicleNumQuery = { vehicleNum: vehicleNum };
+
+        const truckDumpingInfo = await truckDumpingCollection.find(vehicleNumQuery, { date: currentDate }).toArray();
+        const fuelCost = truckDumpingInfo.reduce((accumulator, current) => accumulator + current.bill, 0);
+
+        const stsTruckInfo = await stsLeavingCollection.find(vehicleNumQuery, { date: currentDate }).toArray();
+        const totalWasteVolume = stsTruckInfo.reduce((accumulator, current) => accumulator + current.volumeWaste, 0);
+
+        const landfillDumpingInfo = await truckDumpingCollection.find(vehicleNumQuery, { date: currentDate }).toArray();
+        const totalWasteVolumeOfLandfill = landfillDumpingInfo.reduce(
+          (accumulator, current) => accumulator + current.volumeWaste,
+          0
+        );
+
+        const totalTransportation = [...stsTruckInfo, ...landfillDumpingInfo]
+        const nearestTime = findNearestTime(totalTransportation);
+
+        const truckCostInfo = {
+          vehicleNum: vehicleNum,
+          fuelCost: fuelCost,
+          stsWasteWeight: totalWasteVolume,
+          landfillWasteWeight: totalWasteVolumeOfLandfill,
+          transportation: nearestTime,
+        };
+        result.push(truckCostInfo)
+      }
+      res.send(result);
+    });
+
+
+    // role
+    app.post("/rbac/roles", async (req, res) => {
+      const defineRoleBody = req.body;
+      let id;
+      const allDefinedRole = await rolesCollection.find().toArray();
+      if (allDefinedRole.length == 0) {
+        id = 1;
+      } else {
+        const lastDefinedRoleId = allDefinedRole[(allDefinedRole.length) - 1].id;
+        id = parseInt(lastDefinedRoleId) + 1;
+      }
+      defineRoleBody.id = id;
+      const result = await rolesCollection.insertOne(defineRoleBody);
+      if (result.insertedId) {
+        res.json({
+          result: true,
+          message: "Role Defined Successfully"
+        })
+      } else {
+        res.json({
+          result: false,
+          message: "Role Defined Failed"
+        })
+      }
+    });
+
+    app.post("/rbac/permissions", async (req, res) => {
+      const permissionBody = req.body;
+      const query = { email: permissionBody.email };
+      const getUser = await usersCollection.findOne(query);
+      if (getUser) {
+        res.json({
+          result: true,
+          message: getUser.role,
+        });
+      }
+      else {
+        res.json({
+          result: false,
+          message: `${permissionBody.email} is not exist`
+        });
+      }
+    });
+
 
 
     await client.db("admin").command({ ping: 1 });

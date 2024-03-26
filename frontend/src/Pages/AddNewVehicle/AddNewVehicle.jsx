@@ -2,7 +2,6 @@ import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import Swal from "sweetalert2";
-// import useAxiosPublic from "../../Hooks/useAxiosPublic";
 
 const AddNewVehicle = () => {
     const { register, handleSubmit, reset } = useForm();
@@ -46,7 +45,6 @@ const AddNewVehicle = () => {
                 <div className="w-10/12 mx-auto my-10">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="flex gap-10">
-                            {/* "fualCostUnloaded":80 */}
                             <div className="flex-1">
                                 <label className="label">
                                     <span className="label-text text-xl font-semibold">Reg No.*</span>

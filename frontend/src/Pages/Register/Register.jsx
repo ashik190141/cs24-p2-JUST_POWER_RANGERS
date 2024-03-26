@@ -16,9 +16,9 @@ const Register = () => {
     let [showPassword, setShowPassword] = useState(false);
 
     let axiosPublic = useAxiosPublic();
-    const { register, handleSubmit, formState: { errors },reset } = useForm();
+    const { register, handleSubmit, reset } = useForm();
 
-    
+
     const onSubmit = (data) => {
         let newUser = {
             name: data.name,
@@ -51,7 +51,7 @@ const Register = () => {
 
     };
 
-    
+
     return (
         <div className="w-full md:w-10/12 mx-auto flex flex-col md:flex-row gap-5 px-2 justify-center items-center mt-5">
             <Helmet>
@@ -68,7 +68,6 @@ const Register = () => {
                             {...register("name", { required: true })}
                             placeholder="Type User name"
                         />
-                        {errors?.name && <span className='text-red-600'>Name is required</span>}
                     </div>
                     <hr className="my-2" />
                     <div className="relative">
@@ -79,7 +78,6 @@ const Register = () => {
                             {...register("email", { required: true })}
                             placeholder="Type User email"
                         />
-                        {errors?.email && <span className='text-red-600'>Email is required</span>}
                     </div>
                     <hr className="my-2" />
                     <div className="relative">
@@ -92,9 +90,6 @@ const Register = () => {
                             })}
                             placeholder="Type User password"
                         />
-                        {errors.password?.type === "required" && (
-                            <span className='text-red-600'>Password is required</span>
-                        )}
                         <span onClick={() => setShowPassword(!showPassword)} className="absolute right-3 bottom-4">{showPassword ? <FaEyeSlash></FaEyeSlash> : <FaEye></FaEye>}</span>
                     </div>
                     <hr className="my-2" />

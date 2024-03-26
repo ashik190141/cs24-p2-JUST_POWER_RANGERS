@@ -7,10 +7,9 @@ import IsAdmin from "../Hooks/IsAdmin";
 const SystemAdminRoute = ({ children }) => {
     const { user, loading } = useAuth();
     const location = useLocation();
-    let [isAdmin, isAdminLoading] = IsAdmin();
-    console.log(isAdmin);
+    let [isAdmin] = IsAdmin();
 
-    if (loading || isAdminLoading) {
+    if (loading) {
         return <div className="flex justify-center items-center min-h-[600px]">
             <span className="loading loading-spinner loading-lg"></span>
         </div>
@@ -19,7 +18,7 @@ const SystemAdminRoute = ({ children }) => {
     if (user && isAdmin) {
         return children;
     }
-    return <Navigate to="/auth/login" state={{ from: location }} replace></Navigate>
+    return <Navigate to="/" state={{ from: location }} replace></Navigate>
 };
 SystemAdminRoute.propTypes = {
     children: PropTypes.node,

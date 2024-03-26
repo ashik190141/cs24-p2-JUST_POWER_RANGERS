@@ -2,7 +2,6 @@ import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import Swal from "sweetalert2";
-// import useAxiosPublic from "../../Hooks/useAxiosPublic";
 
 const AddNewSts = () => {
     const { register, handleSubmit, reset } = useForm();

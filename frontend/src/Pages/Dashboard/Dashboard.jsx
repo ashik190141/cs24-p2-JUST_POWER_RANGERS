@@ -1,6 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { FaDatabase, FaEdit, FaEye, FaHeart, FaHome, FaMale, FaPlaceOfWorship, FaTasks, FaTruck, FaUser, FaUsers} from 'react-icons/fa';
-import { GiLovers } from "react-icons/gi";
+import { FaDatabase, FaEdit, FaEye, FaHome, FaMale, FaPlaceOfWorship, FaTasks, FaTruck, FaUser, FaUsers } from 'react-icons/fa';
 import Navbar from '../../Components/Navbar';
 import Footer from '../../Components/Footer';
 // @ts-ignore
@@ -44,24 +43,29 @@ const Dashboard = () => {
                                 </li>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
+                                        to='create-role' >
+                                        <FaTasks />Add New Role</NavLink>
+                                </li>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
                                         to='add-vehicle' >
                                         <FaTruck></FaTruck>Add Vehicle</NavLink>
                                 </li>
+
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
-                                        to='approve-premium' ><FaTasks />Add New Role</NavLink>
+                                        to='create-sts' >
+                                        <FaPlaceOfWorship></FaPlaceOfWorship>Add New STS</NavLink>
                                 </li>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
-                                        to='create-sts' ><FaPlaceOfWorship></FaPlaceOfWorship>Add New STS</NavLink>
+                                        to='create-landfill' >
+                                        <FaPlaceOfWorship></FaPlaceOfWorship>Add New Landfill</NavLink>
                                 </li>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
-                                        to='create-landfill' ><FaPlaceOfWorship></FaPlaceOfWorship>Add New Landfill</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='manage-user' ><FaUsers></FaUsers>Manage User</NavLink>
+                                        to='manage-user' >
+                                        <FaUsers></FaUsers>Manage User</NavLink>
                                 </li>
                             </ul>
                         </>
@@ -73,24 +77,6 @@ const Dashboard = () => {
                                     <NavLink className='flex items-center font-bold gap-2'
                                         to='data-entry-sts-manager' >
                                         <FaDatabase></FaDatabase>Data Entry</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='view-bio-data' >
-                                        <FaEye></FaEye> View Bio-Data</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='my-req-contacts' >
-                                        <FaUser></FaUser> My Req. Contacts</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='favorites' ><FaHeart></FaHeart> Favorites</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='got-married' ><GiLovers></GiLovers>Got Married</NavLink>
                                 </li>
                             </ul>
                         </>
