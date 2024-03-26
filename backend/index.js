@@ -57,7 +57,6 @@ async function run() {
       }
       jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
-          console.log(err);
           return res.status(401).send({ message: "UnAuthorized" });
         }
         console.log("value in the token", decoded);
@@ -80,7 +79,6 @@ async function run() {
 
     // ===============================Check Admin👇===================================
     app.get('/users/admin/:email', verifyToken, async (req, res) => {
-      console.log("Admin Hitted");
       let userEmail = req.params.email;
       if (userEmail !== req.decoded.email) {
         return res.status(403).send({ message: 'forbidded access' })
@@ -88,7 +86,6 @@ async function run() {
       let query = { email: userEmail };
       let user = await usersCollection.findOne(query);
       let admin = false;
-      console.log(user)
       if (user) {
         admin = user?.role == 'Admin'
       }
@@ -461,6 +458,25 @@ async function run() {
       res.send(result);
     });
 
+    //admin access
+    app.put("/users/:userId/roles", async (req, res) => {
+      const id = req.params.userId;
+      const query = { _id: new ObjectId(id) };
+      const updatedRoleInfo = req.body;
+      const updatedDoc = {
+        $set: {
+          role: updatedRoleInfo.role,
+        },
+      };
+      const result = await usersCollection.updateOne(query, updatedDoc);
+      if (result.modifiedCount > 0) {
+        res.json({
+          result: true,
+          message: "Update User Role Successfully",
+        });
+      }
+    });
+
     // admin access
     app.post("/create-vehicles", async (req, res) => {
       const vehicles = req.body;
@@ -498,6 +514,50 @@ async function run() {
         });
       }
     });
+
+    //sts manager
+    app.post("/create-entry-vehicles-leaving", async (req, res) => {
+      const stsVehicleLeavingInfo = req.body;
+      const result = await stsLeavingCollection.insertOne(
+        stsVehicleLeavingInfo
+      );
+      if (result.insertedId) {
+        res.json({
+          result: true,
+          message: "Vehicles Leaving From STS Added Successfully",
+        });
+      } else {
+        res.json({
+          result: false,
+          message: "Data Enrty Error",
+        });
+      }
+    });
+
+    //Get all The Sts
+    app.get('/get-all-sts', async (req, res) => {
+      const result = await stsCollection.find().toArray();
+      res.send(result);
+    })
+    //Get all Vehicle
+    app.get('/get-all-vehicle', async (req, res) => {
+      const result = await vehiclesCollection.find().toArray();
+      res.send(result);
+    })
+
+    //landfill manager
+    app.post("/create-truck-dumping", async (req, res) => {
+      const truckDumpingInfo = req.body;
+      const result = await stsLeavingCollection.insertOne(truckDumpingInfo);
+      if (result.insertedId) {
+        res.json({
+          result: true,
+          message: "Dumping Truck Information Added Successfully",
+        });
+      }
+    });
+
+
 
     await client.db("admin").command({ ping: 1 });
     console.log(

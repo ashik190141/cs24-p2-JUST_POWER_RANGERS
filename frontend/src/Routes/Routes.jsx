@@ -16,6 +16,7 @@ import AddNewSts from "../Pages/AddNewSts/AddNewSts";
 import ManageUser from "../Pages/ManageUsers/ManageUsers";
 import UserDetails from "../Pages/UserDetails/UserDetails";
 import AddNewLandFill from "../Pages/AddNewLandFill/AddNewLandFill";
+import StsDataEntry from "../Pages/StsDataEntry/StsDataEntry";
 
 const router = createBrowserRouter([
     {
@@ -47,7 +48,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/dashboard",
-        element: <PrivateRoutes><Dashboard></Dashboard></PrivateRoutes>,
+        element: <Dashboard></Dashboard>,
         children:[
             {
                 //This will be Admin Route
@@ -89,6 +90,12 @@ const router = createBrowserRouter([
                 path: "users/:id",
                 element: <SystemAdminRoute><UserDetails></UserDetails></SystemAdminRoute>,
                 loader: ({params})=> fetch(`http://localhost:5000/users/${params.id}`)
+            },
+            {
+                //This will be Sts Manager Route
+                path: "data-entry-sts-manager",
+                element: <StsDataEntry></StsDataEntry>
+                
             },
         ]
     }

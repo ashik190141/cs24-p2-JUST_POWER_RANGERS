@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { FaEdit, FaEye, FaHeart, FaHome, FaMale, FaPlaceOfWorship, FaTasks, FaTruck, FaUser, FaUsers} from 'react-icons/fa';
+import { FaDatabase, FaEdit, FaEye, FaHeart, FaHome, FaMale, FaPlaceOfWorship, FaTasks, FaTruck, FaUser, FaUsers} from 'react-icons/fa';
 import { GiLovers } from "react-icons/gi";
 import Navbar from '../../Components/Navbar';
 import Footer from '../../Components/Footer';
@@ -16,7 +16,7 @@ const Dashboard = () => {
     let [isLandManager] = IsLandManager();
     // console.log(isAdmin);
     // console.log(isStsManager);
-    console.log(isLandManager);
+    // console.log(isLandManager);
 
 
     return (
@@ -71,8 +71,8 @@ const Dashboard = () => {
                             <ul className='flex flex-col mt-10 px-6 space-y-3'>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
-                                        to='edit-biodata' >
-                                        <FaEdit></FaEdit> Edit Bio-Data</NavLink>
+                                        to='data-entry-sts-manager' >
+                                        <FaDatabase></FaDatabase>Data Entry</NavLink>
                                 </li>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
