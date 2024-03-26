@@ -15,6 +15,7 @@ import AddNewVehicle from "../Pages/AddNewVehicle/AddNewVehicle";
 import AddNewSts from "../Pages/AddNewSts/AddNewSts";
 import ManageUser from "../Pages/ManageUsers/ManageUsers";
 import UserDetails from "../Pages/UserDetails/UserDetails";
+import AddNewLandFill from "../Pages/AddNewLandFill/AddNewLandFill";
 
 const router = createBrowserRouter([
     {
@@ -72,6 +73,11 @@ const router = createBrowserRouter([
                 //This will be Admin Route
                 path: "create-sts",
                 element: <SystemAdminRoute><AddNewSts></AddNewSts></SystemAdminRoute>
+            },
+            {
+                //This will be Admin Route
+                path: "create-landfill",
+                element: <SystemAdminRoute><AddNewLandFill></AddNewLandFill></SystemAdminRoute>
             },
             {
                 //This will be Admin Route

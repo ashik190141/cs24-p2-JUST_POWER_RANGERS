@@ -44,6 +44,8 @@ async function run() {
     const resetPasswordOTPCollection = client.db("DNCC").collection("reset");
     const vehiclesCollection = client.db("DNCC").collection("vehicles");
     const stsCollection = client.db("DNCC").collection("sts");
+    const stsLeavingCollection = client.db("DNCC").collection("stsLeaving");
+    const landfillCollection = client.db("DNCC").collection("landfill");
 
 
     // ===============================Verify Token ===================================
@@ -142,9 +144,9 @@ async function run() {
     //     res.send(result);
     //   }
     // });
-    
+
     // verifyToken, verifyAdmin,
-    app.post("/auth/create",verifyToken, verifyAdmin, async (req, res) => {
+    app.post("/auth/create", verifyToken, verifyAdmin, async (req, res) => {
       const user = req.body;
       const plainPassword = user.password;
       const userEmail = { email: user.email };
@@ -468,6 +470,19 @@ async function run() {
           result: true,
           message: "Vehicles Added Successfully"
         })
+      }
+    });
+
+    //admin access
+    app.post("/create-landfill", async (req, res) => {
+      const landfillInfo = req.body;
+      landfillInfo.manager = [];
+      const result = await landfillCollection.insertOne(landfillInfo);
+      if (result.insertedId) {
+        res.json({
+          result: true,
+          message: "Landfill Created Successfully",
+        });
       }
     });
 

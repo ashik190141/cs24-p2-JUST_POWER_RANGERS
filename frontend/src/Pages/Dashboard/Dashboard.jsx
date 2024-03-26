@@ -57,6 +57,10 @@ const Dashboard = () => {
                                 </li>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
+                                        to='create-landfill' ><FaPlaceOfWorship></FaPlaceOfWorship>Add New Landfill</NavLink>
+                                </li>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
                                         to='manage-user' ><FaUsers></FaUsers>Manage User</NavLink>
                                 </li>
                             </ul>
