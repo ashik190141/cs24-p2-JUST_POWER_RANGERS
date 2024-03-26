@@ -18,6 +18,21 @@ app.use(cors(
 app.use(express.json());
 app.use(cookieParser());
 
+const distance = (lat1, lon1, lat2, lon2) => {
+  const R = 6371; 
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) *
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const d = R * c;
+  return d;
+};
+
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 //This is for Ashik
 const uri =
@@ -45,6 +60,7 @@ async function run() {
     const vehiclesCollection = client.db("DNCC").collection("vehicles");
     const stsCollection = client.db("DNCC").collection("sts");
     const stsLeavingCollection = client.db("DNCC").collection("stsLeaving");
+    const truckDumpingCollection = client.db("DNCC").collection("truckDumping");
     const landfillCollection = client.db("DNCC").collection("landfill");
 
 
@@ -563,11 +579,56 @@ async function run() {
     //landfill manager
     app.post("/create-truck-dumping", async (req, res) => {
       const truckDumpingInfo = req.body;
-      const result = await stsLeavingCollection.insertOne(truckDumpingInfo);
-      if (result.insertedId) {
+
+      const allTrackDumpingInfo = await truckDumpingCollection.find().toArray();
+      const checkingDate = allTrackDumpingInfo.filter(truck => truck.vehicleNum == truckDumpingInfo.vehicleNum && truck.date == currentDate);
+
+      if (checkingDate.length < 3) {
+        
+        const vehicleQuery = { vehicleRegNum: truckDumpingInfo.vehicleNum };
+        const truckInfo = await vehiclesCollection.findOne(vehicleQuery);
+
+        const stsQuery = { name: truckDumpingInfo.stsName };
+        const stsInfo = await stsCollection.findOne(stsQuery);
+
+        const landfillQuery = { landfillSite: truckDumpingInfo.landfillName };
+        const landfillInfo = await landfillCollection.findOne(landfillQuery);
+
+        const distanceFromStsToLandfill = distance(stsInfo.lat, stsInfo.lon, landfillInfo.lat, landfillInfo.lon);
+        let cost = 0;
+
+        if (truckDumpingInfo.volumeWaste < truckInfo.capacity) {
+          cost =
+            truckInfo.fualCostUnloaded +
+            (truckDumpingInfo.volumeWaste / truckInfo.capacity) *
+              (truckInfo.fualCostLoaded - truckInfo.fualCostUnloaded);
+        } else {
+          cost = truckInfo.fualCostLoaded;
+        }
+
+        let today = new Date();
+        let dd = today.getDate();
+        let mm = today.getMonth() + 1;
+        let yyyy = today.getFullYear();
+        let currentDate = `${dd}/${mm}/${yyyy}`;
+
+        const bill = distanceFromStsToLandfill * cost;
+        truckDumpingInfo.date = currentDate;
+        truckDumpingInfo.bill = bill;
+        const result = await truckDumpingCollection.insertOne(truckDumpingInfo);
+        if (result.insertedId) {
+         res.json({
+           result: true,
+           message: "Dumping Truck Information Added Successfully",
+           bill: bill,
+           distance: distanceFromStsToLandfill,
+         });
+       } 
+      } else {
         res.json({
-          result: true,
-          message: "Dumping Truck Information Added Successfully",
+          result: false,
+          message:
+            "A vehicle goes to the landfill from STS at most three times every day.",
         });
       }
     });
