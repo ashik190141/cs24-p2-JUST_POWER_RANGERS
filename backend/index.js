@@ -33,6 +33,55 @@ const distance = (lat1, lon1, lat2, lon2) => {
   return d;
 };
 
+function findNearestTime(data) {
+  const current = new Date();
+  let currentHours = current.getHours();
+  let currentMinutes = current.getMinutes();
+
+  if (currentHours < 10) {
+    currentHours = "0" + currentHours;
+  }
+
+  if (currentMinutes < 10) {
+    currentMinutes = "0" + currentMinutes;
+  }
+
+  const currentTime = parseInt(currentHours) * 60 + parseInt(currentMinutes);
+
+  let nearestTime = Infinity;
+  let nearestIndex = -1;
+
+  data.forEach((item, index) => {
+    const [arrivalHours, arrivalMinutes] = item.arrival.split(":");
+    const arrivalTime = parseInt(arrivalHours) * 60 + parseInt(arrivalMinutes);
+
+    const [departureHours, departureMinutes] = item.departure.split(":");
+    const departureTime =
+      parseInt(departureHours) * 60 + parseInt(departureMinutes);
+
+    const timeDifferenceArrival = Math.abs(arrivalTime - currentTime);
+    const timeDifferenceDeparture = Math.abs(departureTime - currentTime);
+
+    const minTimeDifference = Math.min(
+      timeDifferenceArrival,
+      timeDifferenceDeparture
+    );
+
+    if (minTimeDifference < nearestTime) {
+      nearestTime = minTimeDifference;
+      nearestIndex = index;
+    }
+  });
+
+  return data[nearestIndex];
+}
+
+let today = new Date();
+let dd = today.getDate();
+let mm = today.getMonth() + 1;
+let yyyy = today.getFullYear();
+let currentDate = `${dd}/${mm}/${yyyy}`;
+
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 //This is for Ashik
 const uri =
@@ -62,6 +111,7 @@ async function run() {
     const stsLeavingCollection = client.db("DNCC").collection("stsLeaving");
     const truckDumpingCollection = client.db("DNCC").collection("truckDumping");
     const landfillCollection = client.db("DNCC").collection("landfill");
+    const rolesCollection = client.db("DNCC").collection("roles");
 
 
     // ===============================Verify Token ===================================
@@ -565,6 +615,12 @@ async function run() {
     //sts manager
     app.post("/create-entry-vehicles-leaving", async (req, res) => {
       const stsVehicleLeavingInfo = req.body;
+      let today = new Date();
+      let dd = today.getDate();
+      let mm = today.getMonth() + 1;
+      let yyyy = today.getFullYear();
+      let currentDate = `${dd}/${mm}/${yyyy}`;
+      stsVehicleLeavingInfo.date = currentDate;
       const result = await stsLeavingCollection.insertOne(
         stsVehicleLeavingInfo
       );
@@ -605,12 +661,6 @@ async function run() {
         } else {
           cost = truckInfo.fualCostLoaded;
         }
-
-        let today = new Date();
-        let dd = today.getDate();
-        let mm = today.getMonth() + 1;
-        let yyyy = today.getFullYear();
-        let currentDate = `${dd}/${mm}/${yyyy}`;
 
         const bill = distanceFromStsToLandfill * cost;
         truckDumpingInfo.date = currentDate;
@@ -656,6 +706,87 @@ async function run() {
         res.json({
           result: true,
           message: "Update User Role Successfully",
+        });
+      }
+    });
+
+    app.get("/dashboard", async (req, res) => {
+      const allVehicles = await vehiclesCollection.find().toArray();
+      let result = [];
+      for (let i = 0; i < allVehicles.length; i++){
+        const vehicleNum = allVehicles[i].vehicleRegNum;
+
+        // truck fuel cost
+        const vehicleNumQuery = { vehicleNum: vehicleNum };
+
+        const truckDumpingInfo = await truckDumpingCollection.find(vehicleNumQuery,{date:currentDate}).toArray();
+        const fuelCost = truckDumpingInfo.reduce((accumulator, current) => accumulator + current.bill, 0);
+
+        const stsTruckInfo = await stsLeavingCollection.find(vehicleNumQuery, { date: currentDate }).toArray();
+        const totalWasteVolume = stsTruckInfo.reduce((accumulator, current) => accumulator + current.volumeWaste, 0);
+
+        const landfillDumpingInfo = await truckDumpingCollection.find(vehicleNumQuery, { date: currentDate }).toArray();
+        const totalWasteVolumeOfLandfill = landfillDumpingInfo.reduce(
+          (accumulator, current) => accumulator + current.volumeWaste,
+          0
+        );
+
+        const totalTransportation = [...stsTruckInfo, ...landfillDumpingInfo]
+        const nearestTime = findNearestTime(totalTransportation);
+
+        const truckCostInfo = {
+          vehicleNum: vehicleNum,
+          fuelCost: fuelCost,
+          stsWasteWeight: totalWasteVolume,
+          landfillWasteWeight: totalWasteVolumeOfLandfill,
+          transportation: nearestTime,
+        };
+        result.push(truckCostInfo)
+      }
+      res.send(result);
+    })
+
+    // role
+    app.post("/rbac/roles", async (req, res) => {
+      const defineRoleBody = req.body;
+      let id;
+      const allDefinedRole = await rolesCollection.find().toArray();
+      if (allDefinedRole.length == 0) {
+        id = 1;
+      } else {
+        const lastDefinedRoleId = allDefinedRole[(allDefinedRole.length) - 1].id;
+        id = parseInt(lastDefinedRoleId) + 1;
+      }
+      defineRoleBody.id = id;
+      const result = await rolesCollection.insertOne(defineRoleBody);
+      if (result.insertedId) {
+        res.json({
+          result: true,
+          message: "Role Defined Successfully"
+        })
+      }
+    });
+
+    app.get("/users/roles", async (req, res) => {
+      const allRoles = await rolesCollection.find().toArray();
+      const availableRoles = allRoles.filter(role => role.allocate > 0)
+      res.send(availableRoles);
+    })
+
+    app.post("/rbac/permissions", async (req, res) => {
+      const permissionBody = req.body;
+      const query = { email: permissionBody.email };
+      const getUser = await usersCollection.findOne(query);
+      if (getUser) {
+        res.json({
+          result: true,
+          message: getUser.role,
+        });
+      }
+      else {
+        res.json({
+          result: false,
+          message:`${permissionBody.email} is not exist`
         });
       }
     });
