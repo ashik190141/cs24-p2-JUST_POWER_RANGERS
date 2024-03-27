@@ -31,12 +31,14 @@ const Login = () => {
             email,
             password
         }
+        let user = {
+            email
+        }
         setLoading(true);
         axiosPublic.post('/auth/login', loginInfo)
             .then(res => {
-                console.log(res.data);
-                setUser(loginInfo);
-                localStorage.setItem("user", JSON.stringify(loginInfo));
+                setUser(user);
+                localStorage.setItem("user", JSON.stringify(user));
                 Swal.fire({
                     position: "top-middle",
                     icon: "success",
@@ -49,7 +51,7 @@ const Login = () => {
             }).catch(err => {
                 Swal.fire({
                     icon: 'error',
-                    title: err.response.data.message,
+                    title: err.message,
                     showConfirmButton: false,
                     timer: 1500
                 })
@@ -57,14 +59,12 @@ const Login = () => {
     }
 
     const resetPasswrod = (data) => {
-        console.log(data);
         let email = data.resetEmail;
         let resetPassInfo = {
             email
         }
         axiosPublic.post('/auth/reset-password/initiate', resetPassInfo)
             .then(res => {
-                console.log(res);
                 if (res.data.result) {
                     Swal.fire({
                         icon: 'success',
@@ -72,7 +72,7 @@ const Login = () => {
                         showConfirmButton: false,
                         timer: 1500
                     });
-                    localStorage.setItem('reset-email', JSON.stringify(resetPassInfo) )
+                    localStorage.setItem('reset-email', JSON.stringify(resetPassInfo))
                     navigate('/auth/reset-password/initiate');
                 } else {
                     Swal.fire({
@@ -84,7 +84,13 @@ const Login = () => {
                 }
             })
             .catch(err => {
-                console.log(err);
+                Swal.fire({
+                    icon: 'error',
+                    title: err.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+
             })
 
     }

@@ -2,7 +2,6 @@ import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "../Layout/MainLayout";
 import Error from "../Pages/ErrorPage/Error";
 import Login from "../Pages/Login/Login";
-import ResetPass from "../Pages/ResetPassword/ResetPass";
 import Dashboard from "../Pages/Dashboard/Dashboard";
 import Profile from "../Pages/Profile/Profile";
 import PrivateRoutes from "./PrivateRoutes";
@@ -19,6 +18,8 @@ import AddNewRole from "../Pages/AddNewRole/AddNewRole";
 import AddNewUser from "../Pages/AddNewUser/AddNewUser";
 import ContactUs from "../Pages/Contact-us/ContactUs";
 import AboutUs from "../Pages/About-Us/AboutUs";
+import OtpConfirm from "../Pages/OtpConfirm/OtpConfirm";
+import ResetPassword from "../Pages/ResetPassword/ResetPassword";
 
 const router = createBrowserRouter([
     {
@@ -40,7 +41,11 @@ const router = createBrowserRouter([
             },
             {
                 path: "/auth/reset-password/initiate",
-                element: <ResetPass></ResetPass>
+                element: <OtpConfirm></OtpConfirm>
+            },
+            {
+                path: "/auth/reset-password/setpassword",
+                element: <ResetPassword></ResetPassword>
             },
             {
                 path: "/about-us",

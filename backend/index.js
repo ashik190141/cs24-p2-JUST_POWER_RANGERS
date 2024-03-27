@@ -247,6 +247,7 @@ async function run() {
         });
     });
 
+
     // ======================Logout User👇============================>
     app.get("/auth/logout", (req, res) => {
       res.clearCookie("token");
@@ -269,6 +270,7 @@ async function run() {
           email: user.email,
           otp: otp,
         };
+        await resetPasswordOTPCollection.insertOne(resetInfo);
         let config = {
           service: "gmail",
           auth: {
@@ -317,7 +319,7 @@ async function run() {
             res.json({
               result: true,
               message: "send otp successfully",
-              data: sendOTP,
+              data: otp,
             });
           })
           .catch((error) => {
@@ -338,39 +340,70 @@ async function run() {
     app.put("/auth/reset-password/confirm", async (req, res) => {
       const userInfo = req.body;
       const query = { email: userInfo.email };
-      const findUser = await usersCollection.findOne(query);
+      const findUser = await resetPasswordOTPCollection.findOne(query);
 
       if (findUser) {
-        const userPassword = userInfo.password;
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(userPassword, salt);
-        userInfo.password = hashedPassword;
-        const updatedPassword = {
-          $set: {
-            password: userInfo.password,
-          },
-        };
-        const result = await usersCollection.updateOne(query, updatedPassword);
-        if (result.modifiedCount > 0) {
+        if (userInfo.otp == findUser.otp) {
           const deleteResetInfo = await resetPasswordOTPCollection.deleteOne(
             query
           );
           if (deleteResetInfo.deletedCount > 0) {
-            res.json({ message: "Successfully updated your password" });
-          } else {
-            res.json({ message: "Password don't update" });
+            res.json({
+              result: true,
+              message: "OTP matched"
+            })
           }
         } else {
-          res.json({ message: "Password don't update" });
+          res.json({
+            result: false,
+            message: "OTP not matched",
+          });
         }
       } else {
-        return res.json({ message: `${information.email} Do Not Valid Email` });
+        return res.json({ message: `${userInfo.email} Do Not Valid Email` });
       }
     });
+
+    // ======================= Reset Password 👇=====================>
+    app.put("/auth/reset-password", async (req, res) => {
+      const userInfo = req.body;
+      const query = { email: userInfo.email };
+      const findUser = await usersCollection.findOne(query);
+
+      if (findUser) {
+        const userPassword = userInfo.newPassword;
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(userPassword, salt);
+        userInfo.newPassword = hashedPassword;
+        const updatedPassword = {
+          $set: {
+            password: userInfo.newPassword,
+          },
+        };
+        const result = await usersCollection.updateOne(query, updatedPassword);
+        if (result.modifiedCount > 0) {
+          res.json({
+            result: true,
+            message: "Successfully Reset your password"
+          });
+        } else {
+          res.json({
+            result: false,
+            message: "Password don't update"
+          });
+        }
+      } else {
+        return res.json({
+          result: false,
+          message: `${information.email} Do Not Valid Email`
+        })
+      }
+    })
 
     // =====================Change PassWord👇==========================>
     app.put("/auth/change-password", async (req, res) => {
       const information = req.body;
+      console.log(information);
       const query = { email: information.email };
       const findUser = await usersCollection.findOne(query);
 
@@ -397,9 +430,15 @@ async function run() {
             options
           );
           if (result.modifiedCount > 0) {
-            res.json({ message: "Successfully updated your password" });
+            res.json({
+              result: true,
+              message: "Successfully updated your password"
+            });
           } else {
-            res.json({ message: "Password don't update" });
+            res.json({
+              result: false,
+              message: "Password don't update"
+            });
           }
         } else {
           res.json({ message: "Current Password is not Matched" });
@@ -408,6 +447,8 @@ async function run() {
         return res.json({ message: `${information.email} Do Not Valid Email` });
       }
     });
+
+
 
     // =====================Get All User👇=============================>
     // User Management Endpoints
