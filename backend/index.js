@@ -169,7 +169,7 @@ async function run() {
       let user = await usersCollection.findOne(query);
       let stsManager = false;
       if (user) {
-        stsManager = user?.role == 'StsManager'
+        stsManager = user?.role == 'Sts Manager'
       }
       res.send({ stsManager });
     });

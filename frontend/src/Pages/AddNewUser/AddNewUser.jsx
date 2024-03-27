@@ -23,6 +23,7 @@ const AddNewUser = () => {
             password: data.password,
             role: data.role
         };
+        console.log(newUser);
         let res = await axiosPublic.post('/users', newUser);
         if (res.data.result) {
             Swal.fire({
@@ -81,7 +82,8 @@ const AddNewUser = () => {
                                     <span className="label-text text-xl font-semibold">Password</span>
                                 </label>
                                 <input
-                                    type="text"
+                                    type="password"
+                                    autoComplete="off"
                                     placeholder="Enter a password"
                                     {...register('password', { required: true })}
                                     required
@@ -89,7 +91,7 @@ const AddNewUser = () => {
                             </div>
                             <div className="flex-1">
                                 <label className="label">
-                                    <span className="label-text text-xl font-semibold">User Role*</span>
+                                    <span className="label-text text-xl font-semibold">User Role</span>
                                 </label>
                                 <select defaultValue="unassigned"
                                     {...register('role')}
