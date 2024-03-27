@@ -18,6 +18,7 @@ app.use(cors(
 app.use(express.json());
 app.use(cookieParser());
 
+// ========================Calculate Distance by Function👇================>
 const distance = (lat1, lon1, lat2, lon2) => {
   const R = 6371;
   const dLat = (lat2 - lat1) * (Math.PI / 180);
@@ -33,6 +34,7 @@ const distance = (lat1, lon1, lat2, lon2) => {
   return d;
 };
 
+// =========================Calculate Nearest Time👇=======================>
 function findNearestTime(data) {
   const current = new Date();
   let currentHours = current.getHours();
@@ -76,6 +78,7 @@ function findNearestTime(data) {
   return data[nearestIndex];
 }
 
+// =====================Calculate Date Method👇======================>
 let today = new Date();
 let dd = today.getDate();
 let mm = today.getMonth() + 1;
@@ -102,7 +105,6 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
-    // Send a ping to confirm a successful connection
 
     const usersCollection = client.db("DNCC").collection("user");
     const resetPasswordOTPCollection = client.db("DNCC").collection("reset");
@@ -114,7 +116,7 @@ async function run() {
     const rolesCollection = client.db("DNCC").collection("roles");
 
 
-    // ===============================Verify Token ===================================
+    // ===================== Verify Token👇 ==========================>
     const verifyToken = async (req, res, next) => {
       let token = req?.cookies?.token;
       console.log("Value of token in middleware: ", token);
@@ -131,7 +133,7 @@ async function run() {
       });
     };
 
-    // ===============================Verify Admin👇===================================
+    // ===================== Verify Admin👇===========================>
     const verifyAdmin = async (req, res, next) => {
       const email = req.decoded?.email;
       const query = { email: email };
@@ -143,72 +145,7 @@ async function run() {
       next();
     };
 
-    // ===============================Check Admin👇===================================
-    app.get('/users/admin/:email', verifyToken, async (req, res) => {
-      let userEmail = req.params.email;
-      if (userEmail !== req.decoded.email) {
-        return res.status(403).send({ message: 'forbidded access' })
-      }
-      let query = { email: userEmail };
-      let user = await usersCollection.findOne(query);
-      let admin = false;
-      if (user) {
-        admin = user?.role == 'Admin'
-      }
-      res.send({ admin });
-    });
-
-
-    // ===============================Check Sts Manager===================================
-    app.get('/users/stsmanager/:email', verifyToken, async (req, res) => {
-      let userEmail = req.params.email;
-      if (userEmail !== req.decoded.email) {
-        return res.status(403).send({ message: 'forbidded access' })
-      }
-      let query = { email: userEmail };
-      let user = await usersCollection.findOne(query);
-      let stsManager = false;
-      if (user) {
-        stsManager = user?.role == 'Sts Manager'
-      }
-      res.send({ stsManager });
-    });
-
-    // ===============================Check Land Manager===================================
-    app.get('/users/landmanager/:email', verifyToken, async (req, res) => {
-      let userEmail = req.params.email;
-      if (userEmail !== req.decoded.email) {
-        return res.status(403).send({ message: 'forbidded access' })
-      }
-      let query = { email: userEmail };
-      let user = await usersCollection.findOne(query);
-      let LandManager = false;
-      if (user) {
-        LandManager = user?.role == 'LandManager'
-      }
-      res.send({ LandManager });
-    });
-
-    // ===============================Create New User 👇===================================
-    // app.post("/auth/create", verifyToken, verifyAdmin, async (req, res) => {
-    //   const user = req.body;
-    //   const userEmail = { email: user.email };
-    //   const findUser = await usersCollection.findOne(userEmail);
-    //   if (findUser) {
-    //     return res.json({ msg: `${user.email} is already registered` });
-    //   } else {
-    //     const userPassword = user.password;
-    //     const salt = await bcrypt.genSalt(10);
-    //     const hashedPassword = await bcrypt.hash(userPassword, salt);
-    //     user.password = hashedPassword;
-    //     user.role = "unassigned";
-
-    //     const result = await usersCollection.insertOne(user);
-    //     res.send(result);
-    //   }
-    // });
-
-    // verifyToken, verifyAdmin,
+    // =====================Create New User 👇=======================>
     app.post("/users", verifyToken, verifyAdmin, async (req, res) => {
       const user = req.body;
       const plainPassword = user.password;
@@ -281,8 +218,7 @@ async function run() {
       }
     });
 
-
-    // ===============================Login User👇===================================
+    // ======================Login User👇============================>
     app.post("/auth/login", async (req, res) => {
       const { email, password } = req.body;
       const user = await usersCollection.findOne({ email });
@@ -311,7 +247,7 @@ async function run() {
         });
     });
 
-    // ===============================Logout User👇====================================
+    // ======================Logout User👇============================>
     app.get("/auth/logout", (req, res) => {
       res.clearCookie("token");
       res.json({
@@ -320,35 +256,7 @@ async function run() {
       });
     });
 
-    // ===============================Reset Password Initiate👇===================================
-    // app.post("/auth/reset-password/initiate", async (req, res) => {
-    //   const user = req.body;
-    //   const otp = Math.floor(100000 + Math.random() * 900000);
-
-    //   const query = { email: user.email };
-    //   const findUser = await usersCollection.findOne(query);
-
-    //   if (findUser) {
-    //     const res = sendEmailForResetPassword(user, otp);
-    //     if (res.result) {
-    //       const resetInfo = {
-    //         email: user.email,
-    //         otp: otp,
-    //       };
-    //       const sendOTP = await resetPasswordOTPCollection.insertOne(resetInfo);
-    //       res.json({
-    //         result: true,
-    //         message: "send otp successfully",
-    //         data: sendOTP,
-    //       });
-    //     }
-    //   } else {
-    //     res.json({
-    //       result: false,
-    //       message: `${user.email} does not exist`
-    //     })
-    //   }
-    // });
+    // =====================Reset Password Initiate👇==================>
     app.post("/auth/reset-password/initiate", async (req, res) => {
       const user = req.body;
       const otp = Math.floor(100000 + Math.random() * 900000);
@@ -426,7 +334,7 @@ async function run() {
       }
     });
 
-    // ===============================Reset Password Confirm👇===================================
+    // =====================Reset Password Confirm👇===================>
     app.put("/auth/reset-password/confirm", async (req, res) => {
       const userInfo = req.body;
       const query = { email: userInfo.email };
@@ -460,6 +368,7 @@ async function run() {
       }
     });
 
+    // =====================Change PassWord👇==========================>
     app.put("/auth/change-password", async (req, res) => {
       const information = req.body;
       const query = { email: information.email };
@@ -500,6 +409,7 @@ async function run() {
       }
     });
 
+    // =====================Get All User👇=============================>
     // User Management Endpoints
     // admin access
     app.get("/users", async (req, res) => {
@@ -507,29 +417,18 @@ async function run() {
       res.send(result);
     });
 
-    // admin access
-    // app.get("/users/:userId", async (req, res) => {
-    //   const id = req.params.userId;
-    //   const query = { _id: new ObjectId(id) };
-    //   const result = await usersCollection.findOne(query);
-    //   res.send(result);
-    // });
-
-    // admin access
-    // app.get("/users/roles", async (req, res) => {
-    //   const allRoles = await rolesCollection.find().toArray();
-    //   const availableRoles = allRoles.filter(role => role.allocate > 0)
-    //   res.send(availableRoles);
-    // })
+    // ===========Get Single User And All Available Roles👇============>
     // admin access
     app.get("/users/:userId", async (req, res) => {
       try {
-        const userId = req.params.userId; // Corrected: Define userId variable
+        const userId = req.params.userId;
+        //All Available Users
         if (userId === "roles") {
           const allRoles = await rolesCollection.find().toArray();
           const availableRoles = allRoles.filter(role => role.allocate > 0)
           res.send(availableRoles);
-        }else{
+        } else {
+          // Get Single User
           const query = { _id: new ObjectId(userId) };
           const result = await usersCollection.findOne(query);
           if (!result) {
@@ -543,7 +442,7 @@ async function run() {
       }
     });
 
-
+    // ==================Delete Single User👇==========================>
     // admin access
     app.delete("/users/:userId", async (req, res) => {
       const id = req.params.userId;
@@ -552,6 +451,7 @@ async function run() {
       res.send(result);
     });
 
+    // ===================Update Role to User👇=======================>
     //admin access
     app.put("/users/:userId/roles", async (req, res) => {
       const id = req.params.userId;
@@ -571,6 +471,7 @@ async function run() {
       }
     });
 
+    // =====================Create a Vehicle👇========================>
     // admin access
     app.post("/create-vehicles", async (req, res) => {
       const vehicles = req.body;
@@ -583,6 +484,7 @@ async function run() {
       }
     });
 
+    // ====================Create a Landfill👇========================>
     //admin access
     app.post("/create-landfill", async (req, res) => {
       const landfillInfo = req.body;
@@ -596,6 +498,7 @@ async function run() {
       }
     });
 
+    // =======================Create a Sts👇==========================>
     // admin access
     app.post("/create-sts", async (req, res) => {
       const stsInfo = req.body;
@@ -609,6 +512,7 @@ async function run() {
       }
     });
 
+    // ===================Data Entry of Sts Manager👇=================>
     //sts manager
     app.post("/create-entry-vehicles-leaving", async (req, res) => {
       const stsVehicleLeavingInfo = req.body;
@@ -628,19 +532,22 @@ async function run() {
       }
     });
 
-    //Get all The Sts
+    // ======================Get All The Sts👇========================>
+    //Landfil Manager
     app.get('/get-all-sts', async (req, res) => {
       const result = await stsCollection.find().toArray();
       res.send(result);
     })
-    //Get all Vehicle
+
+    // =====================Get All The Vehicle👇=====================>
+    //Landfil Manager
     app.get('/get-all-vehicle', async (req, res) => {
       const result = await vehiclesCollection.find().toArray();
       res.send(result);
     })
 
-
-    //landfill manager For billing
+    // =======================Get The Bill👇==========================>
+    //landfill manager
     app.post("/create-truck-dumping", async (req, res) => {
       const truckDumpingInfo = req.body;
 
@@ -696,21 +603,25 @@ async function run() {
         });
       }
     });
+
+    // =======================Get A Profile👇==========================>
     //profile management endpoints
     app.get("/profile", async (req, res) => {
-      const email = req.query.email;
+      const email = req.query.email; //it will be body maybe
       const query = { email: email };
       const result = await usersCollection.find(query).toArray();
       res.send(result);
     });
 
+    // =====================Update User Profile👇======================>
     //update login user info
     app.put("/profile", async (req, res) => {
-      const email = req.query.email;
+      const email = req.query.email;  //it will be body maybe
       const query = { email: email };
       const updatedUserInfo = req.body;
       const updatedDoc = {
         $set: {
+          //ToDO: should be user Email Also
           name: updatedUserInfo.name,
         },
       };
@@ -723,6 +634,7 @@ async function run() {
       }
     });
 
+    // =====================Calculate Fuel Cost👇======================>
     //Dashboard Monitoring
     app.get("/dashboard", async (req, res) => {
       const allVehicles = await vehiclesCollection.find().toArray();
@@ -760,7 +672,7 @@ async function run() {
       res.send(result);
     });
 
-
+    // ==================Create a Role with Role Id👇===================>
     // role
     app.post("/rbac/roles", async (req, res) => {
       const defineRoleBody = req.body;
@@ -787,6 +699,7 @@ async function run() {
       }
     });
 
+    // =====================Check User Role👇======================>
     app.post("/rbac/permissions", async (req, res) => {
       const permissionBody = req.body;
       const query = { email: permissionBody.email };
@@ -804,8 +717,6 @@ async function run() {
         });
       }
     });
-
-
 
     await client.db("admin").command({ ping: 1 });
     console.log(

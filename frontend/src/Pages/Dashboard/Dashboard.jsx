@@ -2,20 +2,13 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { FaDatabase, FaEdit, FaEye, FaHome, FaMale, FaPlaceOfWorship, FaTasks, FaTruck, FaUser, FaUsers } from 'react-icons/fa';
 import Navbar from '../../Components/Navbar';
 import Footer from '../../Components/Footer';
-// @ts-ignore
-import IsAdmin from '../../Hooks/IsAdmin';
-import IsStsManager from '../../Hooks/IsStsManager';
-import IsLandManager from '../../Hooks/IsLandManager';
+import Permission from '../../Hooks/Permission';
 
 
 
 const Dashboard = () => {
-    let [isAdmin] = IsAdmin();
-    let [isStsManager] = IsStsManager();
-    let [isLandManager] = IsLandManager();
-    // console.log(isAdmin);
-    // console.log(isStsManager);
-    // console.log(isLandManager);
+
+    let [userRole] = Permission();
 
 
     return (
@@ -29,7 +22,7 @@ const Dashboard = () => {
                     </div>
 
                     {
-                        isAdmin && <>
+                        userRole === "Admin" && <>
                             <ul className='menu flex flex-col mt-10 px-6 space-y-3'>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
@@ -71,7 +64,7 @@ const Dashboard = () => {
                         </>
                     }
                     {
-                        isStsManager && <>
+                        userRole === "Sts Manager" && <>
                             <ul className='flex flex-col mt-10 px-6 space-y-3'>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
@@ -82,7 +75,7 @@ const Dashboard = () => {
                         </>
                     }
                     {
-                        isLandManager && <>
+                        userRole === "Landfil Manager" && <>
                             <ul className='flex flex-col mt-10 px-6 space-y-3'>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'

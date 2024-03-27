@@ -2,11 +2,14 @@ import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import Swal from "sweetalert2";
+import Permission from "../../Hooks/Permission";
 
 
 const AddNewRole = () => {
     const { register, handleSubmit, reset } = useForm();
     let axiosPublic = useAxiosPublic();
+    let [userRole] = Permission();
+    console.log(userRole);
 
     const onSubmit = async (data) => {
 
