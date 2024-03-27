@@ -146,74 +146,163 @@ async function run() {
     };
 
     // =====================Create New User 👇=======================>
+    // app.post("/users", verifyToken, verifyAdmin, async (req, res) => {
+    //   const user = req.body;
+    //   const plainPassword = user.password;
+    //   const userEmail = { email: user.email };
+    //   const findUser = await usersCollection.findOne(userEmail);
+    //   if (findUser) {
+    //     return res.json({ message: `${user.email} is already registered` });
+    //   } else {
+    //     const userPassword = user.password;
+    //     const salt = await bcrypt.genSalt(10);
+    //     const hashedPassword = await bcrypt.hash(userPassword, salt);
+    //     user.password = hashedPassword;
+
+    //     const result = await usersCollection.insertOne(user);
+    //     if (result.insertedId) {
+    //       let config = {
+    //         service: "gmail",
+    //         auth: {
+    //           user: `${process.env.email}`,
+    //           pass: `${process.env.password}`,
+    //         },
+    //       };
+
+    //       let transporter = nodeMailer.createTransport(config);
+
+    //       let mailGenerator = new Mailgen({
+    //         theme: "default",
+    //         product: {
+    //           name: "Dust Master",
+    //           link: "https://mailgen.js/",
+    //         },
+    //       });
+
+    //       let response = {
+    //         body: {
+    //           intro: "Please, Verify Your Email",
+    //           table: {
+    //             data: [
+    //               {
+    //                 email: user.email,
+    //                 password: plainPassword,
+    //               },
+    //             ],
+    //           },
+    //           outro: "You can not login without the given information",
+    //         },
+    //       };
+
+    //       let mail = mailGenerator.generate(response);
+
+    //       let message = {
+    //         from: `${process.env.email}`,
+    //         to: user.email,
+    //         subject: "Check Email For Login",
+    //         html: mail,
+    //       };
+
+    //       transporter
+    //         .sendMail(message)
+    //         .then(() => {
+    //           return res.json({
+    //             result: true,
+    //             message: "User Created Successfully",
+    //           });
+    //         })
+    //         .catch((error) => {
+    //           return res.status(501).json({ error });
+    //         });
+    //     }
+    //   }
+    // });
     app.post("/users", verifyToken, verifyAdmin, async (req, res) => {
       const user = req.body;
+      console.log(user);
+      const roleQuery = { roleName: user.role };
+
       const plainPassword = user.password;
       const userEmail = { email: user.email };
       const findUser = await usersCollection.findOne(userEmail);
+      console.log(findUser);
       if (findUser) {
-        return res.json({ message: `${user.email} is already registered` });
+        return res.json({
+          result: false,
+          message: `${user.email} is already registered`
+        });
       } else {
         const userPassword = user.password;
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(userPassword, salt);
         user.password = hashedPassword;
 
-        const result = await usersCollection.insertOne(user);
-        if (result.insertedId) {
-          let config = {
-            service: "gmail",
-            auth: {
-              user: `${process.env.email}`,
-              pass: `${process.env.password}`,
-            },
-          };
+        const updatedRoleAllocation = {
+          $inc: {
+            allocate: -1,
+          },
+        };
 
-          let transporter = nodeMailer.createTransport(config);
-
-          let mailGenerator = new Mailgen({
-            theme: "default",
-            product: {
-              name: "Dust Master",
-              link: "https://mailgen.js/",
-            },
-          });
-
-          let response = {
-            body: {
-              intro: "Please, Verify Your Email",
-              table: {
-                data: [
-                  {
-                    email: user.email,
-                    password: plainPassword,
-                  },
-                ],
+        const roleUpdate = await rolesCollection.updateOne(roleQuery, updatedRoleAllocation);
+        console.log(roleUpdate);
+        if (roleUpdate.modifiedCount > 0) {
+          const result = await usersCollection.insertOne(user);
+          console.log(result)
+          if (result.insertedId) {
+            let config = {
+              service: "gmail",
+              auth: {
+                user: `${process.env.email}`,
+                pass: `${process.env.password}`,
               },
-              outro: "You can not login without the given information",
-            },
-          };
+            };
 
-          let mail = mailGenerator.generate(response);
+            let transporter = nodeMailer.createTransport(config);
 
-          let message = {
-            from: `${process.env.email}`,
-            to: user.email,
-            subject: "Check Email For Login",
-            html: mail,
-          };
-
-          transporter
-            .sendMail(message)
-            .then(() => {
-              return res.json({
-                result: true,
-                message: "User Created Successfully",
-              });
-            })
-            .catch((error) => {
-              return res.status(501).json({ error });
+            let mailGenerator = new Mailgen({
+              theme: "default",
+              product: {
+                name: "Dust Master",
+                link: "https://mailgen.js/",
+              },
             });
+
+            let response = {
+              body: {
+                intro: "Please, Verify Your Email",
+                table: {
+                  data: [
+                    {
+                      email: user.email,
+                      password: plainPassword,
+                    },
+                  ],
+                },
+                outro: "You can not login without the given information",
+              },
+            };
+
+            let mail = mailGenerator.generate(response);
+
+            let message = {
+              from: `${process.env.email}`,
+              to: user.email,
+              subject: "Check Email For Login",
+              html: mail,
+            };
+
+            transporter
+              .sendMail(message)
+              .then(() => {
+                return res.json({
+                  result: true,
+                  message: "User Created Successfully",
+                });
+              })
+              .catch((error) => {
+                return res.status(501).json({ error });
+              });
+          }
         }
       }
     });

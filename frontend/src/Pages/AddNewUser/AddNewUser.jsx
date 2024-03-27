@@ -24,26 +24,27 @@ const AddNewUser = () => {
             password: data.password,
             role: data.role
         };
-        console.log(newUser);
-        let res = await axiosPublic.post('/users', newUser);
+        let res = await axiosPublic.post('/users', newUser)
         if (res.data.result) {
             Swal.fire({
-                position: "top-middle",
+                position: "center",
                 icon: "success",
                 title: res.data.message,
                 showConfirmButton: false,
                 timer: 1500
             });
             reset();
-        } else {
+        }else{
             Swal.fire({
-                position: "top-middle",
+                position: "center",
                 icon: "error",
                 title: res.data.message,
                 showConfirmButton: false,
                 timer: 1500
             });
         }
+
+
     }
     return (
         <div>
@@ -62,6 +63,7 @@ const AddNewUser = () => {
                                 <input
                                     type="text"
                                     placeholder="Enter User Name"
+                                    autoComplete="off"
                                     {...register('userName', { required: true })}
 
                                     className="w-full p-2 rounded-md placeholder:pl-2" />
