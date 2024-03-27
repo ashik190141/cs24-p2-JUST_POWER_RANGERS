@@ -13,6 +13,7 @@ const Navbar = () => {
             user? <li><NavLink to={'/profile'}>Profile</NavLink></li> : <></>
         }
         <li><NavLink to={'/about-us'}>About Us</NavLink></li>
+        <li><NavLink to={'/contact-us'}>Contact Us</NavLink></li>
         {
             user? <li><NavLink to={'/dashboard'}>Dashboard</NavLink></li> : <></>
         }

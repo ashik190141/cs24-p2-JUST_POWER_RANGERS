@@ -6,6 +6,7 @@ import { useState } from "react";
 import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
 import TimePicker from 'react-time-picker';
+import SectionTitle from "../../Components/SectionTitle";
 
 const AddNewLandFill = () => {
     const { register, handleSubmit, reset } = useForm();
@@ -47,6 +48,7 @@ const AddNewLandFill = () => {
             <Helmet>
                 <title>Dust Master | Add Landfill</title>
             </Helmet>
+            <SectionTitle title={"Add New Landfill"} subTitle={'More Waste?'}></SectionTitle>
             <div>
                 <div className="w-10/12 mx-auto my-10">
                     <form onSubmit={handleSubmit(onSubmit)}>

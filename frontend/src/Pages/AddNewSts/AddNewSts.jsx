@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import Swal from "sweetalert2";
+import SectionTitle from "../../Components/SectionTitle";
 
 const AddNewSts = () => {
     const { register, handleSubmit, reset } = useForm();
@@ -40,6 +41,7 @@ const AddNewSts = () => {
             <Helmet>
                 <title>Dust Master | Add Sts</title>
             </Helmet>
+            <SectionTitle title={"Add New Sts"} subTitle={'More Waste in City?'}></SectionTitle>
             <div>
                 <div className="w-10/12 mx-auto my-10">
                     <form onSubmit={handleSubmit(onSubmit)}>

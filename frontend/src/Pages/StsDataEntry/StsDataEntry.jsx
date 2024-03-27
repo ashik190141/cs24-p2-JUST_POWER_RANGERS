@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import TimePicker from "react-time-picker";
+import SectionTitle from "../../Components/SectionTitle";
 
 
 const StsDataEntry = () => {
@@ -23,7 +24,6 @@ const StsDataEntry = () => {
             return res.data;
         }
     });
-    console.log(allVehicle);
 
 
     const { register, handleSubmit, reset } = useForm();
@@ -65,6 +65,7 @@ const StsDataEntry = () => {
             <Helmet>
                 <title>Dust Master | Sts Data Entry</title>
             </Helmet>
+            <SectionTitle title={"Entry Updated Data"} subTitle={'Get Up to date'}></SectionTitle>
             <div>
                 <div className="w-10/12 mx-auto my-10">
                     <form onSubmit={handleSubmit(onSubmit)}>
@@ -78,9 +79,9 @@ const StsDataEntry = () => {
                                     className="w-full py-2 rounded-md">
                                     <option disabled value="default">Select Type</option>
                                     {
-                                        allSts?.map((sts) => {
+                                        allSts?.map((sts, index) => {
                                             return (
-                                                <option className="text-black" key={sts.id} value={sts?.wardNumber}>{sts?.wardNumber}</option>
+                                                <option className="text-black" key={index} value={sts?.wardNumber}>{sts?.wardNumber}</option>
                                             )
                                         })
                                     }
@@ -95,9 +96,9 @@ const StsDataEntry = () => {
                                     className="w-full py-2 rounded-md">
                                     <option disabled value="default">Select Type</option>
                                     {
-                                        allVehicle?.map((sts) => {
+                                        allVehicle?.map((sts, index) => {
                                             return (
-                                                <option className="text-black" key={sts.id} value={sts?.vehicleRegNum}>{sts?.vehicleRegNum}</option>
+                                                <option className="text-black" key={index} value={sts?.vehicleRegNum}>{sts?.vehicleRegNum}</option>
                                             )
                                         })
                                     }

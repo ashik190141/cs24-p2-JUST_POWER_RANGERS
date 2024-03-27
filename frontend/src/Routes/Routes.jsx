@@ -5,7 +5,6 @@ import Login from "../Pages/Login/Login";
 import ResetPass from "../Pages/ResetPassword/ResetPass";
 import Dashboard from "../Pages/Dashboard/Dashboard";
 import Profile from "../Pages/Profile/Profile";
-import AboutUs from "../Pages/AboutUs/AboutUs";
 import PrivateRoutes from "./PrivateRoutes";
 import Home from "../Pages/Home/Home";
 import AdminHome from "../Pages/AdminHome/AdminHome";
@@ -18,6 +17,8 @@ import AddNewLandFill from "../Pages/AddNewLandFill/AddNewLandFill";
 import StsDataEntry from "../Pages/StsDataEntry/StsDataEntry";
 import AddNewRole from "../Pages/AddNewRole/AddNewRole";
 import AddNewUser from "../Pages/AddNewUser/AddNewUser";
+import ContactUs from "../Pages/Contact-us/ContactUs";
+import AboutUs from "../Pages/About-Us/AboutUs";
 
 const router = createBrowserRouter([
     {
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
             {
                 path: "/about-us",
                 element: <AboutUs></AboutUs>
+            },
+            {
+                path: "/contact-us",
+                element: <ContactUs></ContactUs>
             }
         ]
     },

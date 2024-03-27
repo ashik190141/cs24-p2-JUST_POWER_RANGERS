@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import Swal from "sweetalert2";
 import { useQuery } from "@tanstack/react-query";
+import SectionTitle from "../../Components/SectionTitle";
 
 const AddNewUser = () => {
     const { register, handleSubmit, reset } = useForm();
@@ -49,6 +50,7 @@ const AddNewUser = () => {
             <Helmet>
                 <title>Dust Master | Add New User</title>
             </Helmet>
+            <SectionTitle title={"Add New User"} subTitle={'Need More Member?'}></SectionTitle>
             <div>
                 <div className="w-10/12 mx-auto my-10">
                     <form onSubmit={handleSubmit(onSubmit)}>

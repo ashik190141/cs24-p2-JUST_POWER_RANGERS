@@ -2,14 +2,12 @@ import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import Swal from "sweetalert2";
-import Permission from "../../Hooks/Permission";
+import SectionTitle from "../../Components/SectionTitle";
 
 
 const AddNewRole = () => {
     const { register, handleSubmit, reset } = useForm();
     let axiosPublic = useAxiosPublic();
-    let [userRole] = Permission();
-    console.log(userRole);
 
     const onSubmit = async (data) => {
 
@@ -42,6 +40,7 @@ const AddNewRole = () => {
             <Helmet>
                 <title>Dust Master | Add New Role</title>
             </Helmet>
+            <SectionTitle title={"Add New Role"} subTitle={'Need More Worker?'}></SectionTitle>
             <div>
                 <div className="w-10/12 mx-auto my-10">
                     <form onSubmit={handleSubmit(onSubmit)}>
