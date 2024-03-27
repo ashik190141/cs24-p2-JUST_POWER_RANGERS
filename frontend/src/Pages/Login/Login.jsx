@@ -59,12 +59,12 @@ const Login = () => {
     const resetPasswrod = (data) => {
         console.log(data);
         let email = data.resetEmail;
-        let info = {
+        let resetPassInfo = {
             email
         }
-        axiosPublic.post('/auth/reset-password/initiate', info)
+        axiosPublic.post('/auth/reset-password/initiate', resetPassInfo)
             .then(res => {
-                console.log(res.data);
+                console.log(res);
                 if (res.data.result) {
                     Swal.fire({
                         icon: 'success',
@@ -72,6 +72,7 @@ const Login = () => {
                         showConfirmButton: false,
                         timer: 1500
                     });
+                    localStorage.setItem('reset-email', JSON.stringify(resetPassInfo) )
                     navigate('/auth/reset-password/initiate');
                 } else {
                     Swal.fire({
@@ -82,6 +83,10 @@ const Login = () => {
                     })
                 }
             })
+            .catch(err => {
+                console.log(err);
+            })
+
     }
 
 

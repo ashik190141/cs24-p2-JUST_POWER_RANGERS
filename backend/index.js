@@ -265,67 +265,64 @@ async function run() {
       const findUser = await usersCollection.findOne(query);
 
       if (findUser) {
-        const res = sendEmailForResetPassword(user, otp);
-        if (res.result) {
-          const resetInfo = {
-            email: user.email,
-            otp: otp,
-          };
-          let config = {
-            service: "gmail",
-            auth: {
-              user: `${process.env.email}`,
-              pass: `${process.env.password}`,
+        const resetInfo = {
+          email: user.email,
+          otp: otp,
+        };
+        let config = {
+          service: "gmail",
+          auth: {
+            user: `${process.env.email}`,
+            pass: `${process.env.password}`,
+          },
+        };
+
+        let transporter = nodeMailer.createTransport(config);
+
+        let mailGenerator = new Mailgen({
+          theme: "default",
+          product: {
+            name: "Dust Master",
+            link: "https://mailgen.js/",
+          },
+        });
+
+        let response = {
+          body: {
+            intro: "Please, Verify Your Email",
+            table: {
+              data: [
+                {
+                  description: "Please Verify your email with the given otp",
+                  OTP: resetInfo.otp,
+                },
+              ],
             },
-          };
+            outro: "You can not change your password without the given otp",
+          },
+        };
 
-          let transporter = nodeMailer.createTransport(config);
+        let mail = mailGenerator.generate(response);
 
-          let mailGenerator = new Mailgen({
-            theme: "default",
-            product: {
-              name: "",
-              link: "",
-            },
-          });
+        let message = {
+          from: `${process.env.email}`,
+          to: resetInfo.email,
+          subject: "Reset Your Password",
+          html: mail,
+        };
 
-          let response = {
-            body: {
-              intro: "Please, Verify Your Email",
-              table: {
-                data: [
-                  {
-                    description: "Please Verify your email with the given otp",
-                    OTP: resetInfo.otp,
-                  },
-                ],
-              },
-              outro: "You can not change your password without the given otp",
-            },
-          };
-
-          let mail = mailGenerator.generate(response);
-
-          let message = {
-            from: `${process.env.email}`,
-            to: resetInfo.email,
-            subject: "Reset Your Password",
-            html: mail,
-          };
-
-          transporter
-            .sendMail(message)
-            .then(() => {
-              res.json({
-                result: true,
-                message: "send otp successfully",
-                data: sendOTP,
-              });
-            })
-            .catch((error) => {
-              return res.status(501).json({ error });
+        transporter
+          .sendMail(message)
+          .then(() => {
+            res.json({
+              result: true,
+              message: "send otp successfully",
+              data: sendOTP,
             });
-        }
+          })
+          .catch((error) => {
+            return res.status(501).json({ error });
+          });
       } else {
         res.json({
           result: false,
@@ -333,6 +330,9 @@ async function run() {
         });
       }
     });
+
+
+
 
     // =====================Reset Password Confirm👇===================>
     app.put("/auth/reset-password/confirm", async (req, res) => {
