@@ -191,29 +191,12 @@ async function run() {
       }
       res.send({ LandManager });
     });
-
-    // ===============================Create New User 👇===================================
-    // app.post("/auth/create", verifyToken, verifyAdmin, async (req, res) => {
-    //   const user = req.body;
-    //   const userEmail = { email: user.email };
-    //   const findUser = await usersCollection.findOne(userEmail);
-    //   if (findUser) {
-    //     return res.json({ msg: `${user.email} is already registered` });
-    //   } else {
-    //     const userPassword = user.password;
-    //     const salt = await bcrypt.genSalt(10);
-    //     const hashedPassword = await bcrypt.hash(userPassword, salt);
-    //     user.password = hashedPassword;
-    //     user.role = "unassigned";
-
-    //     const result = await usersCollection.insertOne(user);
-    //     res.send(result);
-    //   }
-    // });
     
     // verifyToken, verifyAdmin,
-    app.post("/auth/create", async (req, res) => {
+    app.post("/users", async (req, res) => {
       const user = req.body;
+      const roleQuery = { name: user.role };
+
       const plainPassword = user.password;
       const userEmail = { email: user.email };
       const findUser = await usersCollection.findOne(userEmail);
@@ -224,63 +207,71 @@ async function run() {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(userPassword, salt);
         user.password = hashedPassword;
-        user.role = "unassigned";
 
-        const result = await usersCollection.insertOne(user);
-        if (result.insertedId) {
-          let config = {
-            service: "gmail",
-            auth: {
-              user: `${process.env.email}`,
-              pass: `${process.env.password}`,
-            },
-          };
+        const updatedRoleAllocation = {
+          $inc: {
+            allocate: -1,
+          },
+        }; 
 
-          let transporter = nodeMailer.createTransport(config);
-
-          let mailGenerator = new Mailgen({
-            theme: "default",
-            product: {
-              name: "Dust Master",
-              link: "https://mailgen.js/",
-            },
-          });
-
-          let response = {
-            body: {
-              intro: "Please, Verify Your Email",
-              table: {
-                data: [
-                  {
-                    email: user.email,
-                    password: plainPassword,
-                  },
-                ],
+        const roleUpdate = await rolesCollection.updateOne(roleQuery, updatedRoleAllocation);
+        if (roleUpdate.modifiedCount > 0) {
+          const result = await usersCollection.insertOne(user);
+          if (result.insertedId) {
+            let config = {
+              service: "gmail",
+              auth: {
+                user: `${process.env.email}`,
+                pass: `${process.env.password}`,
               },
-              outro: "You can not login without the given information",
-            },
-          };
+            };
 
-          let mail = mailGenerator.generate(response);
+            let transporter = nodeMailer.createTransport(config);
 
-          let message = {
-            from: `${process.env.email}`,
-            to: user.email,
-            subject: "Check Email For Login",
-            html: mail,
-          };
-
-          transporter
-            .sendMail(message)
-            .then(() => {
-              return res.json({
-                result: true,
-                message: "check your email",
-              });
-            })
-            .catch((error) => {
-              return res.status(501).json({ error });
+            let mailGenerator = new Mailgen({
+              theme: "default",
+              product: {
+                name: "Dust Master",
+                link: "https://mailgen.js/",
+              },
             });
+
+            let response = {
+              body: {
+                intro: "Please, Verify Your Email",
+                table: {
+                  data: [
+                    {
+                      email: user.email,
+                      password: plainPassword,
+                    },
+                  ],
+                },
+                outro: "You can not login without the given information",
+              },
+            };
+
+            let mail = mailGenerator.generate(response);
+
+            let message = {
+              from: `${process.env.email}`,
+              to: user.email,
+              subject: "Check Email For Login",
+              html: mail,
+            };
+
+            transporter
+              .sendMail(message)
+              .then(() => {
+                return res.json({
+                  result: true,
+                  message: "check your email",
+                });
+              })
+              .catch((error) => {
+                return res.status(501).json({ error });
+              });
+          }
         }
       }
     });
@@ -292,6 +283,12 @@ async function run() {
       const user = await usersCollection.findOne({ email });
       if (!user) {
         return res.status(401).json({ message: "Invalid email or password" });
+      }
+      if (user.role == 'Unassigned') {
+        return res.json({
+          result: false,
+          message: "You can not login now!"
+        })
       }
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
@@ -324,35 +321,7 @@ async function run() {
       });
     });
 
-    // ===============================Reset Password Initiate👇===================================
-    // app.post("/auth/reset-password/initiate", async (req, res) => {
-    //   const user = req.body;
-    //   const otp = Math.floor(100000 + Math.random() * 900000);
 
-    //   const query = { email: user.email };
-    //   const findUser = await usersCollection.findOne(query);
-
-    //   if (findUser) {
-    //     const res = sendEmailForResetPassword(user, otp);
-    //     if (res.result) {
-    //       const resetInfo = {
-    //         email: user.email,
-    //         otp: otp,
-    //       };
-    //       const sendOTP = await resetPasswordOTPCollection.insertOne(resetInfo);
-    //       res.json({
-    //         result: true,
-    //         message: "send otp successfully",
-    //         data: sendOTP,
-    //       });
-    //     }
-    //   } else {
-    //     res.json({
-    //       result: false,
-    //       message: `${user.email} does not exist`
-    //     })
-    //   }
-    // });
     app.post("/auth/reset-password/initiate", async (req, res) => {
       const user = req.body;
       const otp = Math.floor(100000 + Math.random() * 900000);
@@ -361,67 +330,65 @@ async function run() {
       const findUser = await usersCollection.findOne(query);
 
       if (findUser) {
-        const res = sendEmailForResetPassword(user, otp);
-        if (res.result) {
-          const resetInfo = {
-            email: user.email,
-            otp: otp,
-          };
-          let config = {
-            service: "gmail",
-            auth: {
-              user: `${process.env.email}`,
-              pass: `${process.env.password}`,
+        const resetInfo = {
+          email: user.email,
+          otp: otp,
+        };
+        await resetPasswordOTPCollection.insertOne(resetInfo);
+        let config = {
+          service: "gmail",
+          auth: {
+            user: `${process.env.email}`,
+            pass: `${process.env.password}`,
+          },
+        };
+
+        let transporter = nodeMailer.createTransport(config);
+
+        let mailGenerator = new Mailgen({
+          theme: "default",
+          product: {
+            name: "Dust Master",
+            link: "https://mailgen.js/",
+          },
+        });
+
+        let response = {
+          body: {
+            intro: "Please, Verify Your Email",
+            table: {
+              data: [
+                {
+                  description: "Please Verify your email with the given otp",
+                  OTP: resetInfo.otp,
+                },
+              ],
             },
-          };
+            outro: "You can not change your password without the given otp",
+          },
+        };
 
-          let transporter = nodeMailer.createTransport(config);
+        let mail = mailGenerator.generate(response);
 
-          let mailGenerator = new Mailgen({
-            theme: "default",
-            product: {
-              name: "",
-              link: "",
-            },
-          });
+        let message = {
+          from: `${process.env.email}`,
+          to: resetInfo.email,
+          subject: "Reset Your Password",
+          html: mail,
+        };
 
-          let response = {
-            body: {
-              intro: "Please, Verify Your Email",
-              table: {
-                data: [
-                  {
-                    description: "Please Verify your email with the given otp",
-                    OTP: resetInfo.otp,
-                  },
-                ],
-              },
-              outro: "You can not change your password without the given otp",
-            },
-          };
-
-          let mail = mailGenerator.generate(response);
-
-          let message = {
-            from: `${process.env.email}`,
-            to: resetInfo.email,
-            subject: "Reset Your Password",
-            html: mail,
-          };
-
-          transporter
-            .sendMail(message)
-            .then(() => {
-              res.json({
-                result: true,
-                message: "send otp successfully",
-                data: sendOTP,
-              });
-            })
-            .catch((error) => {
-              return res.status(501).json({ error });
+        transporter
+          .sendMail(message)
+          .then(() => {
+            res.json({
+              result: true,
+              message: "send otp successfully",
+              data: otp,
             });
-        }
+          })
+          .catch((error) => {
+            return res.status(501).json({ error });
+          });
       } else {
         res.json({
           result: false,
@@ -432,6 +399,33 @@ async function run() {
 
     // ===============================Reset Password Confirm👇===================================
     app.put("/auth/reset-password/confirm", async (req, res) => {
+      const userInfo = req.body;
+      const query = { email: userInfo.email };
+      const findUser = await resetPasswordOTPCollection.findOne(query);
+
+      if (findUser) {
+        if (userInfo.otp == findUser.otp) {
+          const deleteResetInfo = await resetPasswordOTPCollection.deleteOne(
+            query
+          );
+          if (deleteResetInfo.deletedCount > 0) {
+            res.json({
+              result: true,
+              message:"OTP matched"
+            })
+          }
+        } else {
+          res.json({
+            result: false,
+            message: "OTP not matched",
+          });
+        }
+      } else {
+        return res.json({ message: `${information.email} Do Not Valid Email` });
+      }
+    });
+
+    app.put("/auth/reset-password", async (req, res) => {
       const userInfo = req.body;
       const query = { email: userInfo.email };
       const findUser = await usersCollection.findOne(query);
@@ -448,21 +442,14 @@ async function run() {
         };
         const result = await usersCollection.updateOne(query, updatedPassword);
         if (result.modifiedCount > 0) {
-          const deleteResetInfo = await resetPasswordOTPCollection.deleteOne(
-            query
-          );
-          if (deleteResetInfo.deletedCount > 0) {
-            res.json({ message: "Successfully updated your password" });
-          } else {
-            res.json({ message: "Password don't update" });
-          }
+          res.json({ message: "Successfully Reset your password" });
         } else {
           res.json({ message: "Password don't update" });
         }
       } else {
         return res.json({ message: `${information.email} Do Not Valid Email` });
       }
-    });
+    })
 
     app.put("/auth/change-password", async (req, res) => {
       const information = req.body;
@@ -563,6 +550,12 @@ async function run() {
           message: "Update User Role Successfully",
         });
       }
+    });
+
+    app.get("/available/roles", async (req, res) => {
+      const allRoles = await rolesCollection.find().toArray();
+      const availableRoles = allRoles.filter(role => role.allocate > 0)
+      res.send(availableRoles);
     });
 
     // admin access
@@ -766,12 +759,6 @@ async function run() {
         })
       }
     });
-
-    app.get("/users/roles", async (req, res) => {
-      const allRoles = await rolesCollection.find().toArray();
-      const availableRoles = allRoles.filter(role => role.allocate > 0)
-      res.send(availableRoles);
-    })
 
     app.post("/rbac/permissions", async (req, res) => {
       const permissionBody = req.body;
