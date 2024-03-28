@@ -2,9 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import useAxiosPublic from "./useAxiosPublic";
 
 
-const GetAvailableVehicle = () => {
+const GetAllVehicle = () => {
     let axiosPublic = useAxiosPublic();
-    
+
     const { data: allVehicle = [] } = useQuery({
         queryKey: ['allVehicle'],
         queryFn: async () => {
@@ -12,8 +12,8 @@ const GetAvailableVehicle = () => {
             return res.data;
         }
     })
-    let availableVehicle = allVehicle.filter(vehicle => vehicle.available === true);
-    return [availableVehicle, allVehicle];
+
+    return [allVehicle];
 };
 
-export default GetAvailableVehicle;
+export default GetAllVehicle;

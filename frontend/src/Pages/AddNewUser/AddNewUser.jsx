@@ -24,7 +24,8 @@ const AddNewUser = () => {
             password: data.password,
             role: data.role
         };
-        let res = await axiosPublic.post('/users', newUser)
+        let res = await axiosPublic.post('/users', newUser);
+        console.log(res)
         if (res.data.result) {
             Swal.fire({
                 position: "center",

@@ -23,7 +23,7 @@ const Login = () => {
     const { register, handleSubmit, formState: { errors }, } = useForm();
 
 
-    let handleLogin = (e) => {
+    let handleLogin = async (e) => {
         e.preventDefault();
         let email = e.target.email.value;
         let password = e.target.password.value;
@@ -35,8 +35,9 @@ const Login = () => {
             email
         }
         setLoading(true);
-        axiosPublic.post('/auth/login', loginInfo)
-            .then(res => {
+        let res = await axiosPublic.post('/auth/login', loginInfo);
+        console.log(res);
+            if(res.data?.success){
                 setUser(user);
                 localStorage.setItem("user", JSON.stringify(user));
                 Swal.fire({
@@ -48,14 +49,14 @@ const Login = () => {
                 });
                 setLoading(false);
                 navigate('/');
-            }).catch(err => {
+            }else {
                 Swal.fire({
                     icon: 'error',
-                    title: err.message,
+                    title: res.data.message,
                     showConfirmButton: false,
                     timer: 1500
                 })
-            })
+            }
     }
 
     const resetPasswrod = (data) => {

@@ -138,7 +138,7 @@ async function run() {
       const email = req.decoded?.email;
       const query = { email: email };
       const user = await usersCollection.findOne(query);
-      const isAdmin = user?.role === "Admin";
+      const isAdmin = user?.role === "System Admin";
       if (!isAdmin) {
         return res.status(403).send({ message: "forbidden access" });
       }
@@ -146,86 +146,14 @@ async function run() {
     };
 
     // =====================Create New User 👇=======================>
-    // app.post("/users", verifyToken, verifyAdmin, async (req, res) => {
-    //   const user = req.body;
-    //   const plainPassword = user.password;
-    //   const userEmail = { email: user.email };
-    //   const findUser = await usersCollection.findOne(userEmail);
-    //   if (findUser) {
-    //     return res.json({ message: `${user.email} is already registered` });
-    //   } else {
-    //     const userPassword = user.password;
-    //     const salt = await bcrypt.genSalt(10);
-    //     const hashedPassword = await bcrypt.hash(userPassword, salt);
-    //     user.password = hashedPassword;
-
-    //     const result = await usersCollection.insertOne(user);
-    //     if (result.insertedId) {
-    //       let config = {
-    //         service: "gmail",
-    //         auth: {
-    //           user: `${process.env.email}`,
-    //           pass: `${process.env.password}`,
-    //         },
-    //       };
-
-    //       let transporter = nodeMailer.createTransport(config);
-
-    //       let mailGenerator = new Mailgen({
-    //         theme: "default",
-    //         product: {
-    //           name: "Dust Master",
-    //           link: "https://mailgen.js/",
-    //         },
-    //       });
-
-    //       let response = {
-    //         body: {
-    //           intro: "Please, Verify Your Email",
-    //           table: {
-    //             data: [
-    //               {
-    //                 email: user.email,
-    //                 password: plainPassword,
-    //               },
-    //             ],
-    //           },
-    //           outro: "You can not login without the given information",
-    //         },
-    //       };
-
-    //       let mail = mailGenerator.generate(response);
-
-    //       let message = {
-    //         from: `${process.env.email}`,
-    //         to: user.email,
-    //         subject: "Check Email For Login",
-    //         html: mail,
-    //       };
-
-    //       transporter
-    //         .sendMail(message)
-    //         .then(() => {
-    //           return res.json({
-    //             result: true,
-    //             message: "User Created Successfully",
-    //           });
-    //         })
-    //         .catch((error) => {
-    //           return res.status(501).json({ error });
-    //         });
-    //     }
-    //   }
-    // });
     app.post("/users", verifyToken, verifyAdmin, async (req, res) => {
       const user = req.body;
       console.log(user);
-      const roleQuery = { roleName: user.role };
+      const roleQuery = { name: user.role };
 
       const plainPassword = user.password;
       const userEmail = { email: user.email };
       const findUser = await usersCollection.findOne(userEmail);
-      console.log(findUser);
       if (findUser) {
         return res.json({
           result: false,
@@ -236,18 +164,15 @@ async function run() {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(userPassword, salt);
         user.password = hashedPassword;
+        user.assigned = false;
 
         const updatedRoleAllocation = {
           $inc: {
             allocate: -1,
           },
         };
-
-        const roleUpdate = await rolesCollection.updateOne(roleQuery, updatedRoleAllocation);
-        console.log(roleUpdate);
-        if (roleUpdate.modifiedCount > 0) {
+        if (user.role === 'System Admin' || user.role === 'unassigned') {
           const result = await usersCollection.insertOne(user);
-          console.log(result)
           if (result.insertedId) {
             let config = {
               service: "gmail",
@@ -296,23 +221,93 @@ async function run() {
               .then(() => {
                 return res.json({
                   result: true,
-                  message: "User Created Successfully",
+                  message: "check your email",
                 });
               })
               .catch((error) => {
                 return res.status(501).json({ error });
               });
           }
+
+        } else {
+          const roleUpdate = await rolesCollection.updateOne(roleQuery, updatedRoleAllocation);
+          if (roleUpdate.modifiedCount > 0) {
+            const result = await usersCollection.insertOne(user);
+            if (result.insertedId) {
+              let config = {
+                service: "gmail",
+                auth: {
+                  user: `${process.env.email}`,
+                  pass: `${process.env.password}`,
+                },
+              };
+
+              let transporter = nodeMailer.createTransport(config);
+
+              let mailGenerator = new Mailgen({
+                theme: "default",
+                product: {
+                  name: "Dust Master",
+                  link: "https://mailgen.js/",
+                },
+              });
+
+              let response = {
+                body: {
+                  intro: "Please, Verify Your Email",
+                  table: {
+                    data: [
+                      {
+                        email: user.email,
+                        password: plainPassword,
+                      },
+                    ],
+                  },
+                  outro: "You can not login without the given information",
+                },
+              };
+
+              let mail = mailGenerator.generate(response);
+
+              let message = {
+                from: `${process.env.email}`,
+                to: user.email,
+                subject: "Check Email For Login",
+                html: mail,
+              };
+
+              transporter
+                .sendMail(message)
+                .then(() => {
+                  return res.json({
+                    result: true,
+                    message: "check your email",
+                  });
+                })
+                .catch((error) => {
+                  return res.status(501).json({ error });
+                });
+            }
+          }
         }
+
+
       }
     });
 
     // ======================Login User👇============================>
+    // ===============================Login User👇===================================
     app.post("/auth/login", async (req, res) => {
       const { email, password } = req.body;
       const user = await usersCollection.findOne({ email });
       if (!user) {
         return res.status(401).json({ message: "Invalid email or password" });
+      }
+      if (user.role == 'unassigned') {
+        return res.json({
+          result: false,
+          message: "You can not login now!"
+        })
       }
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
@@ -797,25 +792,22 @@ async function run() {
     });
 
     // ======================Get All The Sts👇========================>
-    //Landfil Manager
     app.get('/get-all-sts', async (req, res) => {
       const result = await stsCollection.find().toArray();
       res.send(result);
     });
 
     // ======================Get All The Sts👇========================>
-    //Landfil Manager
     app.get('/get-all-landfill', async (req, res) => {
       const result = await landfillCollection.find().toArray();
       res.send(result);
     });
 
     // =====================Get All The Vehicle👇=====================>
-    //Landfil Manager
     app.get('/get-all-vehicle', async (req, res) => {
       const result = await vehiclesCollection.find().toArray();
       res.send(result);
-    })
+    });
 
     // =======================Get The Bill👇==========================>
     //landfill manager
