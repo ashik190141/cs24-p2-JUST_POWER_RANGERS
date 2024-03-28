@@ -97,7 +97,7 @@ const AddNewVehicle = () => {
                                 <select defaultValue="default"
                                     {...register('stsName', { required: true })}
                                     className="w-full py-2 rounded-md">
-                                    <option disabled value="default">Select Capacity</option>
+                                    <option disabled value="default">Select Sts Name</option>
                                     {
                                         allStsCollection?.map((sts, index) => {
                                             return (
