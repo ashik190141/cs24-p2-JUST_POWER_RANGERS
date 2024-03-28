@@ -582,12 +582,58 @@ async function run() {
           },
         };
 
+        let placeName = null;
+
         // if sts manager query
         // todo
         if (updatedRoleInfo.role == 'STS Manager') {
           assignManager = await stsCollection.updateOne(placeQuery, assignManagerPlace);
+
+          for (let i = 0; i < allStsCollection.length; i++) {
+            const stsManagers = allStsCollection[i].manager;
+            for (let j = 0; j < stsManagers.length; j++) {
+              const stsManagerEmail = stsManagers[j].email;
+              if (stsManagerEmail == userInfo.email) {
+                placeName = allStsCollection[i].name;
+                break;
+              }
+            }
+            if (!placeName) break;
+          }
+
+          const removeUserInfo = {
+            $pull: {
+              manager: mangerInfo,
+            },
+          };
+          await stsCollection.updateOne(
+            { name: placeName },
+            removeUserInfo
+          );
+
         } else {
           assignManager = await landfillCollection.updateOne(placeQuery, assignManagerPlace);
+
+          for (let i = 0; i < allLandfillCollection.length; i++) {
+            const landfillManagers = allLandfillCollection[i].manager;
+            for (let j = 0; j < landfillManagers.length; j++) {
+              const landfillManagerEmail = landfillManagers[j].email;
+              if (landfillManagerEmail == userInfo.email) {
+                placeName = allLandfillCollection[i].name;
+                break;
+              }
+            }
+            if (!placeName) break;
+          }
+          const removeUserInfo = {
+            $pull: {
+              manager: mangerInfo,
+            },
+          };
+          await landfillCollection.updateOne(
+            { name: placeName },
+            removeUserInfo
+          );
         }
         if (assignManager.modifiedCount > 0) {
           const updatedDoc = {
@@ -603,10 +649,12 @@ async function run() {
             });
           }
         }
+
+        
       } else {
 
         let placeName = null;
-        let removeUser;
+        let removeUser=null;
         const mangerInfo = {
           managerName: userInfo.name,
           email: userInfo.email
@@ -665,7 +713,7 @@ async function run() {
             removeUser = await landfillCollection.updateOne({name:placeName}, removeUserInfo);
 
           }
-          if (removeUser.modifiedCount > 0) {
+          if (removeUser.modifiedCount > 0 || removeUser==null) {
             res.json({
               result: true,
               message: "Update User Role Successfully",
@@ -678,12 +726,34 @@ async function run() {
     // admin access
     app.post("/create-vehicles", async (req, res) => {
       const vehicles = req.body;
+      const sts = vehicles.stsName;
+
+      const exist = await vehiclesCollection.findOne({
+        vehicleRegNum: vehicles.vehicleRegNum,
+      });
+
+      if (exist) {
+        return res.json({
+          result: false,
+          message: "Registration Number Already Exist"
+        })
+      }
+
       const result = await vehiclesCollection.insertOne(vehicles);
       if (result.insertedId) {
-        res.json({
-          result: true,
-          message: "Vehicles Added Successfully",
-        });
+        const query = { name: sts };
+        const updatedInfo = {
+          $push: {
+            vehicles: vehicles
+          }
+        }
+        const result = await stsCollection.updateOne(query, updatedInfo);
+        if (result.modifiedCount > 0) {
+          res.json({
+            result: true,
+            message: "Vehicles Added Successfully",
+          });
+        }
       }
     });
 
@@ -895,12 +965,53 @@ async function run() {
       }
     });
 
-    app.get("/fleetPath", async(req, res) => {
-      const allTrucks = await vehiclesCollection.find().toArray();
+    app.post("/fleetPath", async (req, res) => {
+
+      const truckTravelPathInfo = req.body;
+      const query = { name: truckTravelPathInfo.stsName };
+      const stsInfo = await stsCollection.findOne(query);
+      const wasteCapacity = stsInfo.capacity;
+
+      const allTrucks = await vehiclesCollection.find(query).toArray();
+
       const trucks = allTrucks.filter(
         (truck) => truck.type == "Dump Truck" || truck.type == "Compactor Truck"
       );
-      res.send(trucks);
+      
+      const compactorTrucks = [];
+      const otherItems = [];
+      trucks.forEach((item) => {
+        if (item.type === "Compactor Truck") {
+          item.capacity = (item.capacity) * 5;
+          compactorTrucks.push(item);
+        } else {
+          otherItems.push(item);
+        }
+      });
+
+      compactorTrucks.sort((a, b) => b.capacity - a.capacity);
+
+      otherItems.sort((a, b) => b.capacity - a.capacity);
+
+      const combinedArray = [...compactorTrucks, ...otherItems];
+
+      let volumeOfWaste = 0;
+      let cnt = 0;
+      let truckDetails = [];
+      for (let i = 0; i < combinedArray.length; i++){
+        if (volumeOfWaste < wasteCapacity) {
+          volumeOfWaste = volumeOfWaste + combinedArray[i].capacity;
+          cnt++;
+          truckDetails.push(combinedArray[i]);
+        }
+      }
+
+      const result = {
+        numberOfTruck: cnt,
+        data: truckDetails
+      }
+
+      res.send(result);
     })
 
     await client.db("admin").command({ ping: 1 });
