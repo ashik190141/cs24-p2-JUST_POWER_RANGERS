@@ -702,7 +702,7 @@ async function run() {
             removeUser = await landfillCollection.updateOne({ name: placeName }, removeUserInfo);
 
           }
-          if(removeUser == null || removeUser.modifiedCount > 0){
+          if (removeUser == null || removeUser.modifiedCount > 0) {
             res.json({
               result: true,
               message: "Update User Role Successfully",
@@ -714,15 +714,36 @@ async function run() {
 
 
     // =====================Create a Vehicle👇========================>
-    // admin access
     app.post("/create-vehicles", async (req, res) => {
       const vehicles = req.body;
+      const sts = vehicles.stsName;
+
+      const exist = await vehiclesCollection.findOne({
+        vehicleRegNum: vehicles.vehicleRegNum,
+      });
+
+      if (exist) {
+        return res.json({
+          result: false,
+          message: "Registration Number Already Exist"
+        })
+      }
+
       const result = await vehiclesCollection.insertOne(vehicles);
       if (result.insertedId) {
-        res.json({
-          result: true,
-          message: "Vehicles Added Successfully"
-        })
+        const query = { name: sts };
+        const updatedInfo = {
+          $push: {
+            vehicles: vehicles
+          }
+        }
+        const result = await stsCollection.updateOne(query, updatedInfo);
+        if (result.modifiedCount > 0) {
+          res.json({
+            result: true,
+            message: "Vehicles Added Successfully",
+          });
+        }
       }
     });
 
@@ -744,7 +765,8 @@ async function run() {
     // admin access
     app.post("/create-sts", async (req, res) => {
       const stsInfo = req.body;
-      stsInfo.manager = false;
+      stsInfo.manager = [];
+      stsInfo.vehicles = [];
       const result = await stsCollection.insertOne(stsInfo);
       if (result.insertedId) {
         res.json({

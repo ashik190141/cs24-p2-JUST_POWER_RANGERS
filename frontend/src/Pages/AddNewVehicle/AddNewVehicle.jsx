@@ -23,7 +23,7 @@ const AddNewVehicle = () => {
         let res = await axiosPublic.post('/create-vehicles', vehicleInfo);
         if (res.data.result) {
             Swal.fire({
-                position: "top-middle",
+                position: "center",
                 icon: "success",
                 title: res.data.message,
                 showConfirmButton: false,
@@ -32,7 +32,7 @@ const AddNewVehicle = () => {
             reset();
         } else {
             Swal.fire({
-                position: "top-middle",
+                position: "center",
                 icon: "error",
                 title: res.data.message,
                 showConfirmButton: false,
