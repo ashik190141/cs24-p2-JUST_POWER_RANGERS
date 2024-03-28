@@ -3,10 +3,12 @@ import { useForm } from "react-hook-form";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import Swal from "sweetalert2";
 import SectionTitle from "../../Components/SectionTitle";
+import GetAllSts from "../../Hooks/GetAllSts";
 
 const AddNewVehicle = () => {
     const { register, handleSubmit, reset } = useForm();
     let axiosPublic = useAxiosPublic();
+    let [allStsCollection] = GetAllSts();
 
     const onSubmit = async (data) => {
 
@@ -15,10 +17,11 @@ const AddNewVehicle = () => {
             type: data.type,
             capacity: parseInt(data.capacity),
             fualCostLoaded: parseInt(data.fualCostLoaded),
-            fualCostUnloaded: parseInt(data.fualCostUnloaded)
+            fualCostUnloaded: parseInt(data.fualCostUnloaded),
+            stsName: data.stsName
         };
-        let res = await axiosPublic.post('/create-vehicles',vehicleInfo);
-        if(res.data.result){
+        let res = await axiosPublic.post('/create-vehicles', vehicleInfo);
+        if (res.data.result) {
             Swal.fire({
                 position: "top-middle",
                 icon: "success",
@@ -27,7 +30,7 @@ const AddNewVehicle = () => {
                 timer: 1500
             });
             reset();
-        }else{
+        } else {
             Swal.fire({
                 position: "top-middle",
                 icon: "error",
@@ -85,9 +88,29 @@ const AddNewVehicle = () => {
                                     <option value="3">3 Tones</option>
                                     <option value="5">5 Tones</option>
                                     <option value="7">7 Tones</option>
+                                </select>
+                            </div>
+                            <div className="flex-1">
+                                <label className="label">
+                                    <span className="label-text text-xl font-semibold">Select a Sts Name*</span>
+                                </label>
+                                <select defaultValue="default"
+                                    {...register('stsName', { required: true })}
+                                    className="w-full py-2 rounded-md">
+                                    <option disabled value="default">Select Capacity</option>
+                                    {
+                                        allStsCollection?.map((sts, index) => {
+                                            return (
+                                                <option className="text-black" key={index} value={sts?.name}>{sts?.name}</option>
+                                            )
+                                        })
+                                    }
 
                                 </select>
                             </div>
+
+                        </div>
+                        <div className="flex gap-10 my-5">
                             <div className="flex-1">
                                 <label className="label">
                                     <span className="label-text text-xl font-semibold">Fual Cost (Loaded)*</span>
@@ -99,8 +122,7 @@ const AddNewVehicle = () => {
                                     required
                                     className="w-full p-2 rounded-md placeholder:pl-2" />
                             </div>
-                        </div>
-                        <div className="mb-8">
+                            <div className="flex-1">
                             <label className="label">
                                 <span className="label-text text-xl font-semibold">Fual Cost (UnLoaded)*</span>
                             </label>
@@ -111,6 +133,8 @@ const AddNewVehicle = () => {
                                 required
                                 className="w-[508px] p-2 rounded-md placeholder:pl-2" />
                         </div>
+                        </div>
+
 
                         <button
                             className="bg-green-800 px-4 py-2 rounded-md text-white"

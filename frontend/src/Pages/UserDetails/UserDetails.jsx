@@ -58,11 +58,23 @@ const UserDetails = () => {
 
 
     const onSubmit = async (data) => {
-        const updatedRole = {
-            email: user.email,
-            role: data.updatedRole,
-            place: selectedLocation
-        };
+
+        let email = user.email;
+        let role = data.updatedRole;
+        let place = selectedLocation;
+        
+        if(data.updatedRole !== 'Sts Manager' && data.updatedRole !== 'Land Manager'){
+            place = null;
+        }
+        else{
+            place = selectedLocation;
+        }
+        let updatedRole ={
+            email,
+            role,
+            place
+        }
+
         if (updatedRole.role == 'null') {
             return Swal.fire({
                 position: "center",
@@ -82,25 +94,26 @@ const UserDetails = () => {
             });
         }
         console.log(updatedRole);
-        // let res = await axiosPublic.post('/users', updatedRole)
-        // if (res.data.result) {
-        //     Swal.fire({
-        //         position: "center",
-        //         icon: "success",
-        //         title: res.data.message,
-        //         showConfirmButton: false,
-        //         timer: 1500
-        //     });
-        //     reset();
-        // } else {
-        //     Swal.fire({
-        //         position: "center",
-        //         icon: "error",
-        //         title: res.data.message,
-        //         showConfirmButton: false,
-        //         timer: 1500
-        //     });
-        // }
+        let res = await axiosPublic.put(`/users/${user._id}/roles`, updatedRole)
+        console.log(res);
+        if (res.data.result) {
+            Swal.fire({
+                position: "center",
+                icon: "success",
+                title: res.data.message,
+                showConfirmButton: false,
+                timer: 1500
+            });
+            reset();
+        } else {
+            Swal.fire({
+                position: "center",
+                icon: "error",
+                title: res.data.message,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
 
     }
     return (
