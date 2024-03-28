@@ -207,6 +207,7 @@ async function run() {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(userPassword, salt);
         user.password = hashedPassword;
+        user.assigned = false;
 
         const updatedRoleAllocation = {
           $inc: {
@@ -284,7 +285,7 @@ async function run() {
       if (!user) {
         return res.status(401).json({ message: "Invalid email or password" });
       }
-      if (user.role == 'Unassigned') {
+      if (user.role == 'unassigned') {
         return res.json({
           result: false,
           message: "You can not login now!"
@@ -500,10 +501,24 @@ async function run() {
 
     // admin access
     app.get("/users/:userId", async (req, res) => {
-      const id = req.params.userId;
-      const query = { _id: new ObjectId(id) };
-      const result = await usersCollection.findOne(query);
-      res.send(result);
+      try {
+        const userId = req.params.userId;
+        if (userId === "roles") {
+          const allRoles = await rolesCollection.find().toArray();
+          const availableRoles = allRoles.filter((role) => role.allocate > 0);
+          res.send(availableRoles);
+        } else {
+          const query = { _id: new ObjectId(userId) };
+          const result = await usersCollection.findOne(query);
+          if (!result) {
+            return res.status(404).send("User not found");
+          }
+          res.send(result);
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        res.status(500).send("Internal Server Error");
+      }
     });
 
     // admin access and own user
@@ -527,35 +542,137 @@ async function run() {
 
     // admin access
     app.delete("/users/:userId", async (req, res) => {
-      const id = req.params.userId;
-      const query = { _id: new ObjectId(id) };
-      const result = await usersCollection.deleteOne(query);
-      res.send(result);
+       const id = req.params.userId;
+       const query = { _id: new ObjectId(id) };
+       const result = await usersCollection.deleteOne(query);
+       res.send(result);
     });
 
     //admin access
     app.put("/users/:userId/roles", async (req, res) => {
+      const updatedRoleInfo = req.body;
       const id = req.params.userId;
       const query = { _id: new ObjectId(id) };
-      const updatedRoleInfo = req.body;
-      const updatedDoc = {
-        $set: {
-          role: updatedRoleInfo.role,
-        },
-      };
-      const result = await usersCollection.updateOne(query, updatedDoc);
-      if (result.modifiedCount > 0) {
-        res.json({
-          result: true,
-          message: "Update User Role Successfully",
-        });
-      }
-    });
+      const userInfo = await usersCollection.findOne(query);
 
-    app.get("/available/roles", async (req, res) => {
-      const allRoles = await rolesCollection.find().toArray();
-      const availableRoles = allRoles.filter(role => role.allocate > 0)
-      res.send(availableRoles);
+      // role info
+      // const roleInfo = await rolesCollection.findOne({name:updatedRoleInfo.role})
+
+      // all sts collection
+      const allStsCollection = await stsCollection.find().toArray();
+
+      // all landfill collection
+      const allLandfillCollection = await landfillCollection.find().toArray();
+
+      // if place exist in the body
+      if (updatedRoleInfo.place) {
+        let placeQuery = { name : updatedRoleInfo.place };
+        let assignManager;
+        
+        // manager info with manager name and email
+        const mangerInfo = {
+          managerName: userInfo.name,
+          email: userInfo.email
+        }
+        
+        // set database
+        const assignManagerPlace = {
+          $push: {
+            manager: mangerInfo,
+          },
+        };
+
+        // if sts manager query
+        // todo
+        if (updatedRoleInfo.role == 'STS Manager') {
+          assignManager = await stsCollection.updateOne(placeQuery, assignManagerPlace);
+        } else {
+          assignManager = await landfillCollection.updateOne(placeQuery, assignManagerPlace);
+        }
+        if (assignManager.modifiedCount > 0) {
+          const updatedDoc = {
+            $set: {
+              assigned: true,
+            },
+          };
+          const assignedConfirm = await usersCollection.updateOne(query, updatedDoc);
+          if (assignedConfirm.modifiedCount > 0) {
+            res.json({
+              result: true,
+              message: "User Assigned Successfully",
+            });
+          }
+        }
+      } else {
+
+        let placeName = null;
+        let removeUser;
+        const mangerInfo = {
+          managerName: userInfo.name,
+          email: userInfo.email
+        }
+
+        const updatedDoc = {
+          $set: {
+            role: updatedRoleInfo.role,
+          },
+        };
+
+        const result = await usersCollection.updateOne(query, updatedDoc);
+
+        if (result.modifiedCount > 0) {
+          if (userInfo.assigned && userInfo.role == 'STS Manager') {
+            // check all sts to find the user and remove 
+            for (let i = 0; i < allStsCollection.length; i++){
+              const stsManagers = allStsCollection[i].manager;
+              for (let j = 0; j < stsManagers.length; j++){
+                const stsManagerEmail = stsManagers[j].email;
+                if (stsManagerEmail == userInfo.email) {
+                  placeName = allStsCollection[i].name;
+                  break;
+                }
+              }
+              if (!placeName) break;
+            }
+            
+            // update information
+            const removeUserInfo = {
+              $pull: {
+                manager: mangerInfo,
+                assigned:false
+              },
+            };
+            removeUser = await stsCollection.updateOne({name:placeName}, removeUserInfo);
+
+          } else if (userInfo.assigned && userInfo.role == "Landfill Manager") {
+            // check all landfill to find the user and remove
+            for (let i = 0; i < allLandfillCollection.length; i++) {
+              const landfillManagers = allLandfillCollection[i].manager;
+              for (let j = 0; j < landfillManagers.length; j++) {
+                const landfillManagerEmail = landfillManagers[j].email;
+                if (landfillManagerEmail == userInfo.email) {
+                  placeName = allLandfillCollection[i].name;
+                  break;
+                }
+              }
+              if (!placeName) break;
+            }
+            const removeUserInfo = {
+              $pull: {
+                manager: mangerInfo
+              },
+            };
+            removeUser = await landfillCollection.updateOne({name:placeName}, removeUserInfo);
+
+          }
+          if (removeUser.modifiedCount > 0) {
+            res.json({
+              result: true,
+              message: "Update User Role Successfully",
+            });
+          }
+        }
+      }
     });
 
     // admin access
@@ -710,15 +827,15 @@ async function run() {
         const vehicleNum = allVehicles[i].vehicleRegNum;
 
         // truck fuel cost
-        const vehicleNumQuery = { vehicleNum: vehicleNum };
+        const vehicleNumQuery = { vehicleNum: vehicleNum, date:currentDate };
 
-        const truckDumpingInfo = await truckDumpingCollection.find(vehicleNumQuery,{date:currentDate}).toArray();
+        const truckDumpingInfo = await truckDumpingCollection.find(vehicleNumQuery).toArray();
         const fuelCost = truckDumpingInfo.reduce((accumulator, current) => accumulator + current.bill, 0);
 
-        const stsTruckInfo = await stsLeavingCollection.find(vehicleNumQuery, { date: currentDate }).toArray();
+        const stsTruckInfo = await stsLeavingCollection.find(vehicleNumQuery).toArray();
         const totalWasteVolume = stsTruckInfo.reduce((accumulator, current) => accumulator + current.volumeWaste, 0);
 
-        const landfillDumpingInfo = await truckDumpingCollection.find(vehicleNumQuery, { date: currentDate }).toArray();
+        const landfillDumpingInfo = await truckDumpingCollection.find(vehicleNumQuery).toArray();
         const totalWasteVolumeOfLandfill = landfillDumpingInfo.reduce(
           (accumulator, current) => accumulator + current.volumeWaste,
           0
@@ -777,6 +894,14 @@ async function run() {
         });
       }
     });
+
+    app.get("/fleetPath", async(req, res) => {
+      const allTrucks = await vehiclesCollection.find().toArray();
+      const trucks = allTrucks.filter(
+        (truck) => truck.type == "Dump Truck" || truck.type == "Compactor Truck"
+      );
+      res.send(trucks);
+    })
 
     await client.db("admin").command({ ping: 1 });
     console.log(
