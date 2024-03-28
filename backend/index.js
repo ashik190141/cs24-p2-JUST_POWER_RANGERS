@@ -870,29 +870,42 @@ async function run() {
     // =======================Get A Profile👇==========================>
     //profile management endpoints
     app.get("/profile", async (req, res) => {
-      const email = req.query.email; //it will be body maybe
+      const email = req.query.email;
       const query = { email: email };
-      const result = await usersCollection.find(query).toArray();
+      const result = await usersCollection.findOne(query);
       res.send(result);
     });
 
     // =====================Update User Profile👇======================>
     //update login user info
     app.put("/profile", async (req, res) => {
-      const email = req.query.email;  //it will be body maybe
+      const email = req.query.email;
       const query = { email: email };
       const updatedUserInfo = req.body;
+      const options = { upsert: true };
       const updatedDoc = {
         $set: {
-          //ToDO: should be user Email Also
-          name: updatedUserInfo.name,
+          userName: updatedUserInfo.userName,
+          email: updatedUserInfo.email,
+          phone: updatedUserInfo.phone,
+          dateOfBirth: updatedUserInfo.dateOfBirth,
+          gender: updatedUserInfo.gender,
+          address: updatedUserInfo.address,
+          thana: updatedUserInfo.thana,
+          district: updatedUserInfo.district,
+          division: updatedUserInfo.division,
         },
       };
-      const result = await usersCollection.updateOne(query, updatedDoc);
+      const result = await usersCollection.updateOne(query,updatedDoc, options );
       if (result.modifiedCount > 0) {
         res.json({
           result: true,
-          message: "Update User Role Successfully",
+          message: "Update User Successfully",
+        });
+      }else{
+        res.json({
+          result: false,
+          message: "Update User Failed",
         });
       }
     });
