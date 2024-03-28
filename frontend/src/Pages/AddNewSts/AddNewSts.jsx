@@ -11,7 +11,7 @@ const AddNewSts = () => {
     const onSubmit = async (data) => {
 
         const stsInfo = {
-            stsName: data.stsName,
+            name: data.stsName,
             wardNumber: data.wardNumber,
             capacity: parseInt(data.capacity),
             coordinate: data.coordinate,

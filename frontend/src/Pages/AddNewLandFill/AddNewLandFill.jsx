@@ -17,7 +17,7 @@ const AddNewLandFill = () => {
     const onSubmit = async (data) => {
 
         const landFillInfo = {
-            landfillName: data.landfillName,
+            name: data.landfillName,
             capacity: parseInt(data.capacity),
             coordinate: data.coordinate,
             startTime: startValue,

@@ -667,7 +667,14 @@ async function run() {
     app.get('/get-all-sts', async (req, res) => {
       const result = await stsCollection.find().toArray();
       res.send(result);
-    })
+    });
+
+    // ======================Get All The Sts👇========================>
+    //Landfil Manager
+    app.get('/get-all-landfill', async (req, res) => {
+      const result = await landfillCollection.find().toArray();
+      res.send(result);
+    });
 
     // =====================Get All The Vehicle👇=====================>
     //Landfil Manager

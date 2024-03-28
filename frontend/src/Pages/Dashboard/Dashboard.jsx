@@ -22,7 +22,7 @@ const Dashboard = () => {
                     </div>
 
                     {
-                        userRole === "Admin" && <>
+                        userRole === "System Admin" && <>
                             <ul className='menu flex flex-col mt-8 px-6 space-y-3'>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
@@ -75,7 +75,7 @@ const Dashboard = () => {
                         </>
                     }
                     {
-                        userRole === "Landfil Manager" && <>
+                        userRole === "Land Manager" && <>
                             <ul className='flex flex-col mt-10 px-6 space-y-3'>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'

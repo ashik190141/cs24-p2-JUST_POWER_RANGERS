@@ -15,7 +15,7 @@ const SystemAdminRoute = ({ children }) => {
         </div>
     }
 
-    if (user && userRole === "Admin") {
+    if (user && userRole === "System Admin") {
         return children;
     }
     return <Navigate to="/" state={{ from: location }} replace></Navigate>
