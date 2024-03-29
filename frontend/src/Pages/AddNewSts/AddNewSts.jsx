@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import Swal from "sweetalert2";
 import SectionTitle from "../../Components/SectionTitle";
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 import "leaflet/dist/leaflet.css";
 
 import Modal from "react-modal";
@@ -20,8 +20,9 @@ const customStyles = {
   },
 };
 
+
 import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
-import { useState } from "react";
+import { useState } from 'react';
 import GelAvailableStsManager from "../../Hooks/GelAvailableStsManager";
 // center={[23.7654, 90.3917]} zoom={14}
 
@@ -61,17 +62,17 @@ const AddNewSts = () => {
       capacity: parseInt(data.capacity),
       lat: parseFloat(data.lat),
       lng: parseFloat(data.lng),
-      id: data.stsmanager,
+      id: data.stsmanager
     };
     console.log(stsInfo);
-    let res = await axiosPublic.post("/create-sts", stsInfo);
+    let res = await axiosPublic.post('/create-sts', stsInfo);
     if (res.data.result) {
       Swal.fire({
         position: "top-middle",
         icon: "success",
         title: res.data.message,
         showConfirmButton: false,
-        timer: 2000,
+        timer: 2000
       });
       reset();
       setClickedPosition(null);
@@ -81,10 +82,10 @@ const AddNewSts = () => {
         icon: "error",
         title: res.data.message,
         showConfirmButton: false,
-        timer: 2000,
+        timer: 2000
       });
     }
-  };
+  }
   return (
     <div>
       <Helmet>
@@ -145,14 +146,12 @@ const AddNewSts = () => {
                     GPS Coordinates*
                   </span>
                 </label>
-                {!clickedPosition && (
-                  <p
-                    onClick={openModal}
-                    className="btn w-[508px] p-2 rounded-md placeholder:pl-2"
-                  >
-                    Open Map
-                  </p>
-                )}
+                {!clickedPosition && <p
+                  onClick={openModal}
+                  className="btn w-[508px] p-2 rounded-md placeholder:pl-2"
+                >
+                  Open Map
+                </p>}
                 {clickedPosition && (
                   <input
                     type="text"
@@ -182,25 +181,19 @@ const AddNewSts = () => {
                     Ward number
                   </span>
                 </label>
-                <select
-                  defaultValue="default"
-                  {...register("stsmanager", { required: true })}
-                  className="w-full py-2 rounded-md"
-                >
-                  <option disabled value="default">
-                    Select Sts Name
-                  </option>
-                  {availableStsManager?.map((stsManager, index) => {
-                    return (
-                      <option
-                        className="text-black"
-                        key={index}
-                        value={stsManager?._id}
-                      >
-                        {stsManager?.userName}
-                      </option>
-                    );
-                  })}
+                <select defaultValue="default"
+                  {...register('stsmanager', { required: true })}
+                  className="w-full py-2 rounded-md">
+                  <option disabled value="default">Select Sts Name</option>
+                  {
+                    availableStsManager?.map((stsManager, index) => {
+                      return (
+                        <option className="text-black" key={index} value={stsManager?._id}>
+                          {stsManager?.userName}</option>
+                      )
+                    })
+                  }
+
                 </select>
               </div>
             </div>
@@ -221,10 +214,7 @@ const AddNewSts = () => {
           style={customStyles}
           contentLabel="Example Modal"
         >
-          <div
-            className="pb-3"
-            style={{ display: "flex", justifyContent: "flex-end" }}
-          >
+          <div className="pb-3" style={{ display: "flex", justifyContent: "flex-end" }}>
             <button onClick={closeModal}>Close Map</button>
           </div>
           <MapContainer
@@ -238,7 +228,9 @@ const AddNewSts = () => {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <MapClickHandler onClick={handleClick} />
-            {clickedPosition && <PositionDisplay position={clickedPosition} />}
+            {clickedPosition && (
+              <PositionDisplay position={clickedPosition} />
+            )}
           </MapContainer>
         </Modal>
       </div>
@@ -276,8 +268,8 @@ const PositionDisplay = ({ position }) => {
 };
 MapClickHandler.propTypes = {
   onClick: PropTypes.func,
-};
+}
 PositionDisplay.propTypes = {
   position: PropTypes.node,
-};
+}
 export default AddNewSts;

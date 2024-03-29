@@ -171,7 +171,7 @@ async function run() {
         };
         if (user.role === "System Admin" || user.role === "unassigned") {
           const result = await usersCollection.insertOne(user);
-          console.log("Hitted System Admin and Unassigned");
+          console.log('Hitted System Admin and Unassigned');
           if (result.insertedId) {
             let config = {
               service: "gmail",
@@ -228,11 +228,8 @@ async function run() {
               });
           }
         } else {
-          console.log("Sts Manager and Land Manager");
-          const roleUpdate = await rolesCollection.updateOne(
-            roleQuery,
-            updatedRoleAllocation
-          );
+          console.log('Sts Manager and Land Manager');
+          const roleUpdate = await rolesCollection.updateOne(roleQuery, updatedRoleAllocation);
           console.log(roleUpdate);
           if (roleUpdate.modifiedCount > 0) {
             const result = await usersCollection.insertOne(user);
@@ -505,11 +502,7 @@ async function run() {
               password: information.newPassword,
             },
           };
-          const result = await usersCollection.updateOne(
-            query,
-            updatedPassword,
-            options
-          );
+          const result = await usersCollection.updateOne(query, updatedPassword, options);
           if (result.modifiedCount > 0) {
             res.json({
               result: true,
@@ -776,23 +769,20 @@ async function run() {
         return res.json({
           result: false,
           message: "Ward Number Already Exist",
-        });
+        })
       }
 
       stsInfo.manager = [];
-      stsInfo.manager.push(id);
+      stsInfo.manager.push(id)
       stsInfo.vehicles = [];
       const result = await stsCollection.insertOne(stsInfo);
       if (result.insertedId) {
         const updatedDoc = {
           $set: {
             assigned: true,
-          },
-        };
-        const updateUserInfo = await usersCollection.updateOne(
-          { _id: new ObjectId(id) },
-          updatedDoc
-        );
+          }
+        }
+        const updateUserInfo = await usersCollection.updateOne({ _id: new ObjectId(id) }, updatedDoc);
         if (updateUserInfo.modifiedCount > 0) {
           res.json({
             result: true,
@@ -842,14 +832,12 @@ async function run() {
 
     app.get("/available-sts-manager", async (req, res) => {
       const allUsers = await usersCollection.find().toArray();
-      const availableSTSManager = allUsers.filter(
-        (user) => user.assigned == false && user.role == "Sts Manager"
-      );
+      const availableSTSManager = allUsers.filter(user => user.assigned == false && user.role == 'Sts Manager');
       res.json({
         result: true,
-        data: availableSTSManager,
-      });
-    });
+        data: availableSTSManager
+      })
+    })
 
     app.get("/available-landfill-manager", async (req, res) => {
       const allUsers = await usersCollection.find().toArray();
@@ -957,11 +945,7 @@ async function run() {
           division: updatedUserInfo.division,
         },
       };
-      const result = await usersCollection.updateOne(
-        query,
-        updatedDoc,
-        options
-      );
+      const result = await usersCollection.updateOne(query, updatedDoc, options);
       if (result.modifiedCount > 0) {
         res.json({
           result: true,
