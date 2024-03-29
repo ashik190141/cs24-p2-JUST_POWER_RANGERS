@@ -25,6 +25,7 @@ const StsDataEntry = () => {
       queryKey: ["stsId"],
       queryFn: async () => {
         const res = await axiosPublic.get(`/stsid/${user.email}`);
+        console.log(res.data);
         return res.data;
       },
     });
@@ -35,6 +36,16 @@ const StsDataEntry = () => {
     const [departure, setDeparture] = useState('00:00');
 
     const onSubmit = async (data) => {
+
+        if (stsId?.vehicles.length == 0) {
+            return Swal.fire({
+              position: "center",
+              icon: "error",
+              title: "Assign Vehicle First",
+              showConfirmButton: false,
+              timer: 2000,
+            });
+        }
 
         const stsDataEntryInfo = {
             stsId: data.stsId,
@@ -86,7 +97,7 @@ const StsDataEntry = () => {
                   <input
                     type="text"
                     placeholder="Enter Weight of Waste"
-                    value={stsId.data}
+                    value={stsId?.data}
                     {...register("stsId", { required: true })}
                     required
                     readOnly
@@ -107,7 +118,7 @@ const StsDataEntry = () => {
                     <option disabled value="default">
                       Select Type
                     </option>
-                    {allVehicle?.map((sts, index) => {
+                    {stsId?.vehicles?.map((sts, index) => {
                       return (
                         <option
                           className="text-black"
