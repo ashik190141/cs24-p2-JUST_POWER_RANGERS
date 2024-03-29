@@ -577,27 +577,20 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const userInfo = await usersCollection.findOne(query);
 
-      // role info
-      // const roleInfo = await rolesCollection.findOne({name:updatedRoleInfo.role})
-
-      // all sts collection
       const allStsCollection = await stsCollection.find().toArray();
 
-      // all landfill collection
       const allLandfillCollection = await landfillCollection.find().toArray();
 
       // if place exist in the body
       if (updatedRoleInfo.place) {
-        console.log('Place Hitted');
-        let placeQuery = { name: updatedRoleInfo.place };
+        let placeQuery = { name : updatedRoleInfo.place };
         let assignManager;
-
+        
         // manager info with manager name and email
         const mangerInfo = {
-          managerName: userInfo.userName,
-          email: userInfo.email
+          id: userInfo._id
         }
-
+        
         // set database
         const assignManagerPlace = {
           $push: {
@@ -605,18 +598,63 @@ async function run() {
           },
         };
 
+        let placeName = null;
+
         // if sts manager query
         // todo
         if (updatedRoleInfo.role == 'Sts Manager') {
           assignManager = await stsCollection.updateOne(placeQuery, assignManagerPlace);
+
+          for (let i = 0; i < allStsCollection.length; i++) {
+            const stsManagers = allStsCollection[i].manager;
+            for (let j = 0; j < stsManagers.length; j++) {
+              const stsManagerEmail = stsManagers[j].email;
+              if (stsManagerEmail == userInfo.email) {
+                placeName = allStsCollection[i].name;
+                break;
+              }
+            }
+            if (!placeName) break;
+          }
+
+          const removeUserInfo = {
+            $pull: {
+              manager: mangerInfo,
+            },
+          };
+          await stsCollection.updateOne(
+            { name: placeName },
+            removeUserInfo
+          );
+
         } else {
           assignManager = await landfillCollection.updateOne(placeQuery, assignManagerPlace);
+
+          for (let i = 0; i < allLandfillCollection.length; i++) {
+            const landfillManagers = allLandfillCollection[i].manager;
+            for (let j = 0; j < landfillManagers.length; j++) {
+              const landfillManagerEmail = landfillManagers[j].email;
+              if (landfillManagerEmail == userInfo.email) {
+                placeName = allLandfillCollection[i].name;
+                break;
+              }
+            }
+            if (!placeName) break;
+          }
+          const removeUserInfo = {
+            $pull: {
+              manager: mangerInfo,
+            },
+          };
+          await landfillCollection.updateOne(
+            { name: placeName },
+            removeUserInfo
+          );
         }
         if (assignManager.modifiedCount > 0) {
           const updatedDoc = {
             $set: {
               assigned: true,
-              role: updatedRoleInfo.role,
             },
           };
           const assignedConfirm = await usersCollection.updateOne(query, updatedDoc);
@@ -627,10 +665,12 @@ async function run() {
             });
           }
         }
+
+        
       } else {
 
         let placeName = null;
-        let removeUser = null;
+        let removeUser=null;
         const mangerInfo = {
           managerName: userInfo.name,
           email: userInfo.email
@@ -645,11 +685,11 @@ async function run() {
         const result = await usersCollection.updateOne(query, updatedDoc);
 
         if (result.modifiedCount > 0) {
-          if (userInfo.role == 'Sts Manager') {
+          if (userInfo.assigned && userInfo.role == 'Sts Manager') {
             // check all sts to find the user and remove 
-            for (let i = 0; i < allStsCollection.length; i++) {
+            for (let i = 0; i < allStsCollection.length; i++){
               const stsManagers = allStsCollection[i].manager;
-              for (let j = 0; j < stsManagers.length; j++) {
+              for (let j = 0; j < stsManagers.length; j++){
                 const stsManagerEmail = stsManagers[j].email;
                 if (stsManagerEmail == userInfo.email) {
                   placeName = allStsCollection[i].name;
@@ -658,17 +698,17 @@ async function run() {
               }
               if (!placeName) break;
             }
-
+            
             // update information
             const removeUserInfo = {
               $pull: {
                 manager: mangerInfo,
-                assigned: false
+                assigned:false
               },
             };
-            removeUser = await stsCollection.updateOne({ name: placeName }, removeUserInfo);
+            removeUser = await stsCollection.updateOne({name:placeName}, removeUserInfo);
 
-          } else if (userInfo.role == "Land Manager") {
+          } else if (userInfo.assigned && userInfo.role == "Land Manager") {
             // check all landfill to find the user and remove
             for (let i = 0; i < allLandfillCollection.length; i++) {
               const landfillManagers = allLandfillCollection[i].manager;
@@ -686,11 +726,10 @@ async function run() {
                 manager: mangerInfo
               },
             };
-
-            removeUser = await landfillCollection.updateOne({ name: placeName }, removeUserInfo);
+            removeUser = await landfillCollection.updateOne({name:placeName}, removeUserInfo);
 
           }
-          if (removeUser == null || removeUser.modifiedCount > 0) {
+          if (removeUser.modifiedCount > 0 || removeUser==null) {
             res.json({
               result: true,
               message: "Update User Role Successfully",
@@ -1003,6 +1042,14 @@ async function run() {
     // role
     app.post("/rbac/roles", async (req, res) => {
       const defineRoleBody = req.body;
+      let query = {roleName: defineRoleBody.roleName};
+      let exist = await rolesCollection.findOne(query);
+      if(exist){
+        return res.json({
+          result: false,
+          message: `Role ${defineRoleBody.roleName} already exist`
+        })
+      }
       let id;
       const allDefinedRole = await rolesCollection.find().toArray();
       if (allDefinedRole.length == 0) {

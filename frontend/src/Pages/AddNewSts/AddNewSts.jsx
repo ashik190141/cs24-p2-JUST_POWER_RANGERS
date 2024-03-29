@@ -126,7 +126,7 @@ const AddNewSts = () => {
                 />
               </div>
             </div>
-            <div className="flex gap-10 my-8">
+            <div className="flex gap-10 my-5">
               <div className="flex-1">
                 <label className="label">
                   <span className="label-text text-xl font-semibold">
@@ -140,6 +140,32 @@ const AddNewSts = () => {
                   className="w-full p-2 rounded-md placeholder:pl-2"
                 />
               </div>
+              <div className="flex-1">
+                <label className="label">
+                  <span className="label-text text-xl font-semibold">
+                    Sts Manager
+                  </span>
+                </label>
+                <select defaultValue="default"
+                  {...register('stsmanager', { required: true })}
+                  className="w-full py-2 rounded-md">
+                  <option disabled value="default">Select Manager Name</option>
+                  {
+                    availableStsManager?.map((stsManager, index) => {
+                      return (
+                        <option className="text-black" key={index} value={stsManager?._id}>
+                          {stsManager?.userName}</option>
+                      )
+                    })
+                  }
+
+                </select>
+              </div>
+            </div>
+            <div>
+
+            </div>
+            <div className="my-5 flex">
               <div className="flex-1">
                 <label className="label">
                   <span className="label-text text-xl font-semibold">
@@ -159,7 +185,7 @@ const AddNewSts = () => {
                     value={clickedPosition?.lat}
                     {...register("lat", { required: true })}
                     required
-                    className="w-[508px] p-2 rounded-md placeholder:pl-2"
+                    className="w-[508px] p-2 rounded-md placeholder:pl-2 mr-10"
                   />
                 )}
                 {clickedPosition && (
@@ -169,32 +195,9 @@ const AddNewSts = () => {
                     value={clickedPosition?.lng}
                     {...register("lng", { required: true })}
                     required
-                    className="w-[508px] p-2 rounded-md placeholder:pl-2 mt-5"
+                    className="w-[500px] p-2 rounded-md placeholder:pl-2 "
                   />
                 )}
-              </div>
-            </div>
-            <div>
-              <div className="w-[508px] mb-5">
-                <label className="label">
-                  <span className="label-text text-xl font-semibold">
-                    Ward number
-                  </span>
-                </label>
-                <select defaultValue="default"
-                  {...register('stsmanager', { required: true })}
-                  className="w-full py-2 rounded-md">
-                  <option disabled value="default">Select Sts Name</option>
-                  {
-                    availableStsManager?.map((stsManager, index) => {
-                      return (
-                        <option className="text-black" key={index} value={stsManager?._id}>
-                          {stsManager?.userName}</option>
-                      )
-                    })
-                  }
-
-                </select>
               </div>
             </div>
             <button

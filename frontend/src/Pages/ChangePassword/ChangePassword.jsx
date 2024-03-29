@@ -4,14 +4,20 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import useAuth from "../../Hooks/useAuth";
-
+import { loadCaptchaEnginge, LoadCanvasTemplate, validateCaptcha } from 'react-simple-captcha';
+import { useEffect, useState } from "react";
 
 const ChangePassword = () => {
     let navigate = useNavigate();
     let axiosPublic = useAxiosPublic();
-    let {user} = useAuth();
+    let { user } = useAuth();
+    const [disabled, setDisabled] = useState(true);
 
-    let ChangePassword = async(e) => {
+    useEffect(() => {
+        loadCaptchaEnginge(6);
+    }, [])
+
+    let ChangePassword = async (e) => {
         e.preventDefault();
         let oldPassword = e.target.old_password.value;
         let newPassword = e.target.new_password.value;
@@ -36,19 +42,32 @@ const ChangePassword = () => {
         console.log(res);
         if (res.data.result) {
             Swal.fire({
-                icon:'success',
+                icon: 'success',
                 title: res.data.message,
                 showConfirmButton: false,
                 timer: 1500
             });
             navigate('/profile');
-        }else{
+        } else {
             Swal.fire({
                 icon: 'error',
                 title: res.data.message,
                 showConfirmButton: false,
                 timer: 1500
             });
+        }
+    }
+
+    let handleCaptchaText = () => {
+        let captchaInput = document.getElementById("captchaInput");
+        let captchaValue = captchaInput.value;
+        if (validateCaptcha(captchaValue)) {
+            setDisabled(false);
+            captchaInput.value = "";
+        }
+        else {
+            setDisabled(true);
+            captchaInput.value = "";
         }
     }
     return (
@@ -85,7 +104,27 @@ const ChangePassword = () => {
                                 required />
                         </div>
 
-                        <button className="bg-green-800 text-white py-2 rounded-md w-full" type="submit">
+                        <div>
+                            <p className="text-left text-lg font-semibold">User Captcha</p>
+                            <div className="w-full"><LoadCanvasTemplate /></div>
+                            <div className="flex justify-center items-center gap-10">
+                                <input className="w-1/2 p-2 text-black rounded-lg my-1"
+                                    type="text"
+                                    id="captchaInput"
+                                    name="captcha"
+                                    placeholder="Type the text captcha"
+                                />
+                                <p
+                                    onClick={handleCaptchaText}
+                                    className="bg-blue-700 px-3 py-2 rounded-md cursor-pointer text-white">
+                                    Validate</p>
+                            </div>
+                        </div>
+                        <hr className="my-3" />
+
+                        <button
+                            disabled={disabled}
+                            className="bg-green-800 text-white py-2 rounded-md w-full disabled:bg-gray-700" type="submit">
                             Confirm</button>
                     </form>
 
