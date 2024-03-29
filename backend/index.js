@@ -171,7 +171,7 @@ async function run() {
         };
         if (user.role === "System Admin" || user.role === "unassigned") {
           const result = await usersCollection.insertOne(user);
-          console.log('Hitted System Admin and Unassigned');
+          console.log("Hitted System Admin and Unassigned");
           if (result.insertedId) {
             let config = {
               service: "gmail",
@@ -228,8 +228,11 @@ async function run() {
               });
           }
         } else {
-          console.log('Sts Manager and Land Manager');
-          const roleUpdate = await rolesCollection.updateOne(roleQuery, updatedRoleAllocation);
+          console.log("Sts Manager and Land Manager");
+          const roleUpdate = await rolesCollection.updateOne(
+            roleQuery,
+            updatedRoleAllocation
+          );
           console.log(roleUpdate);
           if (roleUpdate.modifiedCount > 0) {
             const result = await usersCollection.insertOne(user);
@@ -502,7 +505,11 @@ async function run() {
               password: information.newPassword,
             },
           };
-          const result = await usersCollection.updateOne(query, updatedPassword, options);
+          const result = await usersCollection.updateOne(
+            query,
+            updatedPassword,
+            options
+          );
           if (result.modifiedCount > 0) {
             res.json({
               result: true,
@@ -571,140 +578,6 @@ async function run() {
       const id = req.params.userId;
       const query = { _id: new ObjectId(id) };
       const userInfo = await usersCollection.findOne(query);
-
-      // role info
-      // const roleInfo = await rolesCollection.findOne({name:updatedRoleInfo.role})
-
-      // all sts collection
-      const allStsCollection = await stsCollection.find().toArray();
-
-      // all landfill collection
-      const allLandfillCollection = await landfillCollection.find().toArray();
-
-      // if place exist in the body
-      if (updatedRoleInfo.place) {
-        console.log("Place Hitted");
-        let placeQuery = { name: updatedRoleInfo.place };
-        let assignManager;
-
-        // manager info with manager name and email
-        const mangerInfo = {
-          managerName: userInfo.userName,
-          email: userInfo.email,
-        };
-
-        // set database
-        const assignManagerPlace = {
-          $push: {
-            manager: mangerInfo,
-          },
-        };
-
-        // if sts manager query
-        // todo
-        if (updatedRoleInfo.role == "Sts Manager") {
-          assignManager = await stsCollection.updateOne(
-            placeQuery,
-            assignManagerPlace
-          );
-        } else {
-          assignManager = await landfillCollection.updateOne(
-            placeQuery,
-            assignManagerPlace
-          );
-        }
-        if (assignManager.modifiedCount > 0) {
-          const updatedDoc = {
-            $set: {
-              assigned: true,
-              role: updatedRoleInfo.role,
-            },
-          };
-          const assignedConfirm = await usersCollection.updateOne(
-            query,
-            updatedDoc
-          );
-          if (assignedConfirm.modifiedCount > 0) {
-            res.json({
-              result: true,
-              message: "User Assigned Successfully",
-            });
-          }
-        }
-      } else {
-        let placeName = null;
-        let removeUser = null;
-        const mangerInfo = {
-          managerName: userInfo.name,
-          email: userInfo.email,
-        };
-
-        const updatedDoc = {
-          $set: {
-            role: updatedRoleInfo.role,
-          },
-        };
-
-        const result = await usersCollection.updateOne(query, updatedDoc);
-
-        if (result.modifiedCount > 0) {
-          if (userInfo.role == "Sts Manager") {
-            // check all sts to find the user and remove
-            for (let i = 0; i < allStsCollection.length; i++) {
-              const stsManagers = allStsCollection[i].manager;
-              for (let j = 0; j < stsManagers.length; j++) {
-                const stsManagerEmail = stsManagers[j].email;
-                if (stsManagerEmail == userInfo.email) {
-                  placeName = allStsCollection[i].name;
-                  break;
-                }
-              }
-              if (!placeName) break;
-            }
-
-            // update information
-            const removeUserInfo = {
-              $pull: {
-                manager: mangerInfo,
-                assigned: false,
-              },
-            };
-            removeUser = await stsCollection.updateOne(
-              { name: placeName },
-              removeUserInfo
-            );
-          } else if (userInfo.role == "Land Manager") {
-            // check all landfill to find the user and remove
-            for (let i = 0; i < allLandfillCollection.length; i++) {
-              const landfillManagers = allLandfillCollection[i].manager;
-              for (let j = 0; j < landfillManagers.length; j++) {
-                const landfillManagerEmail = landfillManagers[j].email;
-                if (landfillManagerEmail == userInfo.email) {
-                  placeName = allLandfillCollection[i].name;
-                  break;
-                }
-              }
-              if (!placeName) break;
-            }
-            const removeUserInfo = {
-              $pull: {
-                manager: mangerInfo,
-              },
-            };
-
-            removeUser = await landfillCollection.updateOne(
-              { name: placeName },
-              removeUserInfo
-            );
-          }
-          if (removeUser == null || removeUser.modifiedCount > 0) {
-            res.json({
-              result: true,
-              message: "Update User Role Successfully",
-            });
-          }
-        }
-      }
     });
 
     // =====================Create a Vehicle👇========================>
@@ -769,20 +642,23 @@ async function run() {
         return res.json({
           result: false,
           message: "Ward Number Already Exist",
-        })
+        });
       }
 
       stsInfo.manager = [];
-      stsInfo.manager.push(id)
+      stsInfo.manager.push(id);
       stsInfo.vehicles = [];
       const result = await stsCollection.insertOne(stsInfo);
       if (result.insertedId) {
         const updatedDoc = {
           $set: {
             assigned: true,
-          }
-        }
-        const updateUserInfo = await usersCollection.updateOne({ _id: new ObjectId(id) }, updatedDoc);
+          },
+        };
+        const updateUserInfo = await usersCollection.updateOne(
+          { _id: new ObjectId(id) },
+          updatedDoc
+        );
         if (updateUserInfo.modifiedCount > 0) {
           res.json({
             result: true,
@@ -845,7 +721,7 @@ async function run() {
           if (stsManagers[j] == getUserInfo._id) {
             return res.json({
               result: true,
-              data: allStsCollection[i]
+              data: allStsCollection[i],
             });
           }
         }
@@ -872,12 +748,14 @@ async function run() {
 
     app.get("/available-sts-manager", async (req, res) => {
       const allUsers = await usersCollection.find().toArray();
-      const availableSTSManager = allUsers.filter(user => user.assigned == false && user.role == 'Sts Manager');
+      const availableSTSManager = allUsers.filter(
+        (user) => user.assigned == false && user.role == "Sts Manager"
+      );
       res.json({
         result: true,
-        data: availableSTSManager
-      })
-    })
+        data: availableSTSManager,
+      });
+    });
 
     app.get("/available-landfill-manager", async (req, res) => {
       const allUsers = await usersCollection.find().toArray();
@@ -985,7 +863,11 @@ async function run() {
           division: updatedUserInfo.division,
         },
       };
-      const result = await usersCollection.updateOne(query, updatedDoc, options);
+      const result = await usersCollection.updateOne(
+        query,
+        updatedDoc,
+        options
+      );
       if (result.modifiedCount > 0) {
         res.json({
           result: true,
@@ -1007,38 +889,41 @@ async function run() {
       for (let i = 0; i < allVehicles.length; i++) {
         const vehicleNum = allVehicles[i].vehicleRegNum;
 
-        // truck fuel cost
-        const vehicleNumQuery = { vehicleNum: vehicleNum };
-
         const truckDumpingInfo = await truckDumpingCollection
-          .find(vehicleNumQuery, { date: currentDate })
+          .find({
+            $and: [
+              { vehicleNum: vehicleNum },
+              { date: currentDate }
+            ],
+          })
           .toArray();
+        
         const fuelCost = truckDumpingInfo.reduce(
           (accumulator, current) => accumulator + current.bill,
           0
         );
 
+        const totalWasteVolumeOfLandfill = truckDumpingInfo.reduce(
+          (accumulator, current) => accumulator + current.volumeWaste,
+          0
+        );
+
         const stsTruckInfo = await stsLeavingCollection
-          .find(vehicleNumQuery, { date: currentDate })
+          .find({
+            $and: [{ vehicleNum: vehicleNum }, { date: currentDate }],
+          })
           .toArray();
         const totalWasteVolume = stsTruckInfo.reduce(
           (accumulator, current) => accumulator + current.volumeWaste,
           0
         );
 
-        const landfillDumpingInfo = await truckDumpingCollection
-          .find(vehicleNumQuery, { date: currentDate })
-          .toArray();
-        const totalWasteVolumeOfLandfill = landfillDumpingInfo.reduce(
-          (accumulator, current) => accumulator + current.volumeWaste,
-          0
-        );
-
-        const totalTransportation = [...stsTruckInfo, ...landfillDumpingInfo];
+        const totalTransportation = [...stsTruckInfo, ...truckDumpingInfo];
         const nearestTime = findNearestTime(totalTransportation);
 
         const truckCostInfo = {
           vehicleNum: vehicleNum,
+          stsName: allVehicles[i].stsName,
           fuelCost: fuelCost,
           stsWasteWeight: totalWasteVolume,
           landfillWasteWeight: totalWasteVolumeOfLandfill,
