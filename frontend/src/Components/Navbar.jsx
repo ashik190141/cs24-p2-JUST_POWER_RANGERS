@@ -9,12 +9,17 @@ const Navbar = () => {
 
     let items = <>
         <li><NavLink to={'/'}>Home</NavLink></li>
-        <li><NavLink to={'/profile'}>Profile</NavLink></li>
+        {
+            user? <li><NavLink to={'/profile'}>Profile</NavLink></li> : <></>
+        }
         <li><NavLink to={'/about-us'}>About Us</NavLink></li>
-        <li><NavLink to={'/dashboard'}>Dashboard</NavLink></li>
+        <li><NavLink to={'/contact-us'}>Contact Us</NavLink></li>
+        {
+            user ? <li><NavLink to={'/dashboard'}>Dashboard</NavLink></li> : <></>
+        }
     </>
     return (
-        <div className="navbar bg-[#092111] text-white">
+        <div className="navbar bg-[#092111] text-white px-4">
             <div className="navbar-start">
                 <div className="dropdown">
                     <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -25,8 +30,8 @@ const Navbar = () => {
                     </ul>
                 </div>
                 <div className="flex justify-center items-center">
-                    <img className="w-12 h-12" src={img} alt="" />
-                    <a className="btn btn-ghost text-xl">Dust Master</a>
+                    <Link to={'/'}><img className="w-12 h-12 cursor-pointer" src={img} alt="" /></Link>
+                    <Link to={'/'} className="btn btn-ghost text-xl">Dust Master</Link>
                 </div>
             </div>
             <div className="navbar-center hidden lg:flex">

@@ -1,22 +1,14 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { FaEdit, FaEye, FaHeart, FaHome, FaPlaceOfWorship, FaTasks, FaTruck, FaUser, FaUsers} from 'react-icons/fa';
-import { GiLovers } from "react-icons/gi";
+import { FaDatabase, FaEdit, FaEye, FaHome, FaMale, FaPlaceOfWorship, FaTasks, FaTruck, FaUser, FaUsers } from 'react-icons/fa';
 import Navbar from '../../Components/Navbar';
 import Footer from '../../Components/Footer';
-// @ts-ignore
-import IsAdmin from '../../Hooks/IsAdmin';
-import IsStsManager from '../../Hooks/IsStsManager';
-import IsLandManager from '../../Hooks/IsLandManager';
+import Permission from '../../Hooks/Permission';
 
 
 
 const Dashboard = () => {
-    let [isAdmin] = IsAdmin();
-    let [isStsManager] = IsStsManager();
-    let [isLandManager] = IsLandManager();
-    // console.log(isAdmin);
-    // console.log(isStsManager);
-    console.log(isLandManager);
+
+    let [userRole] = Permission();
 
 
     return (
@@ -24,14 +16,14 @@ const Dashboard = () => {
             <Navbar></Navbar>
             <div className="max-w-full mx-auto flex">
                 <div className="w-64 h-screen bg-[#092111] text-white sticky top-0">
-                    <div className='text-center my-10'>
+                    <div className='text-center my-5'>
                         <h1 className='text-3xl font-bold'>Dust Master</h1>
                         <p className='text-xl'>Web App</p>
                     </div>
 
                     {
-                        isAdmin && <>
-                            <ul className='menu flex flex-col mt-10 px-6 space-y-3'>
+                        userRole === "System Admin" && <>
+                            <ul className='menu flex flex-col mt-8 px-6 space-y-3'>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
                                         to='admin-home' >
@@ -39,60 +31,51 @@ const Dashboard = () => {
                                 </li>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
-                                        to='auth/create' >
-                                        <FaUsers></FaUsers>Add New User</NavLink>
+                                        to='create-user' >
+                                        <FaMale></FaMale>Add New User</NavLink>
                                 </li>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
-                                        to='create-vehicle' >
+                                        to='create-role' >
+                                        <FaTasks />Add New Role</NavLink>
+                                </li>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='add-vehicle' >
                                         <FaTruck></FaTruck>Add Vehicle</NavLink>
                                 </li>
+
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
-                                        to='approve-premium' ><FaTasks />Add New Role</NavLink>
+                                        to='create-sts' >
+                                        <FaPlaceOfWorship></FaPlaceOfWorship>Add New STS</NavLink>
                                 </li>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
-                                        to='create-sts' ><FaPlaceOfWorship></FaPlaceOfWorship>Add New STS</NavLink>
+                                        to='create-landfill' >
+                                        <FaPlaceOfWorship></FaPlaceOfWorship>Add New Landfill</NavLink>
                                 </li>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
-                                        to='manage-user' ><FaUser></FaUser>Manage User</NavLink>
+                                        to='manage-user' >
+                                        <FaUsers></FaUsers>Manage User</NavLink>
                                 </li>
                             </ul>
                         </>
                     }
                     {
-                        isStsManager && <>
+                        userRole === "Sts Manager" && <>
                             <ul className='flex flex-col mt-10 px-6 space-y-3'>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
-                                        to='edit-biodata' >
-                                        <FaEdit></FaEdit> Edit Bio-Data</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='view-bio-data' >
-                                        <FaEye></FaEye> View Bio-Data</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='my-req-contacts' >
-                                        <FaUser></FaUser> My Req. Contacts</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='favorites' ><FaHeart></FaHeart> Favorites</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='got-married' ><GiLovers></GiLovers>Got Married</NavLink>
+                                        to='data-entry-sts-manager' >
+                                        <FaDatabase></FaDatabase>Data Entry</NavLink>
                                 </li>
                             </ul>
                         </>
                     }
                     {
-                        isLandManager && <>
+                        userRole === "Land Manager" && <>
                             <ul className='flex flex-col mt-10 px-6 space-y-3'>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
@@ -114,7 +97,7 @@ const Dashboard = () => {
                     }
 
                 </div>
-                <div className="flex-1 bg-gray-200 overflow-y-scroll">
+                <div className="flex-1 bg-gray-200">
                     <Outlet></Outlet>
                 </div>
 
