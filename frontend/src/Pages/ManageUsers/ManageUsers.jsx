@@ -10,7 +10,7 @@ const ManageUser = () => {
     let axiosPublic = useAxiosPublic();
     let navigate = useNavigate();
 
-    const { data: allUser = [], refetch } = useQuery({
+    const { data: allUser = [], isPending, refetch } = useQuery({
         queryKey: ['allUser'],
         queryFn: async () => {
             const res = await axiosPublic.get('/users');
@@ -57,44 +57,52 @@ const ManageUser = () => {
                 <title>Dust Master | Manage User</title>
             </Helmet>
             <SectionTitle title={"Manage Users"} subTitle={'User Update?'}></SectionTitle>
-            <div className="mt-10">
-                <table className="w-full min-w-max table-auto text-left">
-                    <thead>
-                        <tr className="">
-                            <th className="border-b border-blue-gray-100 bg-blue-gray-50">Index</th>
-                            <th className="border-b border-blue-gray-100 bg-blue-gray-50">User Name</th>
-                            <th className="border-b border-blue-gray-100 bg-blue-gray-50">User Email</th>
-                            <th className="border-b border-blue-gray-100 bg-blue-gray-50">Role</th>
-                            <th className="border-b border-blue-gray-100 bg-blue-gray-50">Details</th>
-                            <th className="border-b border-blue-gray-100 bg-blue-gray-50">Delete User</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            allUser?.map((item, index) => <tr key={item?._id}>
-                                <th className="p-4 border-b border-blue-gray-50">{index + 1}</th>
-                                <td className=" border-b border-blue-gray-50">
-                                    {item?.userName}
-                                </td>
-                                <td className="p-4 border-b border-blue-gray-50">
-                                    {item?.email}
-                                </td>
-                                <td className="p-4 border-b border-blue-gray-50">
-                                    {item?.role}
-                                </td>
-                                <td className="p-4 border-b border-blue-gray-50">
-                                    <button className="bg-green-600 text-white rounded-md px-4 py-2"
-                                        onClick={() => navigate(`/dashboard/users/${item?._id}`)}>
-                                        See Details</button>
-                                </td>
-                                <th className="p-4 border-b border-blue-gray-50">
-                                    <button className="bg-red-600 text-white rounded-md px-4 py-2"
-                                        onClick={() => HandleDeleteUser(item?._id)}>Delete User</button></th>
-                            </tr>
-                            )}
-                    </tbody>
-                </table>
-            </div>
+            {
+                isPending ? <>
+                    <div className="text-center h-screen">
+                        <span className="loading loading-spinner loading-lg"></span>
+                    </div>
+                </> : <>
+                    <div className="mt-10">
+                        <table className="w-full min-w-max table-auto text-left">
+                            <thead>
+                                <tr className="">
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Index</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">User Name</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">User Email</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Role</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Details</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Delete User</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    allUser?.map((item, index) => <tr key={item?._id}>
+                                        <th className="p-4 border-b border-blue-gray-50">{index + 1}</th>
+                                        <td className=" border-b border-blue-gray-50">
+                                            {item?.userName}
+                                        </td>
+                                        <td className="p-4 border-b border-blue-gray-50">
+                                            {item?.email}
+                                        </td>
+                                        <td className="p-4 border-b border-blue-gray-50">
+                                            {item?.role}
+                                        </td>
+                                        <td className="p-4 border-b border-blue-gray-50">
+                                            <button className="bg-green-600 text-white rounded-md px-4 py-2"
+                                                onClick={() => navigate(`/dashboard/users/${item?._id}`)}>
+                                                See Details</button>
+                                        </td>
+                                        <th className="p-4 border-b border-blue-gray-50">
+                                            <button className="bg-red-600 text-white rounded-md px-4 py-2"
+                                                onClick={() => HandleDeleteUser(item?._id)}>Delete User</button></th>
+                                    </tr>
+                                    )}
+                            </tbody>
+                        </table>
+                    </div>
+                </>
+            }
         </div>
     )
 }

@@ -27,7 +27,7 @@ const AddNewRole = () => {
             reset();
         } else {
             Swal.fire({
-                position: "top-middle",
+                position: "center",
                 icon: "error",
                 title: res.data.message,
                 showConfirmButton: false,
@@ -49,12 +49,17 @@ const AddNewRole = () => {
                                 <label className="label">
                                     <span className="label-text text-xl font-semibold">Role Name*</span>
                                 </label>
-                                <input
-                                    type="text"
-                                    placeholder="Enter a Role Name"
+                                <select
+                                    defaultValue="unassigned"
                                     {...register('roleName', { required: true })}
-
-                                    className="w-full p-2 rounded-md placeholder:pl-2" />
+                                    className="w-full py-2 rounded-md"
+                                >
+                                    <option disabled value="unassigned">Select User Role</option>
+                                    <option value="Sts Manager">Sts Manager</option>
+                                    <option value="Land Manager">Land Manager</option>
+                                    <option value="Truck Driver">Truck Driver</option>
+                                    <option value="Dust Collector">Dust Collector</option>
+                                </select>
                             </div>
                             <div className="flex-1">
                                 <label className="label">

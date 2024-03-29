@@ -21,6 +21,7 @@ import AboutUs from "../Pages/About-Us/AboutUs";
 import OtpConfirm from "../Pages/OtpConfirm/OtpConfirm";
 import ResetPassword from "../Pages/ResetPassword/ResetPassword";
 import UpdateProfile from "../Pages/UpdateProfile/UpdateProfile";
+import ChangePassword from "../Pages/ChangePassword/ChangePassword";
 
 const router = createBrowserRouter([
     {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
                 path: "/profile/update/:id",
                 element: <PrivateRoutes><UpdateProfile></UpdateProfile></PrivateRoutes>,
                 loader: ({params})=> fetch(`http://localhost:5000/users/${params.id}`)
+            },
+            {
+                path: "/profile/change-password",
+                element: <PrivateRoutes><ChangePassword></ChangePassword></PrivateRoutes>,
             },
             {
                 path: "/auth/login",

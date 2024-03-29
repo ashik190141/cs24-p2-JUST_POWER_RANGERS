@@ -25,220 +25,260 @@ const customStyles = {
 };
 
 import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
+import GetAvailableLandManager from "../../Hooks/GetAvailableLandManager";
 
 const AddNewLandFill = () => {
-    const { register, handleSubmit, reset } = useForm();
-    let axiosPublic = useAxiosPublic();
-    const [startValue, setStartValue] = useState('00:00');
-    const [endValue, setEndValue] = useState('00:00');
+  const { register, handleSubmit, reset } = useForm();
+  let axiosPublic = useAxiosPublic();
+  const [startValue, setStartValue] = useState('00:00');
+  const [endValue, setEndValue] = useState('00:00');
 
-    let subtitle;
-    const [modalIsOpen, setIsOpen] = useState(false);
+  let [availableLandManager] = GetAvailableLandManager();
+  console.log(availableLandManager)
 
-    function openModal() {
-      setIsOpen(true);
+  let subtitle;
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+    subtitle.style.color = "#f00";
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  const [clickedPosition, setClickedPosition] = useState(null);
+  const handleClick = (e) => {
+    setClickedPosition(e.latlng);
+    closeModal();
+  };
+
+  const onSubmit = async (data) => {
+    if (availableLandManager.length === 0) {
+      return Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Create a Landfill Manager First",
+        showConfirmButton: false,
+        timer: 2000
+      })
+
     }
 
-    function afterOpenModal() {
-      // references are now sync'd and can be accessed.
-      subtitle.style.color = "#f00";
-    }
-
-    function closeModal() {
-      setIsOpen(false);
-    }
-
-    const [clickedPosition, setClickedPosition] = useState(null);
-    const handleClick = (e) => {
-      setClickedPosition(e.latlng);
-      closeModal();
-      console.log(e);
+    const landFillInfo = {
+      name: data.landfillName,
+      capacity: parseInt(data.capacity),
+      lat: parseFloat(data.lat),
+      lng: parseFloat(data.lng),
+      startTime: startValue,
+      endTime: endValue,
+      id: data.LandManager
     };
-
-    const onSubmit = async (data) => {
-
-        const landFillInfo = {
-            name: data.landfillName,
-            capacity: parseInt(data.capacity),
-            lat: parseFloat(data.lat),
-            lng: parseFloat(data.lng),
-            startTime: startValue,
-            endTime: endValue,
-        };
-        let res = await axiosPublic.post('/create-landfill', landFillInfo);
-        if (res.data.result) {
-            Swal.fire({
-                position: "top-middle",
-                icon: "success",
-                title: res.data.message,
-                showConfirmButton: false,
-                timer: 2000
-            });
-            reset();
-        } else {
-            Swal.fire({
-                position: "top-middle",
-                icon: "error",
-                title: res.data.message,
-                showConfirmButton: false,
-                timer: 2000
-            });
-        }
+    let res = await axiosPublic.post('/create-landfill', landFillInfo);
+    if (res.data.result) {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: res.data.message,
+        showConfirmButton: false,
+        timer: 2000
+      });
+      reset();
+      setClickedPosition(null);
+      setStartValue('00:00');
+      setEndValue('00:00');
+    } else {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: res.data.message,
+        showConfirmButton: false,
+        timer: 2000
+      });
     }
-    return (
+  }
+  return (
+    <div>
+      <Helmet>
+        <title>Dust Master | Add Landfill</title>
+      </Helmet>
+      <SectionTitle
+        title={"Add New Landfill"}
+        subTitle={"More Waste?"}
+      ></SectionTitle>
       <div>
-        <Helmet>
-          <title>Dust Master | Add Landfill</title>
-        </Helmet>
-        <SectionTitle
-          title={"Add New Landfill"}
-          subTitle={"More Waste?"}
-        ></SectionTitle>
-        <div>
-          <div className="w-10/12 mx-auto my-10">
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="flex gap-10 my-8">
-                <div className="flex-1">
-                  <label className="label">
-                    <span className="label-text text-xl font-semibold">
-                      Landfill Name*
-                    </span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter Landfill Name"
-                    {...register("landfillName", { required: true })}
-                    className="w-full p-2 rounded-md placeholder:pl-2"
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="label">
-                    <span className="label-text text-xl font-semibold">
-                      Waste Capacity
-                    </span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter Waste Capacity"
-                    {...register("capacity", { required: true })}
-                    className="w-full p-2 rounded-md placeholder:pl-2"
-                  />
-                </div>
-              </div>
-              <div className="my-8">
+        <div className="w-10/12 mx-auto my-5">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex gap-10 my-5">
+              <div className="flex-1">
                 <label className="label">
                   <span className="label-text text-xl font-semibold">
-                    GPS Coordinates*
+                    Landfill Name*
                   </span>
                 </label>
-                {!clickedPosition && (
-                  <p
-                    onClick={openModal}
-                    className="btn w-[508px] p-2 rounded-md placeholder:pl-2"
-                  >
-                    Open Map
-                  </p>
-                )}
-                <div className="flex gap-5">
-                  <div className="flex-1">
-                    {clickedPosition && (
-                      <input
-                        type="text"
-                        placeholder="Enter Latitude"
-                        value={clickedPosition?.lat}
-                        {...register("lat", { required: true })}
-                        required
-                        className="w-[508px] p-2 rounded-md placeholder:pl-2"
-                      />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    {clickedPosition && (
-                      <input
-                        type="text"
-                        placeholder="Enter Longitude"
-                        value={clickedPosition?.lng}
-                        {...register("lng", { required: true })}
-                        required
-                        className="w-[508px] p-2 rounded-md placeholder:pl-2"
-                      />
-                    )}
-                  </div>
-                </div>
+                <input
+                  type="text"
+                  placeholder="Enter Landfill Name"
+                  {...register("landfillName", { required: true })}
+                  className="w-full p-2 rounded-md placeholder:pl-2"
+                />
               </div>
-              <div className="flex gap-10 my-8">
-                <div className="flex-1">
-                  <label className="label">
-                    <span className="label-text text-xl font-semibold">
-                      Landfill Start Time
-                    </span>
-                  </label>
-                  <div className="w-full">
-                    <TimePicker
-                      className={"w-1/2"}
-                      onChange={setStartValue}
-                      value={startValue}
-                    />
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <label className="label">
-                    <span className="label-text text-xl font-semibold">
-                      Landfill End Time
-                    </span>
-                  </label>
-                  <div className="w-full">
-                    <TimePicker
-                      className={"w-1/2"}
-                      onChange={setEndValue}
-                      value={endValue}
-                    />
-                  </div>
-                </div>
+              <div className="flex-1">
+                <label className="label">
+                  <span className="label-text text-xl font-semibold">
+                    Waste Capacity
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter Waste Capacity"
+                  {...register("capacity", { required: true })}
+                  className="w-full p-2 rounded-md placeholder:pl-2"
+                />
               </div>
-
-              <button
-                className="bg-green-800 px-4 py-2 rounded-md text-white"
-                type="submit"
-              >
-                Submit Now!
-              </button>
-            </form>
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto">
-          <Modal
-            isOpen={modalIsOpen}
-            onAfterOpen={afterOpenModal}
-            onRequestClose={closeModal}
-            style={customStyles}
-            contentLabel="Example Modal"
-          >
-            <div
-              className="pb-3"
-              style={{ display: "flex", justifyContent: "flex-end" }}
-            >
-              <button onClick={closeModal}>Close Map</button>
             </div>
-            <MapContainer
-              center={[23.7654, 90.3917]}
-              zoom={13}
-              scrollWheelZoom={false}
-              style={{ height: "70vh", width: "60vw", position: "relative" }}
-            >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <MapClickHandler onClick={handleClick} />
-              {clickedPosition && (
-                <PositionDisplay position={clickedPosition} />
+            <div>
+              <div className="w-[508px] mb-5">
+                <label className="label">
+                  <span className="label-text text-xl font-semibold">
+                    Available Landfill Manager
+                  </span>
+                </label>
+                <select defaultValue="default"
+                  {...register('LandManager', { required: true })}
+                  className="w-full py-2 rounded-md">
+                  <option disabled value="default">Select Manager Name</option>
+                  {
+                    availableLandManager?.map((landManager, index) => {
+                      return (
+                        <option className="text-black" key={index} value={landManager?._id}>
+                          {landManager?.userName}</option>
+                      )
+                    })
+                  }
+
+                </select>
+              </div>
+            </div>
+            <div className="my-5">
+              <label className="label">
+                <span className="label-text text-xl font-semibold">
+                  GPS Coordinates*
+                </span>
+              </label>
+              {!clickedPosition && (
+                <p
+                  onClick={openModal}
+                  className="btn w-[508px] p-2 rounded-md placeholder:pl-2"
+                >
+                  Open Map
+                </p>
               )}
-            </MapContainer>
-          </Modal>
+              <div className="flex gap-5">
+                <div className="flex-1">
+                  {clickedPosition && (
+                    <input
+                      type="text"
+                      placeholder="Enter Latitude"
+                      value={clickedPosition?.lat}
+                      {...register("lat", { required: true })}
+                      required
+                      className="w-[508px] p-2 rounded-md placeholder:pl-2"
+                    />
+                  )}
+                </div>
+                <div className="flex-1">
+                  {clickedPosition && (
+                    <input
+                      type="text"
+                      placeholder="Enter Longitude"
+                      value={clickedPosition?.lng}
+                      {...register("lng", { required: true })}
+                      required
+                      className="w-[508px] p-2 rounded-md placeholder:pl-2"
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-10 my-5">
+              <div className="flex-1">
+                <label className="label">
+                  <span className="label-text text-xl font-semibold">
+                    Landfill Start Time
+                  </span>
+                </label>
+                <div className="w-full">
+                  <TimePicker
+                    className={"w-1/2"}
+                    onChange={setStartValue}
+                    value={startValue}
+                  />
+                </div>
+              </div>
+              <div className="flex-1">
+                <label className="label">
+                  <span className="label-text text-xl font-semibold">
+                    Landfill End Time
+                  </span>
+                </label>
+                <div className="w-full">
+                  <TimePicker
+                    className={"w-1/2"}
+                    onChange={setEndValue}
+                    value={endValue}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <button
+              className="bg-green-800 px-4 py-2 rounded-md text-white"
+              type="submit"
+            >
+              Submit Now!
+            </button>
+          </form>
         </div>
       </div>
-    );
+      <div className="max-w-7xl mx-auto">
+        <Modal
+          isOpen={modalIsOpen}
+          onAfterOpen={afterOpenModal}
+          onRequestClose={closeModal}
+          style={customStyles}
+          contentLabel="Example Modal"
+        >
+          <div
+            className="pb-3"
+            style={{ display: "flex", justifyContent: "flex-end" }}
+          >
+            <button onClick={closeModal}>Close Map</button>
+          </div>
+          <MapContainer
+            center={[23.7654, 90.3917]}
+            zoom={13}
+            scrollWheelZoom={false}
+            style={{ height: "70vh", width: "60vw", position: "relative" }}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <MapClickHandler onClick={handleClick} />
+            {clickedPosition && (
+              <PositionDisplay position={clickedPosition} />
+            )}
+          </MapContainer>
+        </Modal>
+      </div>
+    </div>
+  );
 };
 
 const MapClickHandler = ({ onClick }) => {
