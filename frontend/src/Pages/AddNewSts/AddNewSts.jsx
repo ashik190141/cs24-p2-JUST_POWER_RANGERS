@@ -30,7 +30,6 @@ const AddNewSts = () => {
   const { register, handleSubmit, reset } = useForm();
   let axiosPublic = useAxiosPublic();
   let [availableStsManager] = GelAvailableStsManager();
-  console.log(availableStsManager);
 
   let subtitle;
   const [modalIsOpen, setIsOpen] = useState(false);

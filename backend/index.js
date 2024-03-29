@@ -173,7 +173,6 @@ async function run() {
         };
         if (user.role === 'System Admin' || user.role === 'unassigned') {
           const result = await usersCollection.insertOne(user);
-          console.log('Hitted System Admin and Unassigned');
           if (result.insertedId) {
             let config = {
               service: "gmail",
@@ -231,9 +230,7 @@ async function run() {
           }
 
         } else {
-          console.log('Sts Manager and Land Manager');
           const roleUpdate = await rolesCollection.updateOne(roleQuery, updatedRoleAllocation);
-          console.log(roleUpdate);
           if (roleUpdate.modifiedCount > 0) {
             const result = await usersCollection.insertOne(user);
             if (result.insertedId) {
@@ -293,8 +290,6 @@ async function run() {
             }
           }
         }
-
-
       }
     });
 
@@ -744,13 +739,28 @@ async function run() {
     //admin access
     app.post("/create-landfill", async (req, res) => {
       const landfillInfo = req.body;
+      const id = landfillInfo.id;
+
       landfillInfo.manager = [];
+      landfillInfo.manager.push(id);
+      delete landfillInfo.id;
       const result = await landfillCollection.insertOne(landfillInfo);
       if (result.insertedId) {
-        res.json({
-          result: true,
-          message: "Landfill Created Successfully",
-        });
+        const updatedDoc = {
+          $set: {
+            assigned: true,
+          },
+        };
+        const updateUserInfo = await usersCollection.updateOne(
+          { _id: new ObjectId(id) },
+          updatedDoc
+        );
+        if (updateUserInfo.modifiedCount > 0) {
+          res.json({
+            result: true,
+            message: "Landfill Added Successfully",
+          });
+        }
       }
     });
 
@@ -772,7 +782,8 @@ async function run() {
       }
 
       stsInfo.manager = [];
-      stsInfo.manager.push(id)
+      stsInfo.manager.push(id);
+      delete stsInfo.id;
       stsInfo.vehicles = [];
       const result = await stsCollection.insertOne(stsInfo);
       if (result.insertedId) {
@@ -841,7 +852,7 @@ async function run() {
     app.get("/available-landfill-manager", async (req, res) => {
       const allUsers = await usersCollection.find().toArray();
       const availableLandfillManager = allUsers.filter(
-        (user) => user.assigned == true && user.role == "Land Manager"
+        (user) => user.assigned == false && user.role == "Land Manager"
       );
       res.json({
         result: true,

@@ -4,18 +4,36 @@ import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import Swal from "sweetalert2";
 import SectionTitle from "../../Components/SectionTitle";
 import GetAllSts from "../../Hooks/GetAllSts";
+import { useState } from "react";
 
 const AddNewVehicle = () => {
     const { register, handleSubmit, reset } = useForm();
     let axiosPublic = useAxiosPublic();
     let [allStsCollection] = GetAllSts();
+    let [capacity, setCapacity] = useState(3);
+
+
+    let handleTruckChange = (event) => {
+        if (event.target.value === "Open Truck") {
+            setCapacity(3);
+        }
+        else if (event.target.value === "Dump Truck") {
+            setCapacity(5);
+        }
+        else if (event.target.value === "Compactor") {
+            setCapacity(7);
+        }
+        else if (event.target.value === "Container Carrier") {
+            setCapacity(15);
+        }
+    }
 
     const onSubmit = async (data) => {
 
         const vehicleInfo = {
             vehicleRegNum: data.vehicleRegNum,
             type: data.type,
-            capacity: parseInt(data.capacity),
+            capacity: parseInt(capacity),
             fualCostLoaded: parseInt(data.fualCostLoaded),
             fualCostUnloaded: parseInt(data.fualCostUnloaded),
             stsName: data.stsName
@@ -65,10 +83,13 @@ const AddNewVehicle = () => {
                                 <label className="label">
                                     <span className="label-text text-xl font-semibold">Truck Type*</span>
                                 </label>
-                                <select defaultValue="default"
+                                <select
+                                    defaultValue="default"
                                     {...register('type', { required: true })}
-                                    className="w-full py-2 rounded-md">
-                                    <option disabled value="default">Select Type</option>
+                                    onChange={handleTruckChange}
+                                    className="w-full py-2 rounded-md"
+                                >
+                                    <option disabled value="null">Select Type</option>
                                     <option value="Open Truck">Open Truck</option>
                                     <option value="Dump Truck">Dump Truck</option>
                                     <option value="Compactor">Compactor</option>
@@ -81,14 +102,11 @@ const AddNewVehicle = () => {
                                 <label className="label">
                                     <span className="label-text text-xl font-semibold">Truck Capacity*</span>
                                 </label>
-                                <select defaultValue="default"
-                                    {...register('capacity', { required: true })}
-                                    className="w-full py-2 rounded-md">
-                                    <option disabled value="default">Select Capacity</option>
-                                    <option value="3">3 Tones</option>
-                                    <option value="5">5 Tones</option>
-                                    <option value="7">7 Tones</option>
-                                </select>
+                                <input
+                                    type="text"
+                                    readOnly
+                                    value={capacity}
+                                    className="w-full p-2 rounded-md placeholder:pl-2" />
                             </div>
                             <div className="flex-1">
                                 <label className="label">
@@ -123,16 +141,16 @@ const AddNewVehicle = () => {
                                     className="w-full p-2 rounded-md placeholder:pl-2" />
                             </div>
                             <div className="flex-1">
-                            <label className="label">
-                                <span className="label-text text-xl font-semibold">Fual Cost (UnLoaded)*</span>
-                            </label>
-                            <input
-                                type="text"
-                                placeholder="Enter Fual Cost (UnLoaded)"
-                                {...register('fualCostUnloaded', { required: true })}
-                                required
-                                className="w-[508px] p-2 rounded-md placeholder:pl-2" />
-                        </div>
+                                <label className="label">
+                                    <span className="label-text text-xl font-semibold">Fual Cost (UnLoaded)*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter Fual Cost (UnLoaded)"
+                                    {...register('fualCostUnloaded', { required: true })}
+                                    required
+                                    className="w-[508px] p-2 rounded-md placeholder:pl-2" />
+                            </div>
                         </div>
 
 
