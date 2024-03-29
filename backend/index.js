@@ -903,28 +903,30 @@ async function run() {
     //landfill manager
     app.post("/create-truck-dumping", async (req, res) => {
       const truckDumpingInfo = req.body;
+      console.log(truckDumpingInfo)
 
       const allTrackDumpingInfo = await truckDumpingCollection.find().toArray();
-      const checkingDate = allTrackDumpingInfo.filter(truck => truck.vehicleNum == truckDumpingInfo.vehicleNum && truck.date == currentDate);
+      const checkingDate = allTrackDumpingInfo.filter(truck => truck.vehicleRegNum == truckDumpingInfo.vehicleRegNum && truck?.date == currentDate);
 
       if (checkingDate.length < 3) {
 
-        const vehicleQuery = { vehicleRegNum: truckDumpingInfo.vehicleNum };
+        const vehicleQuery = { vehicleRegNum: truckDumpingInfo.vehicleRegNum };
         const truckInfo = await vehiclesCollection.findOne(vehicleQuery);
 
         const stsQuery = { name: truckDumpingInfo.stsName };
         const stsInfo = await stsCollection.findOne(stsQuery);
+        console.log(stsInfo);
 
-        const landfillQuery = { landfillSite: truckDumpingInfo.landfillName };
+        const landfillQuery = { name: truckDumpingInfo.landName };
         const landfillInfo = await landfillCollection.findOne(landfillQuery);
 
-        const distanceFromStsToLandfill = distance(stsInfo.lat, stsInfo.lon, landfillInfo.lat, landfillInfo.lon);
+        const distanceFromStsToLandfill = distance(stsInfo.lat, stsInfo.lng, landfillInfo.lat, landfillInfo.lng);
         let cost = 0;
 
-        if (truckDumpingInfo.volumeWaste < truckInfo.capacity) {
+        if (truckDumpingInfo.waste < truckInfo.capacity) {
           cost =
-            truckInfo.fualCostUnloaded +
-            (truckDumpingInfo.volumeWaste / truckInfo.capacity) *
+            truckInfo.fualCostUnloaded            +
+            (truckDumpingInfo.waste / truckInfo.capacity) *
             (truckInfo.fualCostLoaded - truckInfo.fualCostUnloaded);
         } else {
           cost = truckInfo.fualCostLoaded;
@@ -957,7 +959,20 @@ async function run() {
       }
     });
 
-    // =======================Get A Profile👇==========================>
+    // ===================Get all vehicle of a sts👇==================>
+
+    // =======================Get A Profile👇=========================>
+    app.get("/sts-vehicles/:id", async (req, res) => {
+      const wardNumber = req.params.id;
+      const query = { wardNumber: wardNumber };
+      const sts = await stsCollection.findOne(query);
+      res.json({
+        result: true,
+        data:sts.vehicles
+      })
+    });
+
+    
     //profile management endpoints
     app.get("/profile", async (req, res) => {
       const email = req.query.email;
@@ -966,7 +981,7 @@ async function run() {
       res.send(result);
     });
 
-    // =====================Update User Profile👇======================>
+    // =====================Update User Profile👇=====================>
     //update login user info
     app.put("/profile", async (req, res) => {
       const email = req.query.email;
@@ -1108,7 +1123,7 @@ async function run() {
           if (land == id) {
             landfill = allLandfillCollection[i];
             break;
-          } 
+          }
           if (!landfill) break;
         }
       }

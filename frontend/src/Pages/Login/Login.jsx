@@ -41,7 +41,7 @@ const Login = () => {
                 setUser(user);
                 localStorage.setItem("user", JSON.stringify(user));
                 Swal.fire({
-                    position: "top-middle",
+                    position: "center",
                     icon: "success",
                     title: res.data.message,
                     showConfirmButton: false,
