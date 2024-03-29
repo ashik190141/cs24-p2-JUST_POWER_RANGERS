@@ -34,7 +34,6 @@ const AddNewLandFill = () => {
   const [endValue, setEndValue] = useState('00:00');
 
   let [availableLandManager] = GetAvailableLandManager();
-  console.log(availableLandManager)
 
   let subtitle;
   const [modalIsOpen, setIsOpen] = useState(false);

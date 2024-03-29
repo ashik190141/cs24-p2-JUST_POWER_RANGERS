@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { FaDatabase, FaEdit, FaEye, FaHome, FaMale, FaPlaceOfWorship, FaTasks, FaTruck, FaUser, FaUsers } from 'react-icons/fa';
+import { FaDatabase, FaEdit, FaHome, FaMale, FaPlaceOfWorship, FaTasks, FaTruck, FaUsers } from 'react-icons/fa';
 import Navbar from '../../Components/Navbar';
 import Footer from '../../Components/Footer';
 import Permission from '../../Hooks/Permission';
@@ -7,9 +7,7 @@ import Permission from '../../Hooks/Permission';
 
 
 const Dashboard = () => {
-
     let [userRole] = Permission();
-
 
     return (
         <div className='max-w-screen-2xl mx-auto min-h-screen sm:px-4 md:px-0 bg-white'>
@@ -79,18 +77,8 @@ const Dashboard = () => {
                             <ul className='flex flex-col mt-10 px-6 space-y-3'>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
-                                        to='edit-biodata' >
-                                        <FaEdit></FaEdit> Land Manager</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='view-bio-data' >
-                                        <FaEye></FaEye> Truct Data</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='my-req-contacts' >
-                                        <FaUser></FaUser> Land Data</NavLink>
+                                        to='land-data-entry' >
+                                        <FaEdit></FaEdit>Land Data Entry</NavLink>
                                 </li>
                             </ul>
                         </>

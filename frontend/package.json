@@ -28,7 +28,8 @@
     "react-simple-captcha": "^9.3.1",
     "react-time-picker": "^6.6.0",
     "sort-by": "^1.2.0",
-    "sweetalert2": "^11.10.7"
+    "sweetalert2": "^11.10.7",
+    "swiper": "^11.1.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

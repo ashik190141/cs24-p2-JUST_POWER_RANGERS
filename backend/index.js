@@ -583,14 +583,14 @@ async function run() {
 
       // if place exist in the body
       if (updatedRoleInfo.place) {
-        let placeQuery = { name : updatedRoleInfo.place };
+        let placeQuery = { name: updatedRoleInfo.place };
         let assignManager;
-        
+
         // manager info with manager name and email
         const mangerInfo = {
           id: userInfo._id
         }
-        
+
         // set database
         const assignManagerPlace = {
           $push: {
@@ -666,11 +666,11 @@ async function run() {
           }
         }
 
-        
+
       } else {
 
         let placeName = null;
-        let removeUser=null;
+        let removeUser = null;
         const mangerInfo = {
           managerName: userInfo.name,
           email: userInfo.email
@@ -687,9 +687,9 @@ async function run() {
         if (result.modifiedCount > 0) {
           if (userInfo.assigned && userInfo.role == 'Sts Manager') {
             // check all sts to find the user and remove 
-            for (let i = 0; i < allStsCollection.length; i++){
+            for (let i = 0; i < allStsCollection.length; i++) {
               const stsManagers = allStsCollection[i].manager;
-              for (let j = 0; j < stsManagers.length; j++){
+              for (let j = 0; j < stsManagers.length; j++) {
                 const stsManagerEmail = stsManagers[j].email;
                 if (stsManagerEmail == userInfo.email) {
                   placeName = allStsCollection[i].name;
@@ -698,15 +698,15 @@ async function run() {
               }
               if (!placeName) break;
             }
-            
+
             // update information
             const removeUserInfo = {
               $pull: {
                 manager: mangerInfo,
-                assigned:false
+                assigned: false
               },
             };
-            removeUser = await stsCollection.updateOne({name:placeName}, removeUserInfo);
+            removeUser = await stsCollection.updateOne({ name: placeName }, removeUserInfo);
 
           } else if (userInfo.assigned && userInfo.role == "Land Manager") {
             // check all landfill to find the user and remove
@@ -726,10 +726,10 @@ async function run() {
                 manager: mangerInfo
               },
             };
-            removeUser = await landfillCollection.updateOne({name:placeName}, removeUserInfo);
+            removeUser = await landfillCollection.updateOne({ name: placeName }, removeUserInfo);
 
           }
-          if (removeUser.modifiedCount > 0 || removeUser==null) {
+          if (removeUser.modifiedCount > 0 || removeUser == null) {
             res.json({
               result: true,
               message: "Update User Role Successfully",
@@ -1042,9 +1042,9 @@ async function run() {
     // role
     app.post("/rbac/roles", async (req, res) => {
       const defineRoleBody = req.body;
-      let query = {roleName: defineRoleBody.roleName};
+      let query = { roleName: defineRoleBody.roleName };
       let exist = await rolesCollection.findOne(query);
-      if(exist){
+      if (exist) {
         return res.json({
           result: false,
           message: `Role ${defineRoleBody.roleName} already exist`
@@ -1091,6 +1091,40 @@ async function run() {
         });
       }
     });
+
+    // =====================Check Landfill Manager's Landfill👇======================>
+    app.get("/landfill-manager/:email", async (req, res) => {
+      const email = req.params.email;
+      const userInfo = await usersCollection.findOne({ email: email });
+      const id = userInfo._id.toString();
+
+      const allLandfillCollection = await landfillCollection.find().toArray();
+
+      let landfill = null;
+      for (let i = 0; i < allLandfillCollection.length; i++) {
+        const landfillManagers = allLandfillCollection[i].manager;
+        for (let j = 0; j < landfillManagers.length; j++) {
+          let land = landfillManagers[j];
+          if (land == id) {
+            landfill = allLandfillCollection[i];
+            break;
+          } 
+          if (!landfill) break;
+        }
+      }
+
+      if (landfill) {
+        res.json({
+          result: true,
+          message: landfill
+        })
+      } else {
+        res.json({
+          result: false,
+          message: landfill,
+        });
+      }
+    })
 
     await client.db("admin").command({ ping: 1 });
     console.log(
