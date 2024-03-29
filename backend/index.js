@@ -149,7 +149,7 @@ async function run() {
     app.post("/users", verifyToken, verifyAdmin, async (req, res) => {
       const user = req.body;
       console.log(user);
-      const roleQuery = { name: user.role };
+      const roleQuery = { roleName: user.role };
 
       const plainPassword = user.password;
       const userEmail = { email: user.email };
@@ -173,6 +173,7 @@ async function run() {
         };
         if (user.role === 'System Admin' || user.role === 'unassigned') {
           const result = await usersCollection.insertOne(user);
+          console.log('Hitted System Admin and Unassigned');
           if (result.insertedId) {
             let config = {
               service: "gmail",
@@ -230,7 +231,9 @@ async function run() {
           }
 
         } else {
+          console.log('Sts Manager and Land Manager');
           const roleUpdate = await rolesCollection.updateOne(roleQuery, updatedRoleAllocation);
+          console.log(roleUpdate);
           if (roleUpdate.modifiedCount > 0) {
             const result = await usersCollection.insertOne(user);
             if (result.insertedId) {
@@ -485,15 +488,15 @@ async function run() {
     })
 
     // =====================Change PassWord👇==========================>
+    //Completed successfully
     app.put("/auth/change-password", async (req, res) => {
       const information = req.body;
-      console.log(information);
       const query = { email: information.email };
       const findUser = await usersCollection.findOne(query);
 
       if (findUser) {
         const isMatch = await bcrypt.compare(
-          information.currentPassword,
+          information.oldPassword,
           findUser.password
         );
         if (isMatch) {
@@ -508,11 +511,7 @@ async function run() {
               password: information.newPassword,
             },
           };
-          const result = await usersCollection.updateOne(
-            query,
-            updatedPassword,
-            options
-          );
+          const result = await usersCollection.updateOne(query, updatedPassword, options);
           if (result.modifiedCount > 0) {
             res.json({
               result: true,
@@ -531,7 +530,6 @@ async function run() {
         return res.json({ message: `${information.email} Do Not Valid Email` });
       }
     });
-
 
 
     // =====================Get All User👇=============================>
@@ -760,14 +758,36 @@ async function run() {
     // admin access
     app.post("/create-sts", async (req, res) => {
       const stsInfo = req.body;
+      const id = stsInfo.id;
+
+      const exist = await stsCollection.findOne({
+        wardNumber: stsInfo.wardNumber,
+      });
+
+      if (exist) {
+        return res.json({
+          result: false,
+          message: "Ward Number Already Exist",
+        })
+      }
+
       stsInfo.manager = [];
+      stsInfo.manager.push(id)
       stsInfo.vehicles = [];
       const result = await stsCollection.insertOne(stsInfo);
       if (result.insertedId) {
-        res.json({
-          result: true,
-          message: "STS Added Successfully",
-        });
+        const updatedDoc = {
+          $set: {
+            assigned: true,
+          }
+        }
+        const updateUserInfo = await usersCollection.updateOne({ _id: new ObjectId(id) }, updatedDoc);
+        if (updateUserInfo.modifiedCount > 0) {
+          res.json({
+            result: true,
+            message: "STS Added Successfully",
+          });
+        }
       }
     });
 
@@ -807,6 +827,26 @@ async function run() {
     app.get('/get-all-vehicle', async (req, res) => {
       const result = await vehiclesCollection.find().toArray();
       res.send(result);
+    });
+
+    app.get("/available-sts-manager", async (req, res) => {
+      const allUsers = await usersCollection.find().toArray();
+      const availableSTSManager = allUsers.filter(user => user.assigned == false && user.role == 'Sts Manager');
+      res.json({
+        result: true,
+        data: availableSTSManager
+      })
+    })
+
+    app.get("/available-landfill-manager", async (req, res) => {
+      const allUsers = await usersCollection.find().toArray();
+      const availableLandfillManager = allUsers.filter(
+        (user) => user.assigned == true && user.role == "Land Manager"
+      );
+      res.json({
+        result: true,
+        data: availableLandfillManager,
+      });
     });
 
     // =======================Get The Bill👇==========================>
@@ -896,13 +936,13 @@ async function run() {
           division: updatedUserInfo.division,
         },
       };
-      const result = await usersCollection.updateOne(query,updatedDoc, options );
+      const result = await usersCollection.updateOne(query, updatedDoc, options);
       if (result.modifiedCount > 0) {
         res.json({
           result: true,
           message: "Update User Successfully",
         });
-      }else{
+      } else {
         res.json({
           result: false,
           message: "Update User Failed",
