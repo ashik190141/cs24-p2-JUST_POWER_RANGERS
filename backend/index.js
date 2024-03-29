@@ -826,7 +826,26 @@ async function run() {
             return res.json({
               result: true,
               data: allStsCollection[i].wardNumber,
-              vehicles :allStsCollection[i].vehicles
+              vehicles: allStsCollection[i].vehicles,
+            });
+          }
+        }
+      }
+    });
+
+    app.get("/sts-info/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const getUserInfo = await usersCollection.findOne(query);
+
+      const allStsCollection = await stsCollection.find().toArray();
+      for (let i = 0; i < allStsCollection.length; i++) {
+        const stsManagers = allStsCollection[i].manager;
+        for (let j = 0; j < stsManagers.length; j++) {
+          if (stsManagers[j] == getUserInfo._id) {
+            return res.json({
+              result: true,
+              data: allStsCollection[i]
             });
           }
         }
