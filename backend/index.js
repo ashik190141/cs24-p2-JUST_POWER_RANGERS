@@ -796,6 +796,7 @@ async function run() {
     //sts manager
     app.post("/create-entry-vehicles-leaving", async (req, res) => {
       const stsVehicleLeavingInfo = req.body;
+      stsVehicleLeavingInfo.date = currentDate;
       const result = await stsLeavingCollection.insertOne(
         stsVehicleLeavingInfo
       );
@@ -809,6 +810,26 @@ async function run() {
           result: false,
           message: "Data Enrty Error",
         });
+      }
+    });
+
+    app.get("/stsid/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const getUserInfo = await usersCollection.findOne(query);
+
+      const allStsCollection = await stsCollection.find().toArray();
+      for (let i = 0; i < allStsCollection.length; i++) {
+        const stsManagers = allStsCollection[i].manager;
+        for (let j = 0; j < stsManagers.length; j++) {
+          if (stsManagers[j] == getUserInfo._id) {
+            return res.json({
+              result: true,
+              data: allStsCollection[i].wardNumber,
+              vehicles :allStsCollection[i].vehicles
+            });
+          }
+        }
       }
     });
 
