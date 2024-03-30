@@ -664,70 +664,176 @@ async function run() {
       } else {
         let flag = 0;
         if (userInfo.role == 'Land Manager' && updatedRoleInfo.role == 'Sts Manager') {
+          let NewLandManager = [];
+          let newLand;
           for (let i = 0; i < allLandfill.length; i++) {
             const managers = allLandfill[i].manager;
             for (let j = 0; j < managers.length; j++) {
               if (managers[j] == id) {
-                allLandfill[i].manager.slice(j, j);
+                NewLandManager = allLandfill[i].manager?.filter(mId => mId !== id);
+                allLandfill[i].manager = NewLandManager;
+                newLand = allLandfill[i];
                 flag = 1;
                 break
               }
             }
             if (flag) break;
           }
-          for (let i = 0; i < allSts.length; i++) {
-            if (allSts[i].name == updatedRoleInfo.place) {
-              allSts[i].manager.push(managerInfo);
-            }
-          }
-          const updatedRole = {
+          const UpdatedDocument = {
             $set: {
-              role: updatedRoleInfo.role
+              manager: newLand.manager
             }
           }
-          const updateRoleIntoDB = await usersCollection.updateOne(query, updatedRole);
-          if (updateRoleIntoDB.modifiedCount > 0) {
-            assignedFlag = 1;
+          let LandQuery = { name: newLand.name };
+          let removed = await landfillCollection.updateOne(LandQuery, UpdatedDocument);
+          console.log(removed);
+          let newSts;
+          if (removed.modifiedCount > 0) {
+            for (let i = 0; i < allSts.length; i++) {
+              if (allSts[i].name == updatedRoleInfo.place) {
+                allSts[i].manager.push(managerInfo);
+                newSts = allSts[i];
+              }
+            }
+            let updateStsManager = {
+              $set: {
+                manager: newSts.manager
+              }
+            }
+            let addtoSts = await stsCollection.updateOne(placeQuery, updateStsManager);
+            if (addtoSts.modifiedCount > 0) {
+              const updatedRole = {
+                $set: {
+                  role: updatedRoleInfo.role
+                }
+              }
+              const updateRoleIntoDB = await usersCollection.updateOne(query, updatedRole);
+              if (updateRoleIntoDB.modifiedCount > 0) {
+                assignedFlag = 1;
+              }
+            }
           }
         } else if (userInfo.role == 'Sts Manager' && updatedRoleInfo.role == 'Land Manager') {
+          let newStsManager = [];
+          let newSts;
           for (let i = 0; i < allSts.length; i++) {
             const managers = allSts[i].manager;
             for (let j = 0; j < managers.length; j++) {
               if (managers[j] == id) {
-                console.log("Manager Id", managers[j]);
-                console.log("User Id", id);
-                allSts[i].manager.slice(j, j);
-                console.log(allSts[i].manager);
+                newStsManager = allSts[i].manager?.filter(mId => mId !== id);
+                allSts[i].manager = newStsManager;
+                newSts = allSts[i];
+                flag = 1;
+                break;
+              }
+            }
+            if (flag) break;
+          }
+          const UpdatedDocument = {
+            $set: {
+              manager: newSts.manager
+            }
+          }
+          let LandQuery = { name: newSts.name };
+          let removed = await stsCollection.updateOne(LandQuery, UpdatedDocument);
+
+          if (removed.modifiedCount > 0) {
+            let newLandfill;
+            for (let i = 0; i < allLandfill.length; i++) {
+              if (allLandfill[i].name == updatedRoleInfo.place) {
+                allLandfill[i].manager.push(managerInfo)
+                newLandfill = allLandfill[i];
+                break;
+              }
+            }
+            let updateStsManager = {
+              $set: {
+                manager: newLandfill.manager
+              }
+            }
+            let addtoLand = await landfillCollection.updateOne(placeQuery, updateStsManager);
+            if (addtoLand.modifiedCount > 0) {
+              const updatedRole = {
+                $set: {
+                  role: updatedRoleInfo.role
+                }
+              }
+              const updateRoleIntoDB = await usersCollection.updateOne(query, updatedRole);
+              if (updateRoleIntoDB.modifiedCount > 0) {
+                assignedFlag = 1;
+              }
+            }
+          }
+
+        } else if ((userInfo.role == 'Sts Manager') && (updatedRoleInfo.role != 'Sts Manager' && updatedRoleInfo.role != 'Land Manager')) {
+          let newStsManager = [];
+          let newSts;
+          for (let i = 0; i < allSts.length; i++) {
+            const managers = allSts[i].manager;
+            for (let j = 0; j < managers.length; j++) {
+              if (managers[j] == id) {
+                newStsManager = allSts[i].manager?.filter(mId => mId !== id);
+                allSts[i].manager = newStsManager;
+                newSts = allSts[i];
                 flag = 1;
                 break
               }
             }
             if (flag) break;
           }
+          const UpdatedDocument = {
+            $set: {
+              manager: newSts.manager
+            }
+          }
+          let StsQuery = { name: newSts.name };
+          let removed = await stsCollection.updateOne(StsQuery, UpdatedDocument);
+          if (removed.modifiedCount > 0) {
+            const updatedRole = {
+              $set: {
+                assigned: false,
+                role: updatedRoleInfo.role
+              }
+            }
+            const updateRoleIntoDB = await usersCollection.updateOne(query, updatedRole);
+            if (updateRoleIntoDB.modifiedCount > 0) {
+              assignedFlag = 1;
+            }
+          }
+        } else if ((userInfo.role == 'Land Manager') && (updatedRoleInfo.role != 'Sts Manager' && updatedRoleInfo.role != 'Land Manager')) {
+          let newLandManager = [];
+          let newLand;
           for (let i = 0; i < allLandfill.length; i++) {
-            if (allLandfill[i].name == updatedRoleInfo.place) {
-              allLandfill[i].manager.push(managerInfo);
+            const managers = allLandfill[i].manager;
+            for (let j = 0; j < managers.length; j++) {
+              if (managers[j] == id) {
+                newLandManager = allLandfill[i].manager?.filter(mId => mId !== id);
+                allLandfill[i].manager = newLandManager;
+                newLand = allLandfill[i];
+                flag = 1;
+                break
+              }
             }
+            if (flag) break;
           }
-          const updatedRole = {
+          const UpdatedDocument = {
             $set: {
-              role: updatedRoleInfo.role
+              manager: newLand.manager
             }
           }
-          const updateRoleIntoDB = await usersCollection.updateOne(query, updatedRole);
-          if (updateRoleIntoDB.modifiedCount > 0) {
-            assignedFlag = 1;
-          }
-        } else if ((userInfo.role == 'Sts Manager') && (updatedRoleInfo.role != 'Sts Manager' && updatedRoleInfo.role != 'Land Manager')) {
-          const updatedRole = {
-            $set: {
-              assigned: false,
-              role: updatedRoleInfo.role
+          let landQuery = { name: newLand.name };
+          let removed = await landfillCollection.updateOne(landQuery, UpdatedDocument);
+          if (removed.modifiedCount > 0) {
+            const updatedRole = {
+              $set: {
+                assigned: false,
+                role: updatedRoleInfo.role
+              }
             }
-          }
-          const updateRoleIntoDB = await usersCollection.updateOne(query, updatedRole);
-          if (updateRoleIntoDB.modifiedCount > 0) {
-            assignedFlag = 1;
+            const updateRoleIntoDB = await usersCollection.updateOne(query, updatedRole);
+            if (updateRoleIntoDB.modifiedCount > 0) {
+              assignedFlag = 1;
+            }
           }
         }
         if (assignedFlag) {
@@ -990,9 +1096,10 @@ async function run() {
 
     // =====================Update User Profile👇=====================>
     //update login user info
-    app.put("/profile", async (req, res) => {
-      const email = req.query.email;
-      const query = { email: email };
+    app.put("/users/:userId", async (req, res) => {
+      const id = req.params.userId;
+      console.log(id);
+      const query = { _id: new ObjectId(id) };
       const updatedUserInfo = req.body;
       const options = { upsert: true };
       const updatedDoc = {
@@ -1022,43 +1129,6 @@ async function run() {
       }
     });
 
-    // =====================Calculate Fuel Cost👇======================>
-    //Dashboard Monitoring
-    app.get("/dashboard", async (req, res) => {
-      const allVehicles = await vehiclesCollection.find().toArray();
-      let result = [];
-      for (let i = 0; i < allVehicles.length; i++) {
-        const vehicleNum = allVehicles[i].vehicleRegNum;
-
-        // truck fuel cost
-        const vehicleNumQuery = { vehicleNum: vehicleNum };
-
-        const truckDumpingInfo = await truckDumpingCollection.find(vehicleNumQuery, { date: currentDate }).toArray();
-        const fuelCost = truckDumpingInfo.reduce((accumulator, current) => accumulator + current.bill, 0);
-
-        const stsTruckInfo = await stsLeavingCollection.find(vehicleNumQuery, { date: currentDate }).toArray();
-        const totalWasteVolume = stsTruckInfo.reduce((accumulator, current) => accumulator + current.volumeWaste, 0);
-
-        const landfillDumpingInfo = await truckDumpingCollection.find(vehicleNumQuery, { date: currentDate }).toArray();
-        const totalWasteVolumeOfLandfill = landfillDumpingInfo.reduce(
-          (accumulator, current) => accumulator + current.volumeWaste,
-          0
-        );
-
-        const totalTransportation = [...stsTruckInfo, ...landfillDumpingInfo]
-        const nearestTime = findNearestTime(totalTransportation);
-
-        const truckCostInfo = {
-          vehicleNum: vehicleNum,
-          fuelCost: fuelCost,
-          stsWasteWeight: totalWasteVolume,
-          landfillWasteWeight: totalWasteVolumeOfLandfill,
-          transportation: nearestTime,
-        };
-        result.push(truckCostInfo)
-      }
-      res.send(result);
-    });
 
     // ==================Create a Role with Role Id👇===================>
     // role
@@ -1172,6 +1242,69 @@ async function run() {
           }
         }
       }
+    });
+
+    // =====================Admin Real Time Monitoring👇======================>
+    //Dashboard Monitoring
+    app.get("/dashboard", async (req, res) => {
+      const allVehicles = await vehiclesCollection.find().toArray();
+      let result = [];
+      for (let i = 0; i < allVehicles.length; i++) {
+        const vehicleNum = allVehicles[i].vehicleRegNum;
+
+        const truckDumpingInfo = await truckDumpingCollection
+          .find({
+            $and: [
+              { vehicleRegNum: vehicleNum },
+              { date: currentDate }
+            ],
+          })
+          .toArray();
+
+        const fuelCost = truckDumpingInfo.reduce(
+          (accumulator, current) => accumulator + current.bill,
+          0
+        );
+
+        const totalWasteVolumeOfLandfill = truckDumpingInfo.reduce(
+          (accumulator, current) => accumulator + current.waste,
+          0
+        );
+
+        const stsTruckInfo = await stsLeavingCollection
+          .find({
+            $and: [{ vehicleNum: vehicleNum }, { date: currentDate }],
+          })
+          .toArray();
+        const totalWasteVolume = stsTruckInfo.reduce(
+          (accumulator, current) => accumulator + current.volumeWaste,
+          0
+        );
+
+        const totalTransportation = [...stsTruckInfo, ...truckDumpingInfo];
+        const nearestTime = findNearestTime(totalTransportation);
+
+        let lastLocation;
+        if (nearestTime?.hasOwnProperty('stsId')) {
+          lastLocation = `${nearestTime?.stsName} STS`;
+        } else if (nearestTime?.hasOwnProperty("landName")) {
+          lastLocation = `${nearestTime?.landName} Landfill`;
+        }
+
+        const truckCostInfo = {
+          vehicleNum: vehicleNum,
+          stsName: allVehicles[i].stsName,
+          fuelCost: fuelCost,
+          stsWasteWeight: totalWasteVolume,
+          landfillWasteWeight: totalWasteVolumeOfLandfill,
+          landLocation: lastLocation || "Can Not Enter Any Landfill or STS",
+          arrival: nearestTime?.arrival || "Can Not Enter Any Landfill or STS",
+          departure:
+            nearestTime?.departure || "Can Not Enter Any Landfill or STS",
+        };
+        result.push(truckCostInfo);
+      }
+      res.send(result);
     });
 
     await client.db("admin").command({ ping: 1 });

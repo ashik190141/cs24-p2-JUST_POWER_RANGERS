@@ -7,8 +7,8 @@ import Swal from "sweetalert2";
 
 
 const UpdateProfile = () => {
-    let data = useLoaderData();
-    console.log(data);
+    let userDetails = useLoaderData();
+    console.log(userDetails);
 
     const { register, handleSubmit, reset } = useForm();
     let axiosPublic = useAxiosPublic();
@@ -27,7 +27,7 @@ const UpdateProfile = () => {
             division: data.division,
         };
         console.log(updatedInfo);
-        let res = await axiosPublic.put(`/profile?email=${data.email}`, updatedInfo);
+        let res = await axiosPublic.put(`/users/${userDetails?._id}`, updatedInfo);
         console.log(res);
         if (res.data.result) {
             Swal.fire({
@@ -38,7 +38,7 @@ const UpdateProfile = () => {
                 timer: 1500
             });
             reset();
-            navigate('/profile');
+            navigate('/');
         } else {
             Swal.fire({
                 position: "center",
@@ -66,7 +66,7 @@ const UpdateProfile = () => {
                                 </label>
                                 <input
                                     type="text"
-                                    defaultValue={data?.userName}
+                                    defaultValue={userDetails?.userName}
                                     {...register('userName', { required: true })}
                                     className="w-full p-2 rounded-md placeholder:pl-2" />
                             </div>
@@ -76,7 +76,7 @@ const UpdateProfile = () => {
                                 </label>
                                 <input
                                     type="email"
-                                    defaultValue={data?.email}
+                                    defaultValue={userDetails?.email}
                                     {...register('email', { required: true })}
                                     className="w-full p-2 rounded-md placeholder:pl-2" />
                             </div>
@@ -88,7 +88,7 @@ const UpdateProfile = () => {
                                 </label>
                                 <input
                                     type="text"
-                                    defaultValue={data?.role}
+                                    defaultValue={userDetails?.role}
                                     readOnly
                                     {...register('role', { required: true })}
                                     className="w-full p-2 rounded-md placeholder:pl-2" />
@@ -99,7 +99,7 @@ const UpdateProfile = () => {
                                 </label>
                                 <input
                                     type="text"
-                                    defaultValue={data?.phone}
+                                    defaultValue={userDetails?.phone}
                                     {...register('phone', { required: true })}
                                     className="w-full p-2 rounded-md placeholder:pl-2" />
                             </div>
@@ -110,7 +110,7 @@ const UpdateProfile = () => {
                                     <span className="label-text text-xl font-semibold">Gender*</span>
                                 </label>
                                 <select
-                                    defaultValue={data?.gender}
+                                    defaultValue={userDetails?.gender}
                                     {...register('gender', { required: true })}
                                     className="w-full p-2 rounded-md placeholder:pl-2">
                                     <option value="male">Male</option>
@@ -124,7 +124,7 @@ const UpdateProfile = () => {
                                 </label>
                                 <input
                                     type="date"
-                                    defaultValue={data?.dateOfBirth}
+                                    defaultValue={userDetails?.dateOfBirth}
                                     {...register('dateOfBirth', { required: true })}
                                     className="w-full p-2 rounded-md placeholder:pl-2" />
                             </div>
@@ -136,7 +136,7 @@ const UpdateProfile = () => {
                                 </label>
                                 <input
                                     type="text"
-                                    defaultValue={data?.address}
+                                    defaultValue={userDetails?.address}
                                     {...register('address', { required: true })}
                                     className="w-full p-2 rounded-md placeholder:pl-2" />
                             </div>
@@ -146,7 +146,7 @@ const UpdateProfile = () => {
                                 </label>
                                 <input
                                     type="text"
-                                    defaultValue={data?.thana}
+                                    defaultValue={userDetails?.thana}
                                     {...register('thana', { required: true })}
                                     className="w-full p-2 rounded-md placeholder:pl-2" />
                             </div>
@@ -158,7 +158,7 @@ const UpdateProfile = () => {
                                 </label>
                                 <input
                                     type="text"
-                                    defaultValue={data?.district}
+                                    defaultValue={userDetails?.district}
                                     {...register('district', { required: true })}
                                     className="w-full p-2 rounded-md placeholder:pl-2" />
                             </div>
@@ -168,7 +168,7 @@ const UpdateProfile = () => {
                                 </label>
                                 <input
                                     type="text"
-                                    defaultValue={data?.division}
+                                    defaultValue={userDetails?.division}
                                     {...register('division', { required: true })}
                                     className="w-full p-2 rounded-md placeholder:pl-2" />
                             </div>
