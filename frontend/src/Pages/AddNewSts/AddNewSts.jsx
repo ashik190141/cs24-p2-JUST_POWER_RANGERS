@@ -89,7 +89,7 @@ const AddNewSts = () => {
   return (
     <div>
       <Helmet>
-        <title>Dust Master | Add Sts</title>
+        <title>EcoSync | Add Sts</title>
       </Helmet>
       <SectionTitle
         title={"Add New Sts"}

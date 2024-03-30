@@ -107,7 +107,7 @@ const LandfillDataEntry = () => {
     return (
         <div>
             <Helmet>
-                <title>Dust Master | Land Manager Data Entry</title>
+                <title>EcoSync | Land Manager Data Entry</title>
             </Helmet>
             <SectionTitle title={"Update Data"} subTitle={'Stay Updated?'}></SectionTitle>
             {

@@ -118,7 +118,7 @@ const UserDetails = () => {
     return (
         <div className="w-full md:w-10/12 mx-auto">
             <Helmet>
-                <title>Dust Master | User Profile</title>
+                <title>EcoSync | User Profile</title>
             </Helmet>
             <SectionTitle title={user?.userName} subTitle={'user Name'}></SectionTitle>
             <div className="">

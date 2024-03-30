@@ -62,7 +62,7 @@ const ResetPassword = () => {
     return (
         <div>
             <Helmet>
-                <title>Dust Master | Reset Password</title>
+                <title>EcoSync | Reset Password</title>
             </Helmet>
             <SectionTitle title={"Reset Password"} subTitle={'Always remember password!'}></SectionTitle>
             <div className="flex justify-center items-center my-5">

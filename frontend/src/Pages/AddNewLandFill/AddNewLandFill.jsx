@@ -104,7 +104,7 @@ const AddNewLandFill = () => {
   return (
     <div>
       <Helmet>
-        <title>Dust Master | Add Landfill</title>
+        <title>EcoSync | Add Landfill</title>
       </Helmet>
       <SectionTitle
         title={"Add New Landfill"}

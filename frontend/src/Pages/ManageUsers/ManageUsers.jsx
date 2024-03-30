@@ -54,7 +54,7 @@ const ManageUser = () => {
     return (
         <div className="w-11/12 mx-auto my-5">
             <Helmet>
-                <title>Dust Master | Manage User</title>
+                <title>EcoSync | Manage User</title>
             </Helmet>
             <SectionTitle title={"Manage Users"} subTitle={'User Update?'}></SectionTitle>
             {

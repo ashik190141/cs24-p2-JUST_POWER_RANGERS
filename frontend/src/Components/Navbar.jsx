@@ -39,7 +39,7 @@ const Navbar = () => {
                 </div>
                 <div className="flex justify-center items-center">
                     <Link to={'/'}><img className="w-12 h-12 cursor-pointer" src={img} alt="" /></Link>
-                    <Link to={'/'} className="btn btn-ghost text-xl">Dust Master</Link>
+                    <Link to={'/'} className="btn btn-ghost text-xl">EcoSync</Link>
                 </div>
             </div>
             <div className="navbar-center hidden lg:flex">

@@ -64,7 +64,7 @@ const AllUserInfo = () => {
     return (
         <div>
             <Helmet>
-                <title>Dust Master | User Profile</title>
+                <title>EcoSync | User Profile</title>
             </Helmet>
             <SectionTitle title={"All Users Info"} subTitle={"need details?"}></SectionTitle>
             {

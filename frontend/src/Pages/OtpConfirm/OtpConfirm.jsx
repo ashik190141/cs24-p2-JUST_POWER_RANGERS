@@ -50,7 +50,7 @@ const OtpConfirm = () => {
     return (
         <div>
             <Helmet>
-                <title>Dust Master | Confirm Otp</title>
+                <title>EcoSync | Confirm Otp</title>
             </Helmet>
             <SectionTitle title={"Confirm Otp"} subTitle={'check Your mail!'}></SectionTitle>
 

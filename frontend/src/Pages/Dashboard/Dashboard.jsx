@@ -15,7 +15,7 @@ const Dashboard = () => {
             <div className="max-w-full mx-auto flex">
                 <div className="w-64 h-screen bg-[#092111] text-white sticky top-0">
                     <div className='text-center my-5'>
-                        <h1 className='text-3xl font-bold'>Dust Master</h1>
+                        <h1 className='text-3xl font-bold'>EcoSync</h1>
                         <p className='text-xl'>Web App</p>
                     </div>
 

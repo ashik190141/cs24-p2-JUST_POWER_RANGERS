@@ -52,7 +52,7 @@ const UpdateProfile = () => {
     return (
         <div className="mb-10">
             <Helmet>
-                <title>Dust Master | Update Profile</title>
+                <title>EcoSync | Update Profile</title>
             </Helmet>
             <SectionTitle title={"Update Profile"} subTitle={'New Information?'}></SectionTitle>
             <div>

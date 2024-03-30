@@ -24,7 +24,7 @@ const Profile = () => {
     return (
         <div>
             <Helmet>
-                <title>Dust Master | Profile</title>
+                <title>EcoSync | Profile</title>
             </Helmet>
             <SectionTitle title={userRole} subTitle={'My Current Position?'}></SectionTitle>
 

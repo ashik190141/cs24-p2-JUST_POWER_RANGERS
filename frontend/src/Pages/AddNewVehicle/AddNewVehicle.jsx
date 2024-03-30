@@ -61,7 +61,7 @@ const AddNewVehicle = () => {
     return (
         <div>
             <Helmet>
-                <title>Dust Master | Add Vehicle</title>
+                <title>EcoSync | Add Vehicle</title>
             </Helmet>
             <SectionTitle title={"Add New Vehicle"} subTitle={'Need More Transportations?'}></SectionTitle>
             <div>

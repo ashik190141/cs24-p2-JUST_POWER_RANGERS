@@ -73,7 +73,7 @@ const ChangePassword = () => {
     return (
         <div>
             <Helmet>
-                <title>Dust Master | Change Password</title>
+                <title>EcoSync | Change Password</title>
             </Helmet>
             <SectionTitle title={"Change Password"} subTitle={'being more Secure!'}></SectionTitle>
             <div className="flex justify-center items-center my-10">

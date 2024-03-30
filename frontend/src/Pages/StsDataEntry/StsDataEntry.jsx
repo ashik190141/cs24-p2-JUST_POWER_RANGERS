@@ -71,7 +71,7 @@ const StsDataEntry = () => {
     return (
       <div>
         <Helmet>
-          <title>Dust Master | Sts Data Entry</title>
+          <title>EcoSync | Sts Data Entry</title>
         </Helmet>
         <SectionTitle
           title={"Entry Updated Data"}
