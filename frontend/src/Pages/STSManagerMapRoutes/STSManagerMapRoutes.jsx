@@ -6,6 +6,8 @@ import "leaflet-routing-machine"; // Import for side effects
 import useAuth from '../../Hooks/useAuth';
 import { useQuery } from '@tanstack/react-query';
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
+import Box from "@mui/material/Box";
+import { DataGrid } from "@mui/x-data-grid";
 
 const STSManagerMapRoutes = () => {
     const { user } = useAuth();
@@ -99,6 +101,7 @@ const STSManagerMapRoutes = () => {
           setDestinationInfo([...newDestinationInfo]);
         });
       });
+      
     };
 
     initializeMap();
@@ -107,11 +110,54 @@ const STSManagerMapRoutes = () => {
 
   console.log("Destination Info:", destinationInfo);
 
+  let newDetails = destinationInfo?.map((info, index) => {
+    return {
+      id: index + 1,
+      stsName: stsId?.name,
+      landfillName: info[2],
+      distance: info[3],
+      time: info[4]
+    };
+  });
+
+  const columns = [
+    { field: "id", headerName: "ID", width: 90 },
+    {
+      field: "stsName",
+      headerName: "STS Name",
+      width: 300,
+      editable: false,
+      sortable: true,
+    },
+    {
+      field: "landfillName",
+      headerName: "Landfill Name",
+      width: 300,
+      editable: false,
+      sortable: true,
+    },
+    {
+      field: "distance",
+      headerName: "Distance",
+      width: 200,
+      editable: false,
+      sortable: true,
+    },
+    {
+      field: "time",
+      headerName: "Time",
+      sortable: true,
+      width: 150,
+    },
+  ];
+
+  let rows = [...newDetails];
+
   return (
     <>
       {" "}
       <div ref={mapContainerRef} style={{ height: "80vh" }} />
-      <div className="pt-10 pl-5 text-xl">
+      {/* <div className="pt-10 pl-5 text-xl">
         {destinationInfo.sort((a, b) => a[4] - b[4]).map((info, index) => (
           <div key={index}>
             <div className="flex">
@@ -123,6 +169,23 @@ const STSManagerMapRoutes = () => {
             </div>
           </div>
         ))}
+      </div> */}
+      <div className="w-full md:w-10/12 mx-auto pt-5">
+        <Box sx={{ height: 400, width: "100%" }}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 5,
+                },
+              },
+            }}
+            pageSizeOptions={[5, 10, 15, 20]}
+            disableRowSelectionOnClick
+          />
+        </Box>
       </div>
     </>
   );
