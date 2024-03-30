@@ -1,9 +1,10 @@
 
+import { Banner } from './Banner';
 
 const Home = () => {
     return (
         <div className="min-h-screen">
-            <p>Hi! I am Home </p>
+            <Banner></Banner>
         </div>
     );
 };

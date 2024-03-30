@@ -23,7 +23,7 @@ import ResetPassword from "../Pages/ResetPassword/ResetPassword";
 import UpdateProfile from "../Pages/UpdateProfile/UpdateProfile";
 import ChangePassword from "../Pages/ChangePassword/ChangePassword";
 import STSManagerMapRoutes from "../Pages/STSManagerMapRoutes/STSManagerMapRoutes";
-import LandManagerMinimumVehicle from "../Pages/LandManagerMinimumVehicle/LandManagerMinimumVehicle";
+import LandManagerMinimumVehicle from "../Pages/StsManagerMinimumVehicle/StsManagerMinimumVehicle";
 
 const router = createBrowserRouter([
   {
