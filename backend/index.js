@@ -1080,7 +1080,7 @@ async function run() {
         const truckDumpingInfo = await truckDumpingCollection
           .find({
             $and: [
-              { vehicleNum: vehicleNum },
+              { vehicleRegNum: vehicleNum },
               { date: currentDate }
             ],
           })
@@ -1092,7 +1092,7 @@ async function run() {
         );
 
         const totalWasteVolumeOfLandfill = truckDumpingInfo.reduce(
-          (accumulator, current) => accumulator + current.volumeWaste,
+          (accumulator, current) => accumulator + current.waste,
           0
         );
 
@@ -1109,13 +1109,23 @@ async function run() {
         const totalTransportation = [...stsTruckInfo, ...truckDumpingInfo];
         const nearestTime = findNearestTime(totalTransportation);
 
+        let lastLocation;
+        if (nearestTime?.hasOwnProperty('stsId')) {
+          lastLocation = `${nearestTime?.stsName} STS`;
+        } else if (nearestTime?.hasOwnProperty("landName")) {
+          lastLocation = `${nearestTime?.landName} Landfill`;
+        }
+
         const truckCostInfo = {
           vehicleNum: vehicleNum,
           stsName: allVehicles[i].stsName,
           fuelCost: fuelCost,
           stsWasteWeight: totalWasteVolume,
           landfillWasteWeight: totalWasteVolumeOfLandfill,
-          transportation: nearestTime,
+          landLocation: lastLocation || "Can Not Enter Any Landfill or STS",
+          arrival: nearestTime?.arrival || "Can Not Enter Any Landfill or STS",
+          departure:
+            nearestTime?.departure || "Can Not Enter Any Landfill or STS",
         };
         result.push(truckCostInfo);
       }
