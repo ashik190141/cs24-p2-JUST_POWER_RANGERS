@@ -23,6 +23,7 @@ import ResetPassword from "../Pages/ResetPassword/ResetPassword";
 import UpdateProfile from "../Pages/UpdateProfile/UpdateProfile";
 import ChangePassword from "../Pages/ChangePassword/ChangePassword";
 import STSManagerMapRoutes from "../Pages/STSManagerMapRoutes/STSManagerMapRoutes";
+import LandManagerMinimumVehicle from "../Pages/LandManagerMinimumVehicle/LandManagerMinimumVehicle";
 
 const router = createBrowserRouter([
   {
@@ -169,6 +170,11 @@ const router = createBrowserRouter([
         //This will be Sts Manager Route
         path: "view-routes",
         element: <STSManagerMapRoutes></STSManagerMapRoutes>,
+      },
+      {
+        //This will be Sts Manager Route
+        path: "min-vehicle-and-cost",
+        element: <LandManagerMinimumVehicle></LandManagerMinimumVehicle>,
       },
     ],
   },

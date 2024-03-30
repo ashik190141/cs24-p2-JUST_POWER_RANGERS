@@ -104,6 +104,14 @@ const Dashboard = () => {
                       <FaDatabase></FaDatabase>View Optimize Route
                     </NavLink>
                   </li>
+                  <li>
+                    <NavLink
+                      className="flex items-center font-bold gap-2"
+                      to="min-vehicle-and-cost"
+                    >
+                      <FaDatabase></FaDatabase>Minimum Vehicle and Cost
+                    </NavLink>
+                  </li>
                 </ul>
               </>
             )}
@@ -113,7 +121,7 @@ const Dashboard = () => {
                   <li>
                     <NavLink
                       className="flex items-center font-bold gap-2"
-                      to="edit-biodata"
+                      to=""
                     >
                       <FaEdit></FaEdit> Land Manager
                     </NavLink>

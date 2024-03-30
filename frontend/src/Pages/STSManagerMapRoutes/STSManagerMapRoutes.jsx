@@ -45,9 +45,9 @@ const STSManagerMapRoutes = () => {
     
     const destinations = [];
     for (let i = 0; i < landfill?.length; i++){
-        let a = landfill[i].lat;
-        let b = landfill[i].lng;
-        let c = landfill[i].name;
+        let a = landfill[i]?.lat;
+        let b = landfill[i]?.lng;
+        let c = landfill[i]?.name;
         destinations.push([a,b,c]);
     }
 
@@ -104,27 +104,26 @@ const STSManagerMapRoutes = () => {
     initializeMap();
   }, [taxiLatLng, destinations]); // Re-render map when taxiLatLng or destinations change
   // Sort the destinationInfo array based on time
-//   useEffect(() => {
-//       const sortedDestinationInfo = [...destinationInfo].sort(
-//           (a, b) => a[4] - b[4]
-//       );
-//       setDestinationInfo(sortedDestinationInfo);
-//   }, [destinationInfo]);
 
   console.log("Destination Info:", destinationInfo);
 
   return (
     <>
       {" "}
-      <div ref={mapContainerRef} style={{height: "80vh" }} />
-      <ul>
-        {destinationInfo.map((info, index) => (
-          <li key={index}>
-            Destination {info[2]} - Distance: {info[3]} km, Time: {info[4]} h,
-            lat: {info[0]}, lon: {info[1]}
-          </li>
+      <div ref={mapContainerRef} style={{ height: "80vh" }} />
+      <div className="pt-10 pl-5 text-xl">
+        {destinationInfo.sort((a, b) => a[4] - b[4]).map((info, index) => (
+          <div key={index}>
+            <div className="flex">
+              <div className="px-5">{index + 1}.</div>{" "}
+              <div className="flex-1">STS Name: {stsId?.name}</div>
+              <div className="flex-1">Landfill Name: {info[2]}</div>{" "}
+              <div className="flex-1">Distance: {info[3]} km</div>{" "}
+              <div className="flex-1">Time: {info[4]} h</div>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
     </>
   );
 };
