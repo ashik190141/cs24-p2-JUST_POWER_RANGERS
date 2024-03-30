@@ -296,37 +296,48 @@ async function run() {
     // ======================Login User👇============================>
     // ===============================Login User👇===================================
     app.post("/auth/login", async (req, res) => {
-      const { email, password } = req.body;
-      const user = await usersCollection.findOne({ email });
-      if (!user) {
-        return res.status(401).json({ message: "Invalid email or password" });
-      }
-      if (user.role == 'unassigned') {
-        return res.json({
-          result: false,
-          message: "You can not login now!"
-        })
-      }
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        return res.status(401).json({ message: "Invalid email or password" });
-      }
+      try {
+        const { email, password } = req.body;
+        const user = await usersCollection.findOne({ email });
+        if (!user) {
+          return res.json({
+            result: false,
+            message: "Invalid email or password"
+          });
+        }
+        if (user.role == 'unassigned') {
+          return res.json({
+            result: false,
+            message: "You can not login now!"
+          })
+        }
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+          return res.status(401).json({ message: "Invalid email or password" });
+        }
 
-      const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
-        expiresIn: process.env.EXPIRES_IN,
-      });
-
-      res
-        .cookie("token", token, {
-          httpOnly: true,
-          secure: true,
-          sameSite: "none",
-        })
-        .json({
-          success: true,
-          message: "Login successful",
-          token,
+        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
+          expiresIn: process.env.EXPIRES_IN,
         });
+
+        res
+          .cookie("token", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+          })
+          .json({
+            success: true,
+            message: "Login successful",
+            token,
+          });
+      } catch (error) {
+        res.json({
+          success: false,
+          message: error.message,
+        })
+
+      }
     });
 
 
@@ -845,6 +856,7 @@ async function run() {
     //sts manager
     app.post("/create-entry-vehicles-leaving", async (req, res) => {
       const stsVehicleLeavingInfo = req.body;
+      stsVehicleLeavingInfo.date = currentDate;
       const result = await stsLeavingCollection.insertOne(
         stsVehicleLeavingInfo
       );
@@ -925,7 +937,7 @@ async function run() {
 
         if (truckDumpingInfo.waste < truckInfo.capacity) {
           cost =
-            truckInfo.fualCostUnloaded            +
+            truckInfo.fualCostUnloaded +
             (truckDumpingInfo.waste / truckInfo.capacity) *
             (truckInfo.fualCostLoaded - truckInfo.fualCostUnloaded);
         } else {
@@ -968,11 +980,11 @@ async function run() {
       const sts = await stsCollection.findOne(query);
       res.json({
         result: true,
-        data:sts.vehicles
+        data: sts.vehicles
       })
     });
 
-    
+
     //profile management endpoints
     app.get("/profile", async (req, res) => {
       const email = req.query.email;
@@ -1139,7 +1151,29 @@ async function run() {
           message: landfill,
         });
       }
-    })
+    });
+
+    // =====================Check Sts Manager's Sts and vehicle👇======================>
+    app.get("/stsid/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const getUserInfo = await usersCollection.findOne(query);
+      const id = getUserInfo._id.toString();
+
+      const allStsCollection = await stsCollection.find().toArray();
+      for (let i = 0; i < allStsCollection.length; i++) {
+        const stsManagers = allStsCollection[i].manager;
+        for (let j = 0; j < stsManagers.length; j++) {
+          if (stsManagers[j] == id) {
+            return res.json({
+              result: true,
+              data: allStsCollection[i].wardNumber,
+              vehicles: allStsCollection[i].vehicles,
+            });
+          }
+        }
+      }
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(

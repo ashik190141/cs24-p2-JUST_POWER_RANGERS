@@ -23,6 +23,7 @@ import ResetPassword from "../Pages/ResetPassword/ResetPassword";
 import UpdateProfile from "../Pages/UpdateProfile/UpdateProfile";
 import ChangePassword from "../Pages/ChangePassword/ChangePassword";
 import LandfillDataEntry from "../Pages/LandfillDataEntry/LandfillDataEntry";
+import AllUserInfo from "../Pages/AllUserInfo/AllUserInfo";
 
 const router = createBrowserRouter([
     {
@@ -39,7 +40,7 @@ const router = createBrowserRouter([
                 element: <PrivateRoutes><Profile></Profile></PrivateRoutes>
             },
             {
-                path: "/profile/update/:id",
+                path: "/update/:id",
                 element: <PrivateRoutes><UpdateProfile></UpdateProfile></PrivateRoutes>,
                 loader: ({params})=> fetch(`http://localhost:5000/users/${params.id}`)
             },
@@ -107,6 +108,11 @@ const router = createBrowserRouter([
                 //This will be Admin Route
                 path: "manage-user",
                 element: <SystemAdminRoute><ManageUser></ManageUser></SystemAdminRoute>
+            },
+            {
+                //This will be Admin Route
+                path: "all-user-info",
+                element: <SystemAdminRoute><AllUserInfo></AllUserInfo></SystemAdminRoute>
             },
             {
                 //This will be Admin Route

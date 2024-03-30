@@ -18,7 +18,6 @@ const UserDetails = () => {
             return res.data;
         }
     });
-    let newRole = availableRole?.filter((item) => item.roleName !== user.role);
 
     const { register, handleSubmit, reset } = useForm();
     let axiosPublic = useAxiosPublic();
@@ -146,7 +145,7 @@ const UserDetails = () => {
                                         user.role != 'unassigned' && <option  value="unassigned">Un-Assigned</option>
                                     }
                                     {
-                                        newRole?.map((role) => {
+                                        availableRole?.map((role) => {
                                             return (
                                                 <option className="text-black" key={role._id} value={role?.roleName}>{role?.roleName}</option>
                                             )
