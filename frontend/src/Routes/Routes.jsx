@@ -22,6 +22,7 @@ import OtpConfirm from "../Pages/OtpConfirm/OtpConfirm";
 import ResetPassword from "../Pages/ResetPassword/ResetPassword";
 import UpdateProfile from "../Pages/UpdateProfile/UpdateProfile";
 import ChangePassword from "../Pages/ChangePassword/ChangePassword";
+import LandfillDataEntry from "../Pages/LandfillDataEntry/LandfillDataEntry";
 
 const router = createBrowserRouter([
     {
@@ -117,6 +118,12 @@ const router = createBrowserRouter([
                 //This will be Sts Manager Route
                 path: "data-entry-sts-manager",
                 element: <StsDataEntry></StsDataEntry>
+                
+            },
+            {
+                //This will be Land Manager Route
+                path: "land-data-entry",
+                element: <LandfillDataEntry></LandfillDataEntry>
                 
             },
         ]

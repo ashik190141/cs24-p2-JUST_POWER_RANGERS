@@ -13,7 +13,7 @@ const useLogout = () => {
     try {
       let res = await axiosPublic.get("/auth/logout")
       Swal.fire({
-        position: "top-middle",
+        position: "center",
         icon: "success",
         title: res.data.message,
         showConfirmButton: false,
