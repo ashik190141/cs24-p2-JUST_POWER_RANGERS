@@ -15,7 +15,7 @@ const LandfillManagerRoute = ({ children }) => {
         </div>
     }
 
-    if (user && userRole === "System Admin") {
+    if (user && userRole === "Land Manager") {
         return children;
     }
     return <Navigate to="/" state={{ from: location }} replace></Navigate>

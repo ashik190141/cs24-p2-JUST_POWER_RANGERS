@@ -2,11 +2,12 @@ import { Link, NavLink } from "react-router-dom";
 import img from '../../public/logo.png'
 import useAuth from "../Hooks/useAuth";
 import useLogout from "../Hooks/useLogout";
+import Permission from "../Hooks/Permission";
 
 const Navbar = () => {
     let { user } = useAuth();
     let { logout } = useLogout();
-
+    let [UserRole] = Permission();
 
     let items = <>
         <li><NavLink to={'/'}>Home</NavLink></li>
@@ -16,7 +17,13 @@ const Navbar = () => {
         <li><NavLink to={'/about-us'}>About Us</NavLink></li>
         <li><NavLink to={'/contact-us'}>Contact Us</NavLink></li>
         {
-            user && <li><NavLink to={'/dashboard'}>Dashboard</NavLink></li>
+            UserRole === 'System Admin' && <li><NavLink to={'/dashboard/admin-home'}>Dashboard</NavLink></li>
+        }
+        {
+            UserRole === 'Land Manager' && <li><NavLink to={'/dashboard/land-data-entry'}>Dashboard</NavLink></li>
+        }
+        {
+            UserRole === 'Sts Manager' && <li><NavLink to={'/dashboard/data-entry-sts-manager'}>Dashboard</NavLink></li>
         }
     </>
     return (

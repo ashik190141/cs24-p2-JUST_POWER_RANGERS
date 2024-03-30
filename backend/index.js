@@ -495,7 +495,7 @@ async function run() {
 
     // =====================Change PassWord👇==========================>
     //Completed successfully
-    app.put("/auth/change-password", async (req, res) => {
+    app.put("/auth/change-password", verifyToken, async (req, res) => {
       const information = req.body;
       const query = { email: information.email };
       const findUser = await usersCollection.findOne(query);
@@ -540,8 +540,7 @@ async function run() {
 
     // =====================Get All User👇=============================>
     // User Management Endpoints
-    // admin access
-    app.get("/users", async (req, res) => {
+    app.get("/users", verifyToken, async (req, res) => {
       const result = await usersCollection.find().toArray();
       res.send(result);
     });
@@ -573,7 +572,7 @@ async function run() {
 
     // ==================Delete Single User👇==========================>
     // admin access
-    app.delete("/users/:userId", async (req, res) => {
+    app.delete("/users/:userId", verifyToken, verifyAdmin, async (req, res) => {
       const id = req.params.userId;
       const query = { _id: new ObjectId(id) };
       const result = await usersCollection.deleteOne(query);
@@ -582,173 +581,6 @@ async function run() {
 
     // ===================Update Role to User👇=======================>
     //admin access
-    // app.put("/users/:userId/roles", async (req, res) => {
-    //   const updatedRoleInfo = req.body;
-    //   const id = req.params.userId;
-    //   const query = { _id: new ObjectId(id) };
-    //   const userInfo = await usersCollection.findOne(query);
-
-    //   const allStsCollection = await stsCollection.find().toArray();
-
-    //   const allLandfillCollection = await landfillCollection.find().toArray();
-
-    //   // if place exist in the body
-    //   if (updatedRoleInfo.place) {
-    //     let placeQuery = { name: updatedRoleInfo.place };
-    //     let assignManager;
-
-    //     // manager info with manager name and email
-    //     const mangerInfo = {
-    //       id: userInfo._id
-    //     }
-
-    //     // set database
-    //     const assignManagerPlace = {
-    //       $push: {
-    //         manager: mangerInfo,
-    //       },
-    //     };
-
-    //     let placeName = null;
-
-    //     // if sts manager query
-    //     // todo
-    //     if (updatedRoleInfo.role == 'Sts Manager') {
-    //       assignManager = await stsCollection.updateOne(placeQuery, assignManagerPlace);
-
-    //       for (let i = 0; i < allStsCollection.length; i++) {
-    //         const stsManagers = allStsCollection[i].manager;
-    //         for (let j = 0; j < stsManagers.length; j++) {
-    //           const stsManagerEmail = stsManagers[j].email;
-    //           if (stsManagerEmail == userInfo.email) {
-    //             placeName = allStsCollection[i].name;
-    //             break;
-    //           }
-    //         }
-    //         if (!placeName) break;
-    //       }
-
-    //       const removeUserInfo = {
-    //         $pull: {
-    //           manager: mangerInfo,
-    //         },
-    //       };
-    //       await stsCollection.updateOne(
-    //         { name: placeName },
-    //         removeUserInfo
-    //       );
-
-    //     } else {
-    //       assignManager = await landfillCollection.updateOne(placeQuery, assignManagerPlace);
-
-    //       for (let i = 0; i < allLandfillCollection.length; i++) {
-    //         const landfillManagers = allLandfillCollection[i].manager;
-    //         for (let j = 0; j < landfillManagers.length; j++) {
-    //           const landfillManagerEmail = landfillManagers[j].email;
-    //           if (landfillManagerEmail == userInfo.email) {
-    //             placeName = allLandfillCollection[i].name;
-    //             break;
-    //           }
-    //         }
-    //         if (!placeName) break;
-    //       }
-    //       const removeUserInfo = {
-    //         $pull: {
-    //           manager: mangerInfo,
-    //         },
-    //       };
-    //       await landfillCollection.updateOne(
-    //         { name: placeName },
-    //         removeUserInfo
-    //       );
-    //     }
-    //     if (assignManager.modifiedCount > 0) {
-    //       const updatedDoc = {
-    //         $set: {
-    //           assigned: true,
-    //         },
-    //       };
-    //       const assignedConfirm = await usersCollection.updateOne(query, updatedDoc);
-    //       if (assignedConfirm.modifiedCount > 0) {
-    //         res.json({
-    //           result: true,
-    //           message: "User Assigned Successfully",
-    //         });
-    //       }
-    //     }
-
-
-    //   } else {
-
-    //     let placeName = null;
-    //     let removeUser = null;
-    //     const mangerInfo = {
-    //       managerName: userInfo.name,
-    //       email: userInfo.email
-    //     }
-
-    //     const updatedDoc = {
-    //       $set: {
-    //         role: updatedRoleInfo.role,
-    //       },
-    //     };
-
-    //     const result = await usersCollection.updateOne(query, updatedDoc);
-
-    //     if (result.modifiedCount > 0) {
-    //       if (userInfo.assigned && userInfo.role == 'Sts Manager') {
-    //         // check all sts to find the user and remove 
-    //         for (let i = 0; i < allStsCollection.length; i++) {
-    //           const stsManagers = allStsCollection[i].manager;
-    //           for (let j = 0; j < stsManagers.length; j++) {
-    //             const stsManagerEmail = stsManagers[j].email;
-    //             if (stsManagerEmail == userInfo.email) {
-    //               placeName = allStsCollection[i].name;
-    //               break;
-    //             }
-    //           }
-    //           if (!placeName) break;
-    //         }
-
-    //         // update information
-    //         const removeUserInfo = {
-    //           $pull: {
-    //             manager: mangerInfo,
-    //             assigned: false
-    //           },
-    //         };
-    //         removeUser = await stsCollection.updateOne({ name: placeName }, removeUserInfo);
-
-    //       } else if (userInfo.assigned && userInfo.role == "Land Manager") {
-    //         // check all landfill to find the user and remove
-    //         for (let i = 0; i < allLandfillCollection.length; i++) {
-    //           const landfillManagers = allLandfillCollection[i].manager;
-    //           for (let j = 0; j < landfillManagers.length; j++) {
-    //             const landfillManagerEmail = landfillManagers[j].email;
-    //             if (landfillManagerEmail == userInfo.email) {
-    //               placeName = allLandfillCollection[i].name;
-    //               break;
-    //             }
-    //           }
-    //           if (!placeName) break;
-    //         }
-    //         const removeUserInfo = {
-    //           $pull: {
-    //             manager: mangerInfo
-    //           },
-    //         };
-    //         removeUser = await landfillCollection.updateOne({ name: placeName }, removeUserInfo);
-
-    //       }
-    //       if (removeUser.modifiedCount > 0 || removeUser == null) {
-    //         res.json({
-    //           result: true,
-    //           message: "Update User Role Successfully",
-    //         });
-    //       }
-    //     }
-    //   }
-    // });
     app.put("/users/:userId/roles", async (req, res) => {
       const updatedRoleInfo = req.body;
       const id = req.params.userId;
@@ -886,7 +718,7 @@ async function run() {
           if (updateRoleIntoDB.modifiedCount > 0) {
             assignedFlag = 1;
           }
-        } else if ((userInfo.role == 'Sts Manager' || userInfo.role == 'Land Manager') && (updatedRoleInfo.role != 'Sts Manager' || updatedRoleInfo.role != 'Land Manager')) {
+        } else if ((userInfo.role == 'Sts Manager') && (updatedRoleInfo.role != 'Sts Manager' && updatedRoleInfo.role != 'Land Manager')) {
           const updatedRole = {
             $set: {
               assigned: false,
@@ -1294,7 +1126,7 @@ async function run() {
       let landfill = null;
       for (let i = 0; i < allLandfillCollection.length; i++) {
         const landfillManagers = allLandfillCollection[i].manager;
-        console.log("Landfill Managers :",landfillManagers);
+        console.log("Landfill Managers :", landfillManagers);
         for (let j = 0; j < landfillManagers.length; j++) {
           let land = landfillManagers[j];
           console.log("Landfill id", land);

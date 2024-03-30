@@ -24,6 +24,8 @@ import UpdateProfile from "../Pages/UpdateProfile/UpdateProfile";
 import ChangePassword from "../Pages/ChangePassword/ChangePassword";
 import LandfillDataEntry from "../Pages/LandfillDataEntry/LandfillDataEntry";
 import AllUserInfo from "../Pages/AllUserInfo/AllUserInfo";
+import LandfillManagerRoute from "./LandfilManagerRoute";
+import StsManagerRoute from "./StsManagerRoute";
 
 const router = createBrowserRouter([
     {
@@ -123,13 +125,13 @@ const router = createBrowserRouter([
             {
                 //This will be Sts Manager Route
                 path: "data-entry-sts-manager",
-                element: <StsDataEntry></StsDataEntry>
+                element: <StsManagerRoute><StsDataEntry></StsDataEntry></StsManagerRoute>
                 
             },
             {
                 //This will be Land Manager Route
                 path: "land-data-entry",
-                element: <LandfillDataEntry></LandfillDataEntry>
+                element: <LandfillManagerRoute><LandfillDataEntry></LandfillDataEntry></LandfillManagerRoute>
                 
             },
         ]
