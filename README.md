@@ -1,4 +1,4 @@
-# MERN Stack Project: cs24-p2-JUST_POWER_RANGERS
+# MERN Stack Project: EcoSync
 
 ## Team Information
 
@@ -31,25 +31,46 @@ Before running the project, make sure you have the following prerequisites insta
 ## Installation
 
 1. **Navigate to the project directory:**
+
+```shell
 cd cs24-p2-JUST_POWER_RANGERS
+```
 
-## Navigate to the backend directory
+### Navigate to the backend directory
+
+```shell
 cd backend
+```
 
-## Install backend dependencies
+### Install backend dependencies
+
+```shell
 npm install
+```
 
-## Navigate to the frontend directory
+### Navigate to the frontend directory
+
+```shell
 cd ../frontend
+```
 
-## Install frontend dependencies
+### Install frontend dependencies
+
+```shell
 npm install
+```
 
-## Navigate back to the project root directory
+### Navigate back to the project root directory
+
+```shell
 cd ..
+```
 
-## Build Docker images for both backend and frontend
+### Build Docker images for both backend and frontend
+
+```shell
 docker-compose up --build
+```
 
 ## Admin Credentials
 - Email: admin@gmail.com
