@@ -1438,7 +1438,7 @@ async function run() {
       for (let i = 0; i < trucks.length; i++) {
         let truck = trucks[i];
         if (truck.type == "Compactor") {
-          truck.capacity = (truck.capacity) * 5;
+          truck.capacity = (truck.capacity);
         }
         const newInfoOfTruck = {
           name: truck.vehicleRegNum,
