@@ -3,10 +3,12 @@ import { FaDatabase, FaEdit, FaHome, FaInfo, FaMale, FaMap, FaPlaceOfWorship, Fa
 import Navbar from '../../Components/Navbar';
 import Footer from '../../Components/Footer';
 import Permission from '../../Hooks/Permission';
+import useAuth from '../../Hooks/useAuth';
 
 
 const Dashboard = () => {
     let [userRole] = Permission();
+    let {user} = useAuth();
 
     return (
         <div className='max-w-screen-2xl mx-auto min-h-screen sm:px-4 md:px-0 bg-white'>
@@ -77,6 +79,13 @@ const Dashboard = () => {
                                     <NavLink className='flex items-center font-bold gap-2'
                                         to='view-routes' >
                                         <FaMap></FaMap>View Optimize Route</NavLink>
+                                </li>
+                                <li>
+                                    <NavLink
+                                        className="flex items-center font-bold gap-2"
+                                        to={`min-vehicle-and-cost/${user?.email}`}>
+                                        <FaTruck></FaTruck>Minimum Vehicle
+                                    </NavLink>
                                 </li>
                             </ul>
                         </>

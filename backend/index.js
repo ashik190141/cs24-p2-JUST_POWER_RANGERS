@@ -1331,6 +1331,51 @@ async function run() {
       }
     });
 
+    app.get("/minimum-vehicle-and-cost/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const getUserInfo = await usersCollection.findOne(query);
+
+      let vehicleInfo;
+      let target;
+
+      const allStsCollection = await stsCollection.find().toArray();
+      for (let i = 0; i < allStsCollection.length; i++) {
+        const stsManagers = allStsCollection[i].manager;
+        for (let j = 0; j < stsManagers.length; j++) {
+          if (stsManagers[j] == getUserInfo._id.toString()) {
+            vehicleInfo = allStsCollection[i].vehicles;
+            target = allStsCollection[i].capacity
+            // console.log(vehicleInfo);
+          }
+        }
+      }
+      const trucks = vehicleInfo.filter(
+        (truck) => truck.type == "Compactor" || truck.type == "Dump Truck"
+      );
+
+      let reqData = []
+
+      for (let i = 0; i < trucks.length; i++){
+        let truck = trucks[i];
+        if (truck.type == "Compactor") {
+          truck.capacity = (truck.capacity) * 5;
+        }
+        const newInfoOfTruck = {
+            name: truck.vehicleRegNum,
+            capacity: truck.capacity,
+            cost: truck?.fualCostLoaded + truck?.fualCostUnloaded,
+        };
+        reqData.push(newInfoOfTruck)
+      }
+
+      res.json({
+          result: true,
+          trucks: reqData,
+          stsCapacity: target,
+      });
+    })
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"

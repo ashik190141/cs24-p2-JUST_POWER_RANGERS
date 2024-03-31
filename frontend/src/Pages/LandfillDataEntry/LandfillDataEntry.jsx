@@ -92,8 +92,8 @@ const LandfillDataEntry = () => {
             setArrival('00:00');
             setDeparture('00:00');
             setDisable(false);
-            setTotalBill(res.data.bill);
-            setTotalDistance(res.data.distance);
+            setTotalBill(res.data.bill.toFixed(2));
+            setTotalDistance(res.data.distance.toFixed(2));
         } else {
             Swal.fire({
                 position: "center",

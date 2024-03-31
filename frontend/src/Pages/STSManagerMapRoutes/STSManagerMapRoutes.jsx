@@ -47,6 +47,7 @@ const STSManagerMapRoutes = () => {
         destinations.push([a, b, c]);
     }
 
+
     useEffect(() => {
         // const destinationInfo = [];
         const initializeMap = async () => {
@@ -101,6 +102,7 @@ const STSManagerMapRoutes = () => {
     }, [taxiLatLng, destinations]);
 
 
+
     let newDetails = destinationInfo?.map((info, index) => {
         return {
             id: index + 1,
@@ -146,16 +148,17 @@ const STSManagerMapRoutes = () => {
 
     return (
         <div>
+            <Helmet>
+                <title>EcoSync | Optimize Route</title>
+            </Helmet>
             {
-                isPending || isLoading  ? <>
+                isPending || isLoading ? <>
                     <div className="text-center h-screen">
                         <span className="loading loading-spinner loading-lg"></span>
                     </div>
 
                 </> : <>
-                    <Helmet>
-                        <title>EcoSync | Optimize Route</title>
-                    </Helmet>
+
                     {" "}
                     <div ref={mapContainerRef} style={{ height: "80vh" }} />
 
