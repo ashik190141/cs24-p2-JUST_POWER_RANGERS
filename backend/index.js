@@ -144,7 +144,7 @@ async function run() {
     };
 
     // =====================Create New User 👇=======================>
-    app.post("/users", verifyToken, verifyAdmin, async (req, res) => {
+    app.post("/users", async (req, res) => {
       const user = req.body;
       console.log(user);
       const roleQuery = { roleName: user.role };
@@ -964,32 +964,33 @@ async function run() {
       const allTrackDumpingInfo = await truckDumpingCollection.find().toArray();
       const checkingDate = allTrackDumpingInfo.filter(
         (truck) =>
-          truck.vehicleNum == truckDumpingInfo.vehicleNum &&
+          truck.vehicleNum == truckDumpingInfo.vehicleRegNum &&
           truck.date == currentDate
       );
 
       if (checkingDate.length < 3) {
-        const vehicleQuery = { vehicleRegNum: truckDumpingInfo.vehicleNum };
+        const vehicleQuery = { vehicleRegNum: truckDumpingInfo.vehicleRegNum };
         const truckInfo = await vehiclesCollection.findOne(vehicleQuery);
 
         const stsQuery = { name: truckDumpingInfo.stsName };
         const stsInfo = await stsCollection.findOne(stsQuery);
+        console.log(stsInfo);
 
-        const landfillQuery = { landfillSite: truckDumpingInfo.landfillName };
+        const landfillQuery = { name: truckDumpingInfo.landName };
         const landfillInfo = await landfillCollection.findOne(landfillQuery);
 
         const distanceFromStsToLandfill = distance(
           stsInfo.lat,
-          stsInfo.lon,
+          stsInfo.lng,
           landfillInfo.lat,
-          landfillInfo.lon
+          landfillInfo.lng
         );
         let cost = 0;
 
-        if (truckDumpingInfo.volumeWaste < truckInfo.capacity) {
+        if (truckDumpingInfo.waste < truckInfo.capacity) {
           cost =
             truckInfo.fualCostUnloaded +
-            (truckDumpingInfo.volumeWaste / truckInfo.capacity) *
+            (truckDumpingInfo.waste / truckInfo.capacity) *
               (truckInfo.fualCostLoaded - truckInfo.fualCostUnloaded);
         } else {
           cost = truckInfo.fualCostLoaded;
@@ -1076,6 +1077,7 @@ async function run() {
       let result = [];
       for (let i = 0; i < allVehicles.length; i++) {
         const vehicleNum = allVehicles[i].vehicleRegNum;
+        console.log('vehicle Number :',vehicleNum);
 
         const truckDumpingInfo = await truckDumpingCollection
           .find({
@@ -1085,6 +1087,8 @@ async function run() {
             ],
           })
           .toArray();
+        
+        console.log('Truck Dumping Information :',truckDumpingInfo);
         
         const fuelCost = truckDumpingInfo.reduce(
           (accumulator, current) => accumulator + current.bill,
@@ -1101,6 +1105,8 @@ async function run() {
             $and: [{ vehicleNum: vehicleNum }, { date: currentDate }],
           })
           .toArray();
+        console.log('stsInfo: ',stsTruckInfo);
+        
         const totalWasteVolume = stsTruckInfo.reduce(
           (accumulator, current) => accumulator + current.volumeWaste,
           0
