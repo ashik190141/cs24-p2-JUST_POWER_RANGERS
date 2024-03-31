@@ -134,7 +134,7 @@ const AddNewLandFill = () => {
                   </span>
                 </label>
                 <input
-                  type="text"
+                  type="number"
                   placeholder="Enter Waste Capacity"
                   {...register("capacity", { required: true })}
                   className="w-full p-2 rounded-md placeholder:pl-2"
