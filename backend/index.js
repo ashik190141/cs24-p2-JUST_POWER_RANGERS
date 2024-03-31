@@ -7,13 +7,14 @@ const nodeMailer = require("nodemailer");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 5000;
 
 app.use(cors(
   {
     origin: [
       'http://localhost:5173',
-      'http://localhost:3000'
+      'http://localhost:3000',
+      'http://localhost:3001',
     ],
     credentials: true,
   }

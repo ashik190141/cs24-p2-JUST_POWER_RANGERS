@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:16
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ RUN npm install
 
 COPY . .
 
-# RUN npm run build
+RUN npm run build
 
 EXPOSE 3000
 
