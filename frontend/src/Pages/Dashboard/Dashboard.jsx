@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { FaDatabase, FaEdit, FaHome, FaInfo, FaMale, FaPlaceOfWorship, FaTasks, FaTruck, FaUsers } from 'react-icons/fa';
+import { FaDatabase, FaEdit, FaHome, FaInfo, FaMale, FaMap, FaPlaceOfWorship, FaTasks, FaTruck, FaUsers } from 'react-icons/fa';
 import Navbar from '../../Components/Navbar';
 import Footer from '../../Components/Footer';
 import Permission from '../../Hooks/Permission';
@@ -72,6 +72,11 @@ const Dashboard = () => {
                                     <NavLink className='flex items-center font-bold gap-2'
                                         to='data-entry-sts-manager' >
                                         <FaDatabase></FaDatabase>Data Entry</NavLink>
+                                </li>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='view-routes' >
+                                        <FaMap></FaMap>View Optimize Route</NavLink>
                                 </li>
                             </ul>
                         </>

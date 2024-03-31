@@ -81,7 +81,7 @@ const AdminHome = () => {
     return (
       <div>
         <Helmet>
-          <title>Dust Master | Admin Home</title>
+          <title>EcoSync | Admin Home</title>
         </Helmet>
         <SectionTitle
           title={"Admin Home"}

@@ -26,6 +26,7 @@ import LandfillDataEntry from "../Pages/LandfillDataEntry/LandfillDataEntry";
 import AllUserInfo from "../Pages/AllUserInfo/AllUserInfo";
 import LandfillManagerRoute from "./LandfilManagerRoute";
 import StsManagerRoute from "./StsManagerRoute";
+import STSManagerMapRoutes from "../Pages/STSManagerMapRoutes/STSManagerMapRoutes";
 
 const router = createBrowserRouter([
     {
@@ -128,6 +129,11 @@ const router = createBrowserRouter([
                 element: <StsManagerRoute><StsDataEntry></StsDataEntry></StsManagerRoute>
                 
             },
+            {
+                //This will be Sts Manager Route
+                path: "view-routes",
+                element: <StsManagerRoute><STSManagerMapRoutes></STSManagerMapRoutes></StsManagerRoute>,
+              },
             {
                 //This will be Land Manager Route
                 path: "land-data-entry",

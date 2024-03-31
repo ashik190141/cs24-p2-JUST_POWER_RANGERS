@@ -11,7 +11,10 @@ const port = process.env.PORT || 5000;
 
 app.use(cors(
   {
-    origin: "http://localhost:5173",
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:3000'
+    ],
     credentials: true,
   }
 ));
@@ -1305,6 +1308,26 @@ async function run() {
         result.push(truckCostInfo);
       }
       res.send(result);
+    });
+
+    // =====================Sts Manager View Optimal Path👇======================>
+    app.get("/sts-info/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const getUserInfo = await usersCollection.findOne(query);
+
+      const allStsCollection = await stsCollection.find().toArray();
+      for (let i = 0; i < allStsCollection.length; i++) {
+        const stsManagers = allStsCollection[i].manager;
+        for (let j = 0; j < stsManagers.length; j++) {
+          if (stsManagers[j] == getUserInfo._id) {
+            return res.json({
+              result: true,
+              data: allStsCollection[i],
+            });
+          }
+        }
+      }
     });
 
     await client.db("admin").command({ ping: 1 });
