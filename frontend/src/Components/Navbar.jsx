@@ -1,14 +1,33 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import img from '../../public/logo.png'
+import useAuth from "../Hooks/useAuth";
+import useLogout from "../Hooks/useLogout";
+import Permission from "../Hooks/Permission";
 
 const Navbar = () => {
-    let items  = <>
-    <li><NavLink to={'/'}>Profile</NavLink></li>
-    <li><NavLink to={'/about-us'}>About Us</NavLink></li>
-    <li><NavLink to={'/dashboard'}>Dashboard</NavLink></li>
+    let { user } = useAuth();
+    let { logout } = useLogout();
+    let [UserRole] = Permission();
+
+    let items = <>
+        <li><NavLink to={'/'}>Home</NavLink></li>
+        {
+            user ? <li><NavLink to={'/profile'}>Profile</NavLink></li> : <></>
+        }
+        <li><NavLink to={'/about-us'}>About Us</NavLink></li>
+        <li><NavLink to={'/contact-us'}>Contact Us</NavLink></li>
+        {
+            UserRole === 'System Admin' && <li><NavLink to={'/dashboard/admin-home'}>Dashboard</NavLink></li>
+        }
+        {
+            UserRole === 'Land Manager' && <li><NavLink to={'/dashboard/land-data-entry'}>Dashboard</NavLink></li>
+        }
+        {
+            UserRole === 'Sts Manager' && <li><NavLink to={'/dashboard/data-entry-sts-manager'}>Dashboard</NavLink></li>
+        }
     </>
     return (
-        <div className="navbar bg-[#092111] text-white">
+        <div className="navbar bg-[#092111] text-white px-4">
             <div className="navbar-start">
                 <div className="dropdown">
                     <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -19,8 +38,8 @@ const Navbar = () => {
                     </ul>
                 </div>
                 <div className="flex justify-center items-center">
-                    <img className="w-12 h-12" src={img} alt="" />
-                    <a className="btn btn-ghost text-xl">Dust Master</a>
+                    <Link to={'/'}><img className="w-12 h-12 cursor-pointer" src={img} alt="" /></Link>
+                    <Link to={'/'} className="btn btn-ghost text-xl">EcoSync</Link>
                 </div>
             </div>
             <div className="navbar-center hidden lg:flex">
@@ -28,9 +47,15 @@ const Navbar = () => {
                     {items}
                 </ul>
             </div>
-            <div className="navbar-end">
-                <button className="bg-red-900 px-4 py-2 rounded-md text-white cursor-pointer hover:scale-105">Logout</button>
-            </div>
+            {
+                user ? <div className="navbar-end">
+                    <button className="bg-red-900 px-4 py-2 rounded-md text-white cursor-pointer hover:scale-105" onClick={() => logout()}>Logout</button>
+                </div> : <div className="navbar-end">
+                    <Link to={"/auth/login"}>
+                        <button className="bg-green-900 px-4 py-2 rounded-md text-white cursor-pointer hover:scale-105">Login</button>
+                    </Link>
+                </div>
+            }
         </div>
     );
 };
