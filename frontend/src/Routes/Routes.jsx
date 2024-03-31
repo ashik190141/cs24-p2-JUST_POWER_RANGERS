@@ -23,6 +23,10 @@ import ResetPassword from "../Pages/ResetPassword/ResetPassword";
 import UpdateProfile from "../Pages/UpdateProfile/UpdateProfile";
 import ChangePassword from "../Pages/ChangePassword/ChangePassword";
 import LandfillDataEntry from "../Pages/LandfillDataEntry/LandfillDataEntry";
+import AllUserInfo from "../Pages/AllUserInfo/AllUserInfo";
+import LandfillManagerRoute from "./LandfilManagerRoute";
+import StsManagerRoute from "./StsManagerRoute";
+import STSManagerMapRoutes from "../Pages/STSManagerMapRoutes/STSManagerMapRoutes";
 
 const router = createBrowserRouter([
     {
@@ -39,9 +43,9 @@ const router = createBrowserRouter([
                 element: <PrivateRoutes><Profile></Profile></PrivateRoutes>
             },
             {
-                path: "/profile/update/:id",
+                path: "/update/:id",
                 element: <PrivateRoutes><UpdateProfile></UpdateProfile></PrivateRoutes>,
-                loader: ({params})=> fetch(`http://localhost:5000/users/${params.id}`)
+                loader: ({params})=> fetch(`http://localhost:8000/users/${params.id}`)
             },
             {
                 path: "/profile/change-password",
@@ -110,20 +114,30 @@ const router = createBrowserRouter([
             },
             {
                 //This will be Admin Route
+                path: "all-user-info",
+                element: <SystemAdminRoute><AllUserInfo></AllUserInfo></SystemAdminRoute>
+            },
+            {
+                //This will be Admin Route
                 path: "users/:id",
                 element: <SystemAdminRoute><UserDetails></UserDetails></SystemAdminRoute>,
-                loader: ({params})=> fetch(`http://localhost:5000/users/${params.id}`)
+                loader: ({params})=> fetch(`http://localhost:8000/users/${params.id}`)
             },
             {
                 //This will be Sts Manager Route
                 path: "data-entry-sts-manager",
-                element: <StsDataEntry></StsDataEntry>
+                element: <StsManagerRoute><StsDataEntry></StsDataEntry></StsManagerRoute>
                 
             },
             {
+                //This will be Sts Manager Route
+                path: "view-routes",
+                element: <StsManagerRoute><STSManagerMapRoutes></STSManagerMapRoutes></StsManagerRoute>,
+              },
+            {
                 //This will be Land Manager Route
                 path: "land-data-entry",
-                element: <LandfillDataEntry></LandfillDataEntry>
+                element: <LandfillManagerRoute><LandfillDataEntry></LandfillDataEntry></LandfillManagerRoute>
                 
             },
         ]

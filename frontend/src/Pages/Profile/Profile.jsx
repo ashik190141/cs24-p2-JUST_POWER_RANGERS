@@ -24,7 +24,7 @@ const Profile = () => {
     return (
         <div>
             <Helmet>
-                <title>Dust Master | Profile</title>
+                <title>EcoSync | Profile</title>
             </Helmet>
             <SectionTitle title={userRole} subTitle={'My Current Position?'}></SectionTitle>
 
@@ -77,7 +77,7 @@ const Profile = () => {
                     <div className="my-16 w-full md:w-10/12 mx-auto flex justify-start items-center">
                         <div className="flex gap-20">
                             <button
-                                onClick={() => navigate(`/profile/update/${userDetails?._id}`)}
+                                onClick={() => navigate(`/update/${userDetails?._id}`)}
                                 className="bg-green-900 text-white px-5 py-2 rounded-md">
                                 Update Profile
                             </button>

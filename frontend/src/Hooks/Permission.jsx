@@ -6,7 +6,7 @@ import useAxiosPublic from "./useAxiosPublic";
 const Permission = () => {
     const { user } = useAuth();
     let info = {
-        email: user.email
+        email: user?.email
     };
 
     let axiosPublic = useAxiosPublic();

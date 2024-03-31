@@ -1,9 +1,8 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { FaDatabase, FaEdit, FaHome, FaMale, FaPlaceOfWorship, FaTasks, FaTruck, FaUsers } from 'react-icons/fa';
+import { FaDatabase, FaEdit, FaHome, FaInfo, FaMale, FaMap, FaPlaceOfWorship, FaTasks, FaTruck, FaUsers } from 'react-icons/fa';
 import Navbar from '../../Components/Navbar';
 import Footer from '../../Components/Footer';
 import Permission from '../../Hooks/Permission';
-
 
 
 const Dashboard = () => {
@@ -15,7 +14,7 @@ const Dashboard = () => {
             <div className="max-w-full mx-auto flex">
                 <div className="w-64 h-screen bg-[#092111] text-white sticky top-0">
                     <div className='text-center my-5'>
-                        <h1 className='text-3xl font-bold'>Dust Master</h1>
+                        <h1 className='text-3xl font-bold'>EcoSync</h1>
                         <p className='text-xl'>Web App</p>
                     </div>
 
@@ -58,6 +57,11 @@ const Dashboard = () => {
                                         to='manage-user' >
                                         <FaUsers></FaUsers>Manage User</NavLink>
                                 </li>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='all-user-info' >
+                                        <FaInfo></FaInfo>User Info</NavLink>
+                                </li>
                             </ul>
                         </>
                     }
@@ -68,6 +72,11 @@ const Dashboard = () => {
                                     <NavLink className='flex items-center font-bold gap-2'
                                         to='data-entry-sts-manager' >
                                         <FaDatabase></FaDatabase>Data Entry</NavLink>
+                                </li>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='view-routes' >
+                                        <FaMap></FaMap>View Optimize Route</NavLink>
                                 </li>
                             </ul>
                         </>

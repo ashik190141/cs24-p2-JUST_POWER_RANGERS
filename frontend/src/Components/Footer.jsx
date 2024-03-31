@@ -30,7 +30,7 @@ const Footer = () => {
             <footer className="footer px-10 py-4 border-t bg-[#092111] text-white">
                 <aside className="items-center grid-flow-col">
                     <img className='w-16 h-16' src={img} alt="" />
-                    <p>Dust Master Ltd. <br />Providing reliable Service since 2024</p>
+                    <p>EcoSync Ltd. <br />Providing reliable Service since 2024</p>
                 </aside>
                 <nav className="md:place-self-center md:justify-self-end">
                     <div className="grid grid-flow-col gap-4">

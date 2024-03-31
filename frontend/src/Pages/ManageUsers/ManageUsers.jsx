@@ -54,7 +54,7 @@ const ManageUser = () => {
     return (
         <div className="w-11/12 mx-auto my-5">
             <Helmet>
-                <title>Dust Master | Manage User</title>
+                <title>EcoSync | Manage User</title>
             </Helmet>
             <SectionTitle title={"Manage Users"} subTitle={'User Update?'}></SectionTitle>
             {
@@ -71,7 +71,8 @@ const ManageUser = () => {
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">User Name</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">User Email</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Role</th>
-                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Details</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Change Role</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Update User</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Delete User</th>
                                 </tr>
                             </thead>
@@ -91,11 +92,17 @@ const ManageUser = () => {
                                         <td className="p-4 border-b border-blue-gray-50">
                                             <button className="bg-green-600 text-white rounded-md px-4 py-2"
                                                 onClick={() => navigate(`/dashboard/users/${item?._id}`)}>
-                                                See Details</button>
+                                                Change Role</button>
                                         </td>
                                         <th className="p-4 border-b border-blue-gray-50">
+                                            <button className="bg-blue-800 text-white rounded-md px-4 py-2"
+                                                onClick={() => navigate(`/update/${item?._id}`)}>
+                                                Update User</button>
+                                        </th>
+                                        <th className="p-4 border-b border-blue-gray-50">
                                             <button className="bg-red-600 text-white rounded-md px-4 py-2"
-                                                onClick={() => HandleDeleteUser(item?._id)}>Delete User</button></th>
+                                                onClick={() => HandleDeleteUser(item?._id)}>Delete User</button>
+                                        </th>
                                     </tr>
                                     )}
                             </tbody>

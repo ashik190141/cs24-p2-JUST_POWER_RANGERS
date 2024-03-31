@@ -38,7 +38,7 @@ const AddNewRole = () => {
     return (
         <div>
             <Helmet>
-                <title>Dust Master | Add New Role</title>
+                <title>EcoSync | Add New Role</title>
             </Helmet>
             <SectionTitle title={"Add New Role"} subTitle={'Need More Worker?'}></SectionTitle>
             <div>

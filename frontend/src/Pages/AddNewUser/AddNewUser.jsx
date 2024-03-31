@@ -49,7 +49,7 @@ const AddNewUser = () => {
     return (
         <div>
             <Helmet>
-                <title>Dust Master | Add New User</title>
+                <title>EcoSync | Add New User</title>
             </Helmet>
             <SectionTitle title={"Add New User"} subTitle={'Need More Member?'}></SectionTitle>
             <div>

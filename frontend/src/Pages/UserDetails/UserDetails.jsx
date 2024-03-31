@@ -18,7 +18,6 @@ const UserDetails = () => {
             return res.data;
         }
     });
-    let newRole = availableRole?.filter((item) => item.roleName !== user.role);
 
     const { register, handleSubmit, reset } = useForm();
     let axiosPublic = useAxiosPublic();
@@ -119,7 +118,7 @@ const UserDetails = () => {
     return (
         <div className="w-full md:w-10/12 mx-auto">
             <Helmet>
-                <title>Dust Master | User Profile</title>
+                <title>EcoSync | User Profile</title>
             </Helmet>
             <SectionTitle title={user?.userName} subTitle={'user Name'}></SectionTitle>
             <div className="">
@@ -146,7 +145,7 @@ const UserDetails = () => {
                                         user.role != 'unassigned' && <option  value="unassigned">Un-Assigned</option>
                                     }
                                     {
-                                        newRole?.map((role) => {
+                                        availableRole?.map((role) => {
                                             return (
                                                 <option className="text-black" key={role._id} value={role?.roleName}>{role?.roleName}</option>
                                             )
