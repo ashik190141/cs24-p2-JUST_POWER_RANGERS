@@ -90,11 +90,7 @@ let yyyy = today.getFullYear();
 let currentDate = `${dd}/${mm}/${yyyy}`;
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-//This is for Ashik
-// const uri =
-//   `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.nhg2oh1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
-//This is for Shojib
 const uri =
   `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.oglq0ui.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -225,7 +221,7 @@ async function run() {
               .then(() => {
                 return res.json({
                   result: true,
-                  message: "check your email",
+                  message: "User Created Successfully",
                 });
               })
               .catch((error) => {
@@ -285,7 +281,7 @@ async function run() {
                 .then(() => {
                   return res.json({
                     result: true,
-                    message: "check your email",
+                    message: "User Created Successfully",
                   });
                 })
                 .catch((error) => {
@@ -431,8 +427,6 @@ async function run() {
     });
 
 
-
-
     // =====================Reset Password Confirm👇===================>
     app.put("/auth/reset-password/confirm", async (req, res) => {
       const userInfo = req.body;
@@ -498,7 +492,6 @@ async function run() {
     })
 
     // =====================Change PassWord👇==========================>
-    //Completed successfully
     app.put("/auth/change-password", verifyToken, async (req, res) => {
       const information = req.body;
       const query = { email: information.email };
