@@ -31,8 +31,7 @@ const ManageUser = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 let res = await axiosPublic.delete(`/users/${id}`)
-                console.log(res.data);
-                if (res.data.deletedCount > 0) {
+                if (res.data.result) {
                     Swal.fire({
                         title: "Deleted!",
                         text: "User has been deleted.",
@@ -42,7 +41,7 @@ const ManageUser = () => {
                 } else {
                     Swal.fire({
                         icon: 'error',
-                        title: "Unsuccessful",
+                        title: "Deleted Unsuccessful",
                         showConfirmButton: false,
                         timer: 2000
                     })
