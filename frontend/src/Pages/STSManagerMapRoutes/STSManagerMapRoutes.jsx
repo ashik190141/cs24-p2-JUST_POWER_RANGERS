@@ -3,26 +3,19 @@ import { useState, useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import L from "leaflet";
-import "leaflet-routing-machine"; // Import for side effects
-import useAuth from '../../Hooks/useAuth';
+import "leaflet-routing-machine";
 import { useQuery } from '@tanstack/react-query';
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
 import { Helmet } from "react-helmet-async";
+import GetMyStsInfo from "../../Hooks/GetMyStsInfo";
 
 const STSManagerMapRoutes = () => {
-    const { user } = useAuth();
     let axiosPublic = useAxiosPublic()
     const [destinationInfo, setDestinationInfo] = useState([]);
+    let [stsId, isLoading] = GetMyStsInfo();
 
-    const { data: stsId, isPending: isLoading } = useQuery({
-        queryKey: ["stsLocation"],
-        queryFn: async () => {
-            const res = await axiosPublic.get(`/sts-info/${user?.email}`);
-            return res.data.data;
-        },
-    });
     console.log(stsId?.lat);
     const a = stsId?.lat;
     const b = stsId?.lng;
