@@ -308,12 +308,15 @@ async function run() {
         if (user.role == 'unassigned') {
           return res.json({
             result: false,
-            message: "You can not login now!"
+            message: "You are unassigned now!"
           })
         }
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-          return res.status(401).json({ message: "Invalid email or password" });
+          return res.json({
+            result: false,
+            message: "Invalid password"
+          });
         }
 
         const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
@@ -1332,7 +1335,6 @@ async function run() {
       let result = [];
       for (let i = 0; i < allVehicles.length; i++) {
         const vehicleNum = allVehicles[i].vehicleRegNum;
-
         const truckDumpingInfo = await truckDumpingCollection
           .find({
             $and: [
