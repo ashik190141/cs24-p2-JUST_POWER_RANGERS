@@ -1,25 +1,19 @@
-# Use an official Node.js image as the base image
-FROM node:14
+FROM node:16
 
-# Set the working directory in the container
-WORKDIR /app/backend
+# Set working directory
+WORKDIR /app
 
-# Copy package.json and package-lock.json to the working directory
+# Copy package.json and package-lock.json
 COPY package*.json ./
-
-# Install nodemon globally
-RUN npm install -g nodemon
-RUN npm uninstall bcrypt
-RUN npm install bcrypt
 
 # Install dependencies
 RUN npm install
 
-# Copy the remaining source code to the working directory
+# Copy other backend files
 COPY . .
 
-# Expose the port the app runs on
+# Expose port
 EXPOSE 8000
 
-# Command to run the app
-CMD ["npm", "run", "dev"]
+# Command to run the backend server
+CMD ["node", "index.js"]

@@ -1,20 +1,15 @@
-# Use official Node.js image as the base image
-FROM node:14
+FROM node:latest
 
-# Set the working directory in the container
-WORKDIR /app/frontend
+WORKDIR /app
 
-# Copy the dependencies file to the working directory
-COPY package.json ./
+COPY package*.json ./
 
-# Install dependencies
 RUN npm install
 
-# Copy the remaining source code to the working directory
 COPY . .
 
-# Expose the port the app runs on
+# RUN npm run build
+
 EXPOSE 3000
 
-# Command to run the app
 CMD ["npm", "run", "dev"]

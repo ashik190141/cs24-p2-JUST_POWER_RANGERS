@@ -1,30 +1,41 @@
-version: '3.7'
+version: '3'
 
 services:
   backend:
-    container_name: backend
-    build:
+    build: 
       context: ./backend
-      dockerfile: Dockerfile
-    volumes:
-      - ./backend:/app/backend
     ports:
       - "8000:8000"
     environment:
+      - NODE_ENV=development
       - DB_USER=CodeSamuraiP2
       - DB_PASS=UDmukBd6YOci9AWD
       - JWT_SECRET=9e513de0d87e487b7e0babd825ba9cebdfbf9a85c54fb9beb3fb04270bfc747c66bf7242b9afac75d0d35474dcd30c39d48ac6f895829f2b0483cdaa46aa0494
       - EXPIRES_IN=5d
       - email=jyotiranmondal@gmail.com
-      - password=wfksuxzhbxhloyao
+      - password=wfks uxzh bxhl oyao
+    env_file:
+      - ./backend/.env 
+    volumes:
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
+    depends_on:
+      - mongo
+
 
   frontend:
-    container_name: frontend
     build:
       context: ./frontend
-      dockerfile: Dockerfile
-    volumes:
-      - ./frontend:/app/frontend
     ports:
       - "3000:3000"
 
+  mongo:
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

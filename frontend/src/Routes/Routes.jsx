@@ -45,7 +45,7 @@ const router = createBrowserRouter([
             {
                 path: "/update/:id",
                 element: <PrivateRoutes><UpdateProfile></UpdateProfile></PrivateRoutes>,
-                loader: ({params})=> fetch(`http://localhost:5000/users/${params.id}`)
+                loader: ({params})=> fetch(`http://localhost:8000/users/${params.id}`)
             },
             {
                 path: "/profile/change-password",
@@ -121,7 +121,7 @@ const router = createBrowserRouter([
                 //This will be Admin Route
                 path: "users/:id",
                 element: <SystemAdminRoute><UserDetails></UserDetails></SystemAdminRoute>,
-                loader: ({params})=> fetch(`http://localhost:5000/users/${params.id}`)
+                loader: ({params})=> fetch(`http://localhost:8000/users/${params.id}`)
             },
             {
                 //This will be Sts Manager Route

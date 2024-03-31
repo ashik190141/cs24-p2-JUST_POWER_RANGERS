@@ -7,7 +7,7 @@ import { DataGrid } from "@mui/x-data-grid";
 const AdminHome = () => {
     const [truckDetails, setTruckDetails] = useState([]);
     useEffect(() => {
-        fetch("http://localhost:5000/dashboard")
+        fetch("http://localhost:8000/dashboard")
             .then(res => res.json())
             .then(data => {
                 console.log(data);
