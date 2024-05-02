@@ -294,7 +294,6 @@ async function run() {
     });
 
     // ======================Login User👇============================>
-    // ===============================Login User👇===================================
     app.post("/auth/login", async (req, res) => {
       try {
         const { email, password } = req.body;
@@ -540,7 +539,7 @@ async function run() {
 
     // =====================Get All User👇=============================>
     // User Management Endpoints
-    app.get("/users", verifyToken, async (req, res) => {
+    app.get("/users", async (req, res) => {
       const result = await usersCollection.find().toArray();
       res.send(result);
     });

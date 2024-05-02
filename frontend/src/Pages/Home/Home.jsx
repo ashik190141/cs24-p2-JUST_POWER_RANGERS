@@ -1,6 +1,7 @@
 
 import SectionTitle from '../../Components/SectionTitle';
 import { Banner } from './Banner';
+import Counter from './Counter';
 import Effect from './Effect';
 
 const Home = () => {
@@ -9,6 +10,7 @@ const Home = () => {
             <Banner></Banner>
             <SectionTitle title={'Waste Cause Polutions'} subTitle={'Clean Dhaka'}></SectionTitle>
             <Effect></Effect>
+            <Counter></Counter>
         </div>
     );
 };
