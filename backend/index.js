@@ -1424,8 +1424,7 @@ async function run() {
         for (let j = 0; j < stsManagers.length; j++) {
           if (stsManagers[j] == getUserInfo._id.toString()) {
             vehicleInfo = allStsCollection[i].vehicles;
-            target = allStsCollection[i].capacity
-            // console.log(vehicleInfo);
+            target = allStsCollection[i].capacity;
           }
         }
       }
