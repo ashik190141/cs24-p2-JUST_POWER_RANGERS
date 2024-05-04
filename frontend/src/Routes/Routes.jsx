@@ -28,6 +28,8 @@ import LandfillManagerRoute from "./LandfilManagerRoute";
 import StsManagerRoute from "./StsManagerRoute";
 import STSManagerMapRoutes from "../Pages/STSManagerMapRoutes/STSManagerMapRoutes";
 import StsManagerMinimumVehicle from "../Pages/StsManagerMinimumVehicle/StsManagerMinimumVehicle";
+import ManageAllSts from "../Pages/Manage-All-Sts/ManageAllSts";
+import ManageAllLandfill from "../Pages/Manage-All-Landfill/ManageAllLandfill";
 
 const router = createBrowserRouter([
     {
@@ -117,6 +119,16 @@ const router = createBrowserRouter([
                 //This will be Admin Route
                 path: "all-user-info",
                 element: <SystemAdminRoute><AllUserInfo></AllUserInfo></SystemAdminRoute>
+            },
+            {
+                //This will be Admin Route
+                path: "manage-all-sts",
+                element: <SystemAdminRoute><ManageAllSts></ManageAllSts></SystemAdminRoute>
+            },
+            {
+                //This will be Admin Route
+                path: "manage-all-landfill",
+                element: <SystemAdminRoute><ManageAllLandfill></ManageAllLandfill></SystemAdminRoute>
             },
             {
                 //This will be Admin Route
