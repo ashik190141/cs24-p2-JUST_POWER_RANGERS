@@ -28,13 +28,15 @@ import LandfillManagerRoute from "./LandfilManagerRoute";
 import StsManagerRoute from "./StsManagerRoute";
 import STSManagerMapRoutes from "../Pages/STSManagerMapRoutes/STSManagerMapRoutes";
 import StsManagerMinimumVehicle from "../Pages/StsManagerMinimumVehicle/StsManagerMinimumVehicle";
+import ManageAllSts from "../Pages/Manage-All-Sts/ManageAllSts";
+import ManageAllLandfill from "../Pages/Manage-All-Landfill/ManageAllLandfill";
 
 const router = createBrowserRouter([
     {
         path: "/",
         errorElement: <Error></Error>,
         element: <MainLayout></MainLayout>,
-        children:[
+        children: [
             {
                 path: "/",
                 element: <Home></Home>
@@ -46,7 +48,7 @@ const router = createBrowserRouter([
             {
                 path: "/update/:id",
                 element: <PrivateRoutes><UpdateProfile></UpdateProfile></PrivateRoutes>,
-                loader: ({params})=> fetch(`http://localhost:5000/users/${params.id}`)
+                loader: ({ params }) => fetch(`http://localhost:5000/users/${params.id}`)
             },
             {
                 path: "/profile/change-password",
@@ -76,8 +78,8 @@ const router = createBrowserRouter([
     },
     {
         path: "/dashboard",
-        element: <Dashboard></Dashboard>,
-        children:[
+        element: <PrivateRoutes><Dashboard></Dashboard></PrivateRoutes>,
+        children: [
             {
                 //This will be Admin Route
                 path: "admin-home",
@@ -120,15 +122,25 @@ const router = createBrowserRouter([
             },
             {
                 //This will be Admin Route
+                path: "manage-all-sts",
+                element: <SystemAdminRoute><ManageAllSts></ManageAllSts></SystemAdminRoute>
+            },
+            {
+                //This will be Admin Route
+                path: "manage-all-landfill",
+                element: <SystemAdminRoute><ManageAllLandfill></ManageAllLandfill></SystemAdminRoute>
+            },
+            {
+                //This will be Admin Route
                 path: "users/:id",
                 element: <SystemAdminRoute><UserDetails></UserDetails></SystemAdminRoute>,
-                loader: ({params})=> fetch(`http://localhost:5000/users/${params.id}`)
+                loader: ({ params }) => fetch(`http://localhost:5000/users/${params.id}`)
             },
             {
                 //This will be Sts Manager Route
                 path: "data-entry-sts-manager",
                 element: <StsManagerRoute><StsDataEntry></StsDataEntry></StsManagerRoute>
-                
+
             },
             {
                 //This will be Sts Manager Route
@@ -138,14 +150,14 @@ const router = createBrowserRouter([
             {
                 //This will be Sts Manager Route
                 path: "min-vehicle-and-cost/:email",
-                element: <StsManagerMinimumVehicle></StsManagerMinimumVehicle>,
+                element: <StsManagerRoute><StsManagerMinimumVehicle></StsManagerMinimumVehicle></StsManagerRoute>,
                 loader: ({ params }) => fetch(`http://localhost:5000/minimum-vehicle-and-cost/${params?.email}`),
             },
             {
                 //This will be Land Manager Route
                 path: "land-data-entry",
                 element: <LandfillManagerRoute><LandfillDataEntry></LandfillDataEntry></LandfillManagerRoute>
-                
+
             },
         ]
     }

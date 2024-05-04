@@ -1,23 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
 import Swal from "sweetalert2";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import { useNavigate } from "react-router-dom";
 import SectionTitle from "../../Components/SectionTitle";
+import GetAllUsers from "../../Hooks/GetAllUsers";
 
 
 const ManageUser = () => {
     let axiosPublic = useAxiosPublic();
     let navigate = useNavigate();
-
-    const { data: allUser = [], isPending, refetch } = useQuery({
-        queryKey: ['allUser'],
-        queryFn: async () => {
-            const res = await axiosPublic.get('/users');
-            return res.data;
-        }
-    });
-
+    let [allUser, isPending, refetch] = GetAllUsers();
 
     let HandleDeleteUser = (id) => {
         Swal.fire({
@@ -31,8 +23,7 @@ const ManageUser = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 let res = await axiosPublic.delete(`/users/${id}`)
-                console.log(res.data);
-                if (res.data.deletedCount > 0) {
+                if (res.data.result) {
                     Swal.fire({
                         title: "Deleted!",
                         text: "User has been deleted.",
@@ -42,7 +33,7 @@ const ManageUser = () => {
                 } else {
                     Swal.fire({
                         icon: 'error',
-                        title: "Unsuccessful",
+                        title: "Deleted Unsuccessful",
                         showConfirmButton: false,
                         timer: 2000
                     })

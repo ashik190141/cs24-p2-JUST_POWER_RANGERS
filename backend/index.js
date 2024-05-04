@@ -294,7 +294,6 @@ async function run() {
     });
 
     // ======================Login User👇============================>
-    // ===============================Login User👇===================================
     app.post("/auth/login", async (req, res) => {
       try {
         const { email, password } = req.body;
@@ -308,12 +307,15 @@ async function run() {
         if (user.role == 'unassigned') {
           return res.json({
             result: false,
-            message: "You can not login now!"
+            message: "You are unassigned now!"
           })
         }
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-          return res.status(401).json({ message: "Invalid email or password" });
+          return res.json({
+            result: false,
+            message: "Invalid password"
+          });
         }
 
         const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
@@ -537,7 +539,7 @@ async function run() {
 
     // =====================Get All User👇=============================>
     // User Management Endpoints
-    app.get("/users", verifyToken, async (req, res) => {
+    app.get("/users", async (req, res) => {
       const result = await usersCollection.find().toArray();
       res.send(result);
     });
@@ -571,9 +573,94 @@ async function run() {
     // admin access
     app.delete("/users/:userId", verifyToken, verifyAdmin, async (req, res) => {
       const id = req.params.userId;
-      const query = { _id: new ObjectId(id) };
-      const result = await usersCollection.deleteOne(query);
-      res.send(result);
+      const query = { _id: new ObjectId(id) }
+      const allLandfill = await landfillCollection.find().toArray();
+      const allSts = await stsCollection.find().toArray();
+      let userInfo = await usersCollection.findOne(query);
+      let flag = 0;
+      let deleted = 0;
+      if (userInfo.assigned) {
+        if (userInfo.role === 'Sts Manager') {
+          let newStsManager = [];
+          let newSts;
+          for (let i = 0; i < allSts.length; i++) {
+            const managers = allSts[i].manager;
+            for (let j = 0; j < managers.length; j++) {
+              if (managers[j] == id) {
+                newStsManager = allSts[i].manager?.filter(mId => mId !== id);
+                allSts[i].manager = newStsManager;
+                newSts = allSts[i];
+                flag = 1;
+                break;
+              }
+            }
+            if (flag) break;
+          }
+          const UpdatedDocument = {
+            $set: {
+              manager: newSts.manager
+            }
+          }
+          let LandQuery = { name: newSts.name };
+          let removed = await stsCollection.updateOne(LandQuery, UpdatedDocument);
+          if (removed.modifiedCount > 0) {
+            const result = await usersCollection.deleteOne(query);
+            if (result.deletedCount > 0) {
+              deleted = 1;
+            }
+          }
+        } else if (userInfo.role === 'Land Manager') {
+          let NewLandManager = [];
+          let newLand;
+          for (let i = 0; i < allLandfill.length; i++) {
+            const managers = allLandfill[i].manager;
+            for (let j = 0; j < managers.length; j++) {
+              if (managers[j] == id) {
+                NewLandManager = allLandfill[i].manager?.filter(mId => mId !== id);
+                allLandfill[i].manager = NewLandManager;
+                newLand = allLandfill[i];
+                flag = 1;
+                break
+              }
+            }
+            if (flag) break;
+          }
+          const UpdatedDocument = {
+            $set: {
+              manager: newLand.manager
+            }
+          }
+          let LandQuery = { name: newLand.name };
+          let removed = await landfillCollection.updateOne(LandQuery, UpdatedDocument);
+          if (removed.modifiedCount > 0) {
+            const result = await usersCollection.deleteOne(query);
+            if (result.deletedCount > 0) {
+              deleted = 1;
+            }
+          }
+        } else {
+          const result = await usersCollection.deleteOne(query);
+          if (result.deletedCount > 0) {
+            deleted = 1;
+          }
+        }
+      } else {
+        const result = await usersCollection.deleteOne(query);
+        if (result.deletedCount > 0) {
+          deleted = 1;
+        }
+      }
+      if (deleted == 1) {
+        res.json({
+          result: true,
+          message: "Successfully Deleted User"
+        });
+      } else {
+        res.json({
+          result: false,
+          message: "Something went wrong"
+        });
+      }
     });
 
     // ===================Update Role to User👇=======================>
@@ -683,7 +770,6 @@ async function run() {
           }
           let LandQuery = { name: newLand.name };
           let removed = await landfillCollection.updateOne(LandQuery, UpdatedDocument);
-          console.log(removed);
           let newSts;
           if (removed.modifiedCount > 0) {
             for (let i = 0; i < allSts.length; i++) {
@@ -1248,7 +1334,6 @@ async function run() {
       let result = [];
       for (let i = 0; i < allVehicles.length; i++) {
         const vehicleNum = allVehicles[i].vehicleRegNum;
-
         const truckDumpingInfo = await truckDumpingCollection
           .find({
             $and: [
@@ -1338,8 +1423,7 @@ async function run() {
         for (let j = 0; j < stsManagers.length; j++) {
           if (stsManagers[j] == getUserInfo._id.toString()) {
             vehicleInfo = allStsCollection[i].vehicles;
-            target = allStsCollection[i].capacity
-            // console.log(vehicleInfo);
+            target = allStsCollection[i].capacity;
           }
         }
       }
@@ -1349,23 +1433,23 @@ async function run() {
 
       let reqData = []
 
-      for (let i = 0; i < trucks.length; i++){
+      for (let i = 0; i < trucks.length; i++) {
         let truck = trucks[i];
         if (truck.type == "Compactor") {
-          truck.capacity = (truck.capacity) * 5;
+          truck.capacity = (truck.capacity);
         }
         const newInfoOfTruck = {
-            name: truck.vehicleRegNum,
-            capacity: truck.capacity,
-            cost: truck?.fualCostLoaded + truck?.fualCostUnloaded,
+          name: truck.vehicleRegNum,
+          capacity: truck.capacity,
+          cost: truck?.fualCostLoaded + truck?.fualCostUnloaded,
         };
         reqData.push(newInfoOfTruck)
       }
 
       res.json({
-          result: true,
-          trucks: reqData,
-          stsCapacity: target,
+        result: true,
+        trucks: reqData,
+        stsCapacity: target,
       });
     })
 

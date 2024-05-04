@@ -40,7 +40,7 @@ const LandfillDataEntry = () => {
           Landfill Name: ${pdfData.landName}
           Weight of Waste: ${pdfData.waste}
           Truck Arrival: ${pdfData.arrival}
-          Truck Arrival: ${pdfData.departure}
+          Truck Departure: ${pdfData.departure}
           Total Bill: ${totalBill}
           Distance: ${totalDistance}
         `;
