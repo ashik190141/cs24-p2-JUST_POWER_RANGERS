@@ -75,7 +75,7 @@ const ManageAllSts = () => {
                                         </td>
                                         <th className="p-4 border-b border-blue-gray-50">
                                             <button className="bg-blue-800 text-white rounded-md px-4 py-2"
-                                                onClick={() => navigate(`/update/${item?._id}`)}>
+                                                onClick={() => navigate(`/update-sts/${item?._id}`)}>
                                                 Update</button>
                                         </th>
                                         <th className="p-4 border-b border-blue-gray-50">
