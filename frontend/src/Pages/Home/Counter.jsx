@@ -28,7 +28,7 @@ const Counter = () => {
                             className='text-xl font-bold'
                             start={0}
                             end={userNumber}
-                            duration={3} />
+                            duration={5} />
                     </div>
 
                 </div>
@@ -39,7 +39,7 @@ const Counter = () => {
                             className='text-xl font-bold'
                             start={0}
                             end={stsNumber}
-                            duration={3} />
+                            duration={5} />
                     </div>
                 </div>
                 <div className='text-center bg-white rounded-full h-36'>
@@ -49,7 +49,7 @@ const Counter = () => {
                             className='text-xl font-bold'
                             start={0}
                             end={landfillNumber}
-                            duration={3} />
+                            duration={5} />
                     </div>
                 </div>
                 <div className='text-center bg-white rounded-full h-36'>
@@ -59,7 +59,7 @@ const Counter = () => {
                             className='text-xl font-bold'
                             start={0}
                             end={vehicleNumber}
-                            duration={3} />
+                            duration={5} />
                     </div>
                 </div>
             </div>
