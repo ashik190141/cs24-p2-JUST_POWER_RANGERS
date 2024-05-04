@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 
 
 const ManageAllSts = () => {
-    let [allSts, isStsLoading] = GetAllSts();
+    let [allSts, isStsLoading, refetch] = GetAllSts();
     let navigate = useNavigate();
 
     let HandleDeleteSts = (id) =>{
@@ -26,6 +26,7 @@ const ManageAllSts = () => {
                     'Your file has been deleted.',
                    'success'
                 )
+                refetch();
             }
         })
 

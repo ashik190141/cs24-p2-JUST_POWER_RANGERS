@@ -9,7 +9,7 @@ const ManageAllLandfill = () => {
     let [allLandfill, isPending, refetch] = GetAllLandfill();
     let navigate = useNavigate();
 
-    let HandleDeleteSts = (id) =>{
+    let HandleDeleteLandfill = (id) =>{
         console.log(id)
         Swal.fire({
             title: 'Are you sure?',
@@ -26,6 +26,7 @@ const ManageAllLandfill = () => {
                     'Your file has been deleted.',
                    'success'
                 )
+                refetch();
             }
         })
 
@@ -78,7 +79,7 @@ const ManageAllLandfill = () => {
                                     </th>
                                     <th className="p-4 border-b border-blue-gray-50">
                                         <button className="bg-red-600 text-white rounded-md px-4 py-2"
-                                            onClick={() => HandleDeleteSts(item?._id)}>Delete</button>
+                                            onClick={() => HandleDeleteLandfill(item?._id)}>Delete</button>
                                     </th>
                                 </tr>
                                 )}
