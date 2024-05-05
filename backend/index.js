@@ -998,6 +998,45 @@ async function run() {
       }
     });
 
+    //Get single Lanfill info
+    app.get('/update-landfill/:id', async (req, res) => {
+      let id = req.params.id;
+      let query = { _id: new ObjectId(id) };
+      let result = await landfillCollection.findOne(query);
+      res.send(result);
+    });
+
+    // =======================Update a Sts👇==========================>
+    // admin access
+    app.put('/update-landfill-info/:id', async (req, res) => {
+      let newLanfillInfo = req.body;
+      let id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedInfo = {
+        $set: {
+          name: newLanfillInfo.name,
+          capacity: newLanfillInfo.capacity,
+          lat: newLanfillInfo.lat,
+          lng: newLanfillInfo.lng,
+          startTime: newLanfillInfo.startTime,
+          endTime: newLanfillInfo.endTime,
+        }
+      }
+      let result = await landfillCollection.updateOne(query, updatedInfo, options);
+      if (result.modifiedCount > 0) {
+        res.json({
+          result: true,
+          message: "Landfill Updated Successfully",
+        });
+      } else {
+        res.json({
+          result: false,
+          message: "Landfill Update Error",
+        });
+      }
+    });
+
     // =======================Create a Sts👇==========================>
     // admin access
     app.post("/create-sts", async (req, res) => {
@@ -1044,7 +1083,7 @@ async function run() {
       res.send(result);
     })
 
-    // =======================Create a Sts👇==========================>
+    // =======================Update a Sts👇==========================>
     // admin access
     app.put('/update-sts-info/:id', async (req, res) => {
       let newStsInfo = req.body;

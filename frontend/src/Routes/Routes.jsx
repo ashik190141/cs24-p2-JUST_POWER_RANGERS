@@ -31,6 +31,7 @@ import StsManagerMinimumVehicle from "../Pages/StsManagerMinimumVehicle/StsManag
 import ManageAllSts from "../Pages/Manage-All-Sts/ManageAllSts";
 import ManageAllLandfill from "../Pages/Manage-All-Landfill/ManageAllLandfill";
 import UpdateSingleSts from "../Pages/Update-Sts/UpdateSingleSts";
+import UpdateSingleLandfill from "../Pages/Update-Landfill/UpdateSingleLandfill";
 
 const router = createBrowserRouter([
     {
@@ -136,6 +137,12 @@ const router = createBrowserRouter([
                 //This will be Admin Route
                 path: "manage-all-landfill",
                 element: <SystemAdminRoute><ManageAllLandfill></ManageAllLandfill></SystemAdminRoute>
+            },
+            {
+                //This will be Admin Route
+                path: "update-landfill/:id",
+                element: <SystemAdminRoute><UpdateSingleLandfill></UpdateSingleLandfill></SystemAdminRoute>,
+                loader: ({ params }) => fetch(`http://localhost:5000/update-landfill/${params.id}`)
             },
             {
                 //This will be Admin Route
