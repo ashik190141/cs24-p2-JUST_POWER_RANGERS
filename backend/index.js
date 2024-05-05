@@ -1037,6 +1037,62 @@ async function run() {
       }
     });
 
+    // =======================Delete a Landfill👇==========================>
+    // admin access
+    app.delete("/delete-landfill/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const landfillInfo = await landfillCollection.findOne(query);
+
+      const landfillManagers = landfillInfo.manager;
+
+      for (let i = 0; i < landfillManagers.length; i++) {
+        const managerUserId = landfillManagers[i];
+        const findManagerQuery = { _id: new ObjectId(managerUserId) };
+        const updatedInfo = {
+          $set: {
+            assigned: false,
+          },
+        };
+        const updateUserInfoResult = await usersCollection.updateOne(
+          findManagerQuery,
+          updatedInfo
+        );
+        if (updateUserInfoResult.modifiedCount == 0) {
+          return res.json({
+            result: false,
+            message: "something went wrong",
+          });
+        }
+      }
+
+      const deleteLandfill = await landfillCollection.deleteOne(query);
+      if (deleteLandfill.deletedCount > 0) {
+        return res.json({
+          result: true,
+          message: "Delete Landfill Successfully",
+        });
+      }
+    });
+
+    // =======================My Landfill Info👇==========================>
+    // Sts Manager
+    app.get('/my-landfill-managers/:id', async (req, res) => {
+      let id = req.params.id;
+      let query = { _id: new ObjectId(id) };
+      let myLandfill = await landfillCollection.findOne(query);
+      let count = myLandfill.manager.length;
+
+      let managers = [];
+      for (let i = 0; i < count; i++) {
+        let managerId = myLandfill.manager[i];
+        let manager = await usersCollection.findOne({ _id: new ObjectId(managerId) });
+        managers.push(manager.userName);
+      }
+      console.log(managers)
+      res.send(managers);
+    });
+
     // =======================Create a Sts👇==========================>
     // admin access
     app.post("/create-sts", async (req, res) => {
@@ -1212,43 +1268,39 @@ async function run() {
       }
     });
 
-    // =======================Delete a Landfill👇==========================>
-    // admin access
-    app.delete("/delete-landfill/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
-      const landfillInfo = await landfillCollection.findOne(query);
+    // =======================My Sts Info👇==========================>
+    // Sts Manager
+    app.get('/my-sts-managers/:id', async (req, res) => {
+      let id = req.params.id;
+      let query = { _id: new ObjectId(id) };
+      let mySts = await stsCollection.findOne(query);
+      let count = mySts.manager.length;
 
-      const landfillManagers = landfillInfo.manager;
-
-      for (let i = 0; i < landfillManagers.length; i++) {
-        const managerUserId = landfillManagers[i];
-        const findManagerQuery = { _id: new ObjectId(managerUserId) };
-        const updatedInfo = {
-          $set: {
-            assigned: false,
-          },
-        };
-        const updateUserInfoResult = await usersCollection.updateOne(
-          findManagerQuery,
-          updatedInfo
-        );
-        if (updateUserInfoResult.modifiedCount == 0) {
-          return res.json({
-            result: false,
-            message: "something went wrong",
-          });
-        }
+      let managers = [];
+      for (let i = 0; i < count; i++) {
+        let managerId = mySts.manager[i];
+        let manager = await usersCollection.findOne({ _id: new ObjectId(managerId) });
+        managers.push(manager.userName);
       }
-
-      const deleteLandfill = await landfillCollection.deleteOne(query);
-      if (deleteLandfill.deletedCount > 0) {
-        return res.json({
-          result: true,
-          message: "Delete Landfill Successfully",
-        });
-      }
+      console.log(managers)
+      res.send(managers);
     });
+
+    // =======================My Sts Info👇==========================>
+    // Sts Manager
+    app.get('/my-sts-vehicles/:id', async (req, res) => {
+      let id = req.params.id;
+      let query = { _id: new ObjectId(id) };
+      let mySts = await stsCollection.findOne(query);
+      let count = mySts.vehicles.length;
+
+      let vehicles = [];
+      for (let i = 0; i < count; i++) {
+        vehicles.push(mySts.vehicles[i].vehicleRegNum);
+      }
+      res.send(vehicles);
+    })
+
 
     // ===================Data Entry of Sts Manager👇=================>
     //sts manager

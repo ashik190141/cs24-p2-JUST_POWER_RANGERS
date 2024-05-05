@@ -32,6 +32,8 @@ import ManageAllSts from "../Pages/Manage-All-Sts/ManageAllSts";
 import ManageAllLandfill from "../Pages/Manage-All-Landfill/ManageAllLandfill";
 import UpdateSingleSts from "../Pages/Update-Sts/UpdateSingleSts";
 import UpdateSingleLandfill from "../Pages/Update-Landfill/UpdateSingleLandfill";
+import MyStsInfo from "../Pages/MyStsInfo/MyStsInfo";
+import MyLandfillInfo from "../Pages/MyLandfillInfo/MyLandfillInfo";
 
 const router = createBrowserRouter([
     {
@@ -152,6 +154,12 @@ const router = createBrowserRouter([
             },
             {
                 //This will be Sts Manager Route
+                path: "my-sts-info",
+                element: <StsManagerRoute><MyStsInfo></MyStsInfo></StsManagerRoute>
+
+            },
+            {
+                //This will be Sts Manager Route
                 path: "data-entry-sts-manager",
                 element: <StsManagerRoute><StsDataEntry></StsDataEntry></StsManagerRoute>
 
@@ -166,6 +174,12 @@ const router = createBrowserRouter([
                 path: "min-vehicle-and-cost/:email",
                 element: <StsManagerRoute><StsManagerMinimumVehicle></StsManagerMinimumVehicle></StsManagerRoute>,
                 loader: ({ params }) => fetch(`http://localhost:5000/minimum-vehicle-and-cost/${params?.email}`),
+            },
+            {
+                //This will be Land Manager Route
+                path: "my-landfill-info",
+                element: <LandfillManagerRoute><MyLandfillInfo></MyLandfillInfo></LandfillManagerRoute>
+
             },
             {
                 //This will be Land Manager Route

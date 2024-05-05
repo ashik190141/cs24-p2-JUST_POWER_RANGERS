@@ -4,7 +4,7 @@ import Navbar from '../../Components/Navbar';
 import Footer from '../../Components/Footer';
 import Permission from '../../Hooks/Permission';
 import useAuth from '../../Hooks/useAuth';
-
+import { CgProfile } from "react-icons/cg";
 
 const Dashboard = () => {
     let [userRole] = Permission();
@@ -82,19 +82,24 @@ const Dashboard = () => {
                             <ul className='flex flex-col mt-10 px-6 space-y-3'>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
+                                        to='my-sts-info' >
+                                        <CgProfile ></CgProfile>My Sts Info</NavLink>
+                                </li>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
                                         to='data-entry-sts-manager' >
-                                        <FaDatabase></FaDatabase>Data Entry</NavLink>
+                                        <FaDatabase></FaDatabase>Sts Data Entry</NavLink>
                                 </li>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
                                         to='view-routes' >
-                                        <FaMap></FaMap>View Optimize Route</NavLink>
+                                        <FaMap></FaMap>View Route</NavLink>
                                 </li>
                                 <li>
                                     <NavLink
                                         className="flex items-center font-bold gap-2"
                                         to={`min-vehicle-and-cost/${user?.email}`}>
-                                        <FaTruck></FaTruck>Minimum Vehicle
+                                        <FaTruck></FaTruck>Minimum Cost
                                     </NavLink>
                                 </li>
                             </ul>
@@ -103,6 +108,11 @@ const Dashboard = () => {
                     {
                         userRole === "Land Manager" && <>
                             <ul className='flex flex-col mt-10 px-6 space-y-3'>
+                                <li >
+                                    <NavLink className='flex items-center font-bold gap-2'
+                                        to='my-landfill-info' >
+                                        <CgProfile></CgProfile>My Landfill Info</NavLink>
+                                </li>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
                                         to='land-data-entry' >

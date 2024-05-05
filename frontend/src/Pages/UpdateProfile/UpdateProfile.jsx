@@ -53,12 +53,12 @@ const UpdateProfile = () => {
             <SectionTitle title={"Update Profile"} subTitle={'New Information?'}></SectionTitle>
             <div>
                 <div
-                    className="w-full md:w-8/12 mx-auto my-3 bg-gray-400 px-10 py-5 rounded-md">
+                    className="w-full md:w-8/12 mx-auto my-3 bg-base-content px-10 py-5 rounded-md">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="flex gap-10">
                             <div className="flex-1">
                                 <label className="label">
-                                    <span className="label-text text-xl font-semibold">User Name*</span>
+                                    <span className="label-text text-xl font-semibold text-base-300">User Name*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -68,7 +68,7 @@ const UpdateProfile = () => {
                             </div>
                             <div className="flex-1">
                                 <label className="label">
-                                    <span className="label-text text-xl font-semibold">User Email*</span>
+                                    <span className="label-text text-xl font-semibold text-base-300">User Email*</span>
                                 </label>
                                 <input
                                     type="email"
@@ -80,7 +80,7 @@ const UpdateProfile = () => {
                         <div className="flex gap-10 my-2">
                             <div className="flex-1">
                                 <label className="label">
-                                    <span className="label-text text-xl font-semibold">Current Role*</span>
+                                    <span className="label-text text-xl font-semibold text-base-300">Current Role*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -91,7 +91,7 @@ const UpdateProfile = () => {
                             </div>
                             <div className="flex-1">
                                 <label className="label">
-                                    <span className="label-text text-xl font-semibold">Phone Number*</span>
+                                    <span className="label-text text-xl font-semibold text-base-300">Phone Number*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -103,7 +103,7 @@ const UpdateProfile = () => {
                         <div className="flex gap-10 my-2">
                             <div className="flex-1">
                                 <label className="label">
-                                    <span className="label-text text-xl font-semibold">Gender*</span>
+                                    <span className="label-text text-xl font-semibold text-base-300">Gender*</span>
                                 </label>
                                 <select
                                     defaultValue={userDetails?.gender}
@@ -116,7 +116,7 @@ const UpdateProfile = () => {
                             </div>
                             <div className="flex-1">
                                 <label className="label">
-                                    <span className="label-text text-xl font-semibold">Date Of Birth*</span>
+                                    <span className="label-text text-xl font-semibold text-base-300">Date Of Birth*</span>
                                 </label>
                                 <input
                                     type="date"
@@ -128,7 +128,7 @@ const UpdateProfile = () => {
                         <div className="flex gap-10 my-2">
                             <div className="flex-1">
                                 <label className="label">
-                                    <span className="label-text text-xl font-semibold">Address*</span>
+                                    <span className="label-text text-xl font-semibold text-base-300">Address*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -138,7 +138,7 @@ const UpdateProfile = () => {
                             </div>
                             <div className="flex-1">
                                 <label className="label">
-                                    <span className="label-text text-xl font-semibold">Thana Name*</span>
+                                    <span className="label-text text-xl font-semibold text-base-300">Thana Name*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -150,7 +150,7 @@ const UpdateProfile = () => {
                         <div className="flex gap-10 my-2 mb-5">
                             <div className="flex-1">
                                 <label className="label">
-                                    <span className="label-text text-xl font-semibold">District*</span>
+                                    <span className="label-text text-xl font-semibold text-base-300">District*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -160,7 +160,7 @@ const UpdateProfile = () => {
                             </div>
                             <div className="flex-1">
                                 <label className="label">
-                                    <span className="label-text text-xl font-semibold">Division*</span>
+                                    <span className="label-text text-xl font-semibold text-base-300">Division*</span>
                                 </label>
                                 <input
                                     type="text"
