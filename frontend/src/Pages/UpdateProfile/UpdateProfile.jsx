@@ -5,10 +5,8 @@ import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 
-
 const UpdateProfile = () => {
     let userDetails = useLoaderData();
-    console.log(userDetails);
 
     const { register, handleSubmit, reset } = useForm();
     let axiosPublic = useAxiosPublic();
@@ -26,9 +24,7 @@ const UpdateProfile = () => {
             district: data.district,
             division: data.division,
         };
-        console.log(updatedInfo);
         let res = await axiosPublic.put(`/users/${userDetails?._id}`, updatedInfo);
-        console.log(res);
         if (res.data.result) {
             Swal.fire({
                 position: "center",
@@ -173,8 +169,6 @@ const UpdateProfile = () => {
                                     className="w-full p-2 rounded-md placeholder:pl-2" />
                             </div>
                         </div>
-
-
                         <button
                             className="bg-green-800 px-4 py-2 rounded-md text-white"
                             type="submit">

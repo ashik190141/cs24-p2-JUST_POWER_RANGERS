@@ -22,7 +22,7 @@ const Dashboard = () => {
 
                     {
                         userRole === "System Admin" && <>
-                            <ul className='menu flex flex-col mt-8 px-6 space-y-3'>
+                            <ul className='menu flex flex-col mt-5 px-6 space-y-3'>
                                 <li >
                                     <NavLink className='flex items-center font-bold gap-2'
                                         to='admin-home' >
