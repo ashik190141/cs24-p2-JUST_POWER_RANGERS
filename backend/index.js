@@ -104,7 +104,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
 
     const usersCollection = client.db("DNCC").collection("user");
     const resetPasswordOTPCollection = client.db("DNCC").collection("reset");
@@ -1453,7 +1453,7 @@ async function run() {
       });
     })
 
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
