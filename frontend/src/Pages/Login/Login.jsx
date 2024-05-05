@@ -100,7 +100,7 @@ const Login = () => {
     return (
         <div className='w-full md:w-10/12 mx-auto'>
             <Helmet>
-                <title>Dust Service | Login</title>
+                <title>EcoSync | Login</title>
             </Helmet>
             <SectionTitle title={"Login Now"} subTitle={'Need Access?'}></SectionTitle>
 
