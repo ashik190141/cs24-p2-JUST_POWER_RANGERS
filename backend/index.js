@@ -1090,26 +1090,67 @@ async function run() {
       let id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const options = { upsert: true };
-      const updatedInfo = {
-        $set: {
-          name: newStsInfo.name,
-          wardNumber: newStsInfo.wardNumber,
-          capacity: newStsInfo.capacity,
-          lat: newStsInfo.lat,
-          lng: newStsInfo.lng
+      let sts = await stsCollection.findOne(query);
+
+      if (newStsInfo.vehicle != 'default') {
+        let vehicleQuery = { _id: new ObjectId(newStsInfo.vehicle) };
+        let vehicleInfo = await vehiclesCollection.findOne(vehicleQuery);
+        let updatedVehicle = {
+          $set: {
+            stsName: sts.name,
+            assigned: true,
+          }
         }
-      }
-      let result = await stsCollection.updateOne(query, updatedInfo, options);
-      if (result.modifiedCount > 0) {
-        res.json({
-          result: true,
-          message: "STS Updated Successfully",
-        });
+        let updateVehicle = await vehiclesCollection.updateOne(vehicleQuery, updatedVehicle, options);
+        if (updateVehicle.modifiedCount > 0) {
+          let updatedSts = {
+            $push: {
+              vehicles: vehicleInfo
+            },
+            $set: {
+              name: newStsInfo.name,
+              wardNumber: newStsInfo.wardNumber,
+              capacity: newStsInfo.capacity,
+              lat: newStsInfo.lat,
+              lng: newStsInfo.lng
+            }
+          }
+          let updateSts = await stsCollection.updateOne(query, updatedSts, options);
+          if (updateSts.modifiedCount > 0) {
+            return res.json({
+              result: true,
+              message: "STS Updated Successfully",
+            })
+          } else {
+            return res.json({
+              result: false,
+              message: "STS Update Error",
+            })
+          }
+        }
+
       } else {
-        res.json({
-          result: false,
-          message: "STS Update Error",
-        });
+        let updatedSts = {
+          $set: {
+            name: newStsInfo.name,
+            wardNumber: newStsInfo.wardNumber,
+            capacity: newStsInfo.capacity,
+            lat: newStsInfo.lat,
+            lng: newStsInfo.lng
+          }
+        }
+        let updateSts = await stsCollection.updateOne(query, updatedSts, options);
+        if (updateSts.modifiedCount > 0) {
+          return res.json({
+            result: true,
+            message: "STS Updated Successfully",
+          })
+        } else {
+          return res.json({
+            result: false,
+            message: "STS Update Error",
+          })
+        }
       }
     });
 
@@ -1124,19 +1165,19 @@ async function run() {
       const stsManagers = stsInfo.manager;
       const stsVehicles = stsInfo.vehicles;
 
-      for (let i = 0; i < stsManagers.length; i++){
+      for (let i = 0; i < stsManagers.length; i++) {
         const managerUserId = stsManagers[i]
         const findManagerQuery = { _id: new ObjectId(managerUserId) }
         const updatedInfo = {
           $set: {
-            assigned:true
+            assigned: false
           }
         }
         const updateUserInfoResult = await usersCollection.updateOne(findManagerQuery, updatedInfo);
         if (updateUserInfoResult.modifiedCount == 0) {
           return res.json({
             result: false,
-            message:"something went wrong"
+            message: "something went wrong"
           })
         }
       }

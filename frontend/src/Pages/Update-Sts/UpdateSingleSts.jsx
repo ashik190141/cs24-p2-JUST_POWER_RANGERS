@@ -10,6 +10,7 @@ import "leaflet/dist/leaflet.css";
 import { useState } from 'react';
 import Modal from "react-modal";
 import { useLoaderData, useNavigate } from "react-router-dom";
+import GetAllVehicle from "../../Hooks/GetAllVehicle";
 
 const customStyles = {
     content: {
@@ -29,6 +30,9 @@ const UpdateSingleSts = () => {
     let axiosPublic = useAxiosPublic();
     let StsInfo = useLoaderData();
     let navigate = useNavigate();
+    let [allVehicle] = GetAllVehicle();
+    let availableVehicle = allVehicle.filter(vehicle => vehicle.assigned == false);
+    console.log(availableVehicle);
 
     let subtitle;
     const [modalIsOpen, setIsOpen] = useState(false);
@@ -58,10 +62,10 @@ const UpdateSingleSts = () => {
             name: data.stsName,
             wardNumber: data.wardNumber,
             capacity: parseInt(data.capacity),
+            vehicle: data.vehicle,
             lat:  parseFloat(data.lat) || StsInfo.lat,
             lng:  parseFloat(data.lng) || StsInfo.lng,
         };
-        console.log(newStsInfo);
         let res = await axiosPublic.put(`/update-sts-info/${StsInfo._id}`, newStsInfo);
         if (res.data.result) {
           Swal.fire({
@@ -137,6 +141,27 @@ const UpdateSingleSts = () => {
                                     className="w-[510px] p-2 rounded-md placeholder:pl-2"
                                 />
                             </div>
+                            <div className="flex-1">
+                <label className="label">
+                  <span className="label-text text-xl font-semibold">
+                    Available Vehicle
+                  </span>
+                </label>
+                <select defaultValue="default"
+                  {...register('vehicle')}
+                  className="w-full py-2 rounded-md">
+                  <option disabled value="default">Select Vehicle </option>
+                  {
+                    availableVehicle?.map((vehicle, index) => {
+                      return (
+                        <option className="text-black" key={index} value={vehicle?._id}>
+                          {vehicle?.vehicleRegNum}</option>
+                      )
+                    })
+                  }
+
+                </select>
+              </div>
                         </div>
                         <div>
 

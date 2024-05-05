@@ -3,11 +3,13 @@ import GetAllSts from "../../Hooks/GetAllSts";
 import SectionTitle from "../../Components/SectionTitle";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import useAxiosPublic from "../../Hooks/useAxiosPublic";
 
 
 const ManageAllSts = () => {
     let [allSts, isStsLoading, refetch] = GetAllSts();
     let navigate = useNavigate();
+    let axiosPublic = useAxiosPublic();
 
     let HandleDeleteSts = (id) =>{
         console.log(id)
@@ -19,14 +21,24 @@ const ManageAllSts = () => {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
+        }).then(async(result) => {
             if (result.isConfirmed) {
-                Swal.fire(
-                    'Deleted!',
-                    'Your file has been deleted.',
-                   'success'
-                )
-                refetch();
+                let res = await axiosPublic.delete(`/delete-sts/${id}`)
+                if (res.data.result) {
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "User has been deleted.",
+                        icon: "success"
+                    });
+                    refetch();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: "Deleted Unsuccessful",
+                        showConfirmButton: false,
+                        timer: 2000
+                    })
+                }
             }
         })
 
