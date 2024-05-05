@@ -18,10 +18,10 @@ const Counter = () => {
         <div>
             <SectionTitle title={"System Info"} subTitle={"Our Dynamic"}></SectionTitle>
             <div
-                className='bg-gradient-to-r from-emerald-600 to-cyan-900 my-5 h-52 mx-6 grid grid-cols-1 md:grid-cols-4 gap-10 justify-center items-center rounded-md'>
-                <div className='text-center bg-white rounded-full h-36'>
+                className='bg-gradient-to-r from-emerald-600 to-cyan-900 my-5 py-8 mx-6 grid grid-cols-2 md:grid-cols-4 gap-10 justify-center items-center rounded-md'>
+                <div className='text-center bg-white rounded-full p-3'>
                     <h1 className='text-2xl font-bold mb-2'>Number of Users</h1>
-                    <div className='h-20 w-20 rounded-full mx-auto bg-sky-900 text-white p-6'>
+                    <div className='h-12 w-12 md:h-20 md:w-20 rounded-full mx-auto bg-sky-900 text-white p-3 md:p-6'>
                         <CountUp
                             className='text-xl font-bold'
                             start={0}
@@ -30,9 +30,9 @@ const Counter = () => {
                     </div>
 
                 </div>
-                <div className='text-center bg-white rounded-full h-36'>
+                <div className='text-center bg-white rounded-full p-3'>
                     <h1 className='text-2xl font-bold mb-2'>Number of STS</h1>
-                    <div className='h-20 w-20 rounded-full mx-auto bg-sky-900 text-white p-6'>
+                    <div className='h-12 w-12 md:h-20 md:w-20 rounded-full mx-auto bg-sky-900 text-white p-3 md:p-6'>
                         <CountUp
                             className='text-xl font-bold'
                             start={0}
@@ -40,9 +40,9 @@ const Counter = () => {
                             duration={5} />
                     </div>
                 </div>
-                <div className='text-center bg-white rounded-full h-36'>
+                <div className='text-center bg-white rounded-full p-3'>
                     <h1 className='text-2xl font-bold mb-2'>Number of Landfil</h1>
-                    <div className='h-20 w-20 rounded-full mx-auto bg-sky-900 text-white p-6'>
+                    <div className='h-12 w-12 md:h-20 md:w-20 rounded-full mx-auto bg-sky-900 text-white p-3 md:p-6'>
                         <CountUp
                             className='text-xl font-bold'
                             start={0}
@@ -50,9 +50,9 @@ const Counter = () => {
                             duration={5} />
                     </div>
                 </div>
-                <div className='text-center bg-white rounded-full h-36'>
+                <div className='text-center bg-white rounded-full p-3'>
                     <h1 className='text-2xl font-bold mb-2'>Number of Vehicle</h1>
-                    <div className='h-20 w-20 rounded-full mx-auto bg-sky-900 text-white p-6'>
+                    <div className='h-12 w-12 md:h-20 md:w-20 rounded-full mx-auto bg-sky-900 text-white p-3 md:p-6'>
                         <CountUp
                             className='text-xl font-bold'
                             start={0}

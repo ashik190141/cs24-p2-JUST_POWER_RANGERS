@@ -8,13 +8,103 @@ import { CgProfile } from "react-icons/cg";
 
 const Dashboard = () => {
     let [userRole] = Permission();
-    let {user} = useAuth();
+    let { user } = useAuth();
+
+    let systemAdmin = <>
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
+                to='admin-home' >
+                <FaHome></FaHome>Admin Home</NavLink>
+        </li>
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
+                to='create-user' >
+                <FaMale></FaMale>Add New User</NavLink>
+        </li>
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
+                to='create-role' >
+                <FaTasks />Add New Role</NavLink>
+        </li>
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
+                to='add-vehicle' >
+                <FaTruck></FaTruck>Add Vehicle</NavLink>
+        </li>
+
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
+                to='create-sts' >
+                <FaPlaceOfWorship></FaPlaceOfWorship>Add New STS</NavLink>
+        </li>
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
+                to='create-landfill' >
+                <FaPlaceOfWorship></FaPlaceOfWorship>Add New Landfill</NavLink>
+        </li>
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
+                to='manage-user' >
+                <FaUsers></FaUsers>Manage User</NavLink>
+        </li>
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
+                to='all-user-info' >
+                <FaInfo></FaInfo>User Info</NavLink>
+        </li>
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
+                to='manage-all-sts' >
+                <FaMap></FaMap>Manage All Sts</NavLink>
+        </li>
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
+                to='manage-all-landfill' >
+                <FaDumpster></FaDumpster>Manage All Landfill</NavLink>
+        </li>
+    </>
+    let stsManager = <>
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
+                to='my-sts-info' >
+                <CgProfile ></CgProfile>My Sts Info</NavLink>
+        </li>
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
+                to='data-entry-sts-manager' >
+                <FaDatabase></FaDatabase>Sts Data Entry</NavLink>
+        </li>
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
+                to='view-routes' >
+                <FaMap></FaMap>View Route</NavLink>
+        </li>
+        <li>
+            <NavLink
+                className="flex items-center font-bold gap-2"
+                to={`min-vehicle-and-cost/${user?.email}`}>
+                <FaTruck></FaTruck>Minimum Cost
+            </NavLink>
+        </li>
+    </>
+    let landManager = <>
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
+                to='my-landfill-info' >
+                <CgProfile></CgProfile>My Landfill Info</NavLink>
+        </li>
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
+                to='land-data-entry' >
+                <FaEdit></FaEdit>Land Data Entry</NavLink>
+        </li>
+    </>
 
     return (
         <div className='max-w-screen-2xl mx-auto min-h-screen sm:px-4 md:px-0 bg-base-300'>
             <Navbar></Navbar>
             <div className="max-w-full mx-auto flex">
-                <div className="w-64 h-screen bg-[#092111] text-white sticky top-0">
+                <div className="w-64 min-h-screen bg-[#092111] text-white sticky top-0">
                     <div className='text-center my-5'>
                         <h1 className='text-3xl font-bold'>EcoSync</h1>
                         <p className='text-xl'>Web App</p>
@@ -23,101 +113,21 @@ const Dashboard = () => {
                     {
                         userRole === "System Admin" && <>
                             <ul className='menu flex flex-col mt-5 px-6 space-y-3'>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='admin-home' >
-                                        <FaHome></FaHome>Admin Home</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='create-user' >
-                                        <FaMale></FaMale>Add New User</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='create-role' >
-                                        <FaTasks />Add New Role</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='add-vehicle' >
-                                        <FaTruck></FaTruck>Add Vehicle</NavLink>
-                                </li>
-
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='create-sts' >
-                                        <FaPlaceOfWorship></FaPlaceOfWorship>Add New STS</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='create-landfill' >
-                                        <FaPlaceOfWorship></FaPlaceOfWorship>Add New Landfill</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='manage-user' >
-                                        <FaUsers></FaUsers>Manage User</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='all-user-info' >
-                                        <FaInfo></FaInfo>User Info</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='manage-all-sts' >
-                                        <FaMap></FaMap>Manage All Sts</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='manage-all-landfill' >
-                                        <FaDumpster></FaDumpster>Manage All Landfill</NavLink>
-                                </li>
+                                {systemAdmin}
                             </ul>
                         </>
                     }
                     {
                         userRole === "Sts Manager" && <>
                             <ul className='flex flex-col mt-10 px-6 space-y-3'>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='my-sts-info' >
-                                        <CgProfile ></CgProfile>My Sts Info</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='data-entry-sts-manager' >
-                                        <FaDatabase></FaDatabase>Sts Data Entry</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='view-routes' >
-                                        <FaMap></FaMap>View Route</NavLink>
-                                </li>
-                                <li>
-                                    <NavLink
-                                        className="flex items-center font-bold gap-2"
-                                        to={`min-vehicle-and-cost/${user?.email}`}>
-                                        <FaTruck></FaTruck>Minimum Cost
-                                    </NavLink>
-                                </li>
+                                {stsManager}
                             </ul>
                         </>
                     }
                     {
                         userRole === "Land Manager" && <>
                             <ul className='flex flex-col mt-10 px-6 space-y-3'>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='my-landfill-info' >
-                                        <CgProfile></CgProfile>My Landfill Info</NavLink>
-                                </li>
-                                <li >
-                                    <NavLink className='flex items-center font-bold gap-2'
-                                        to='land-data-entry' >
-                                        <FaEdit></FaEdit>Land Data Entry</NavLink>
-                                </li>
+                                {landManager}
                             </ul>
                         </>
                     }
@@ -128,7 +138,7 @@ const Dashboard = () => {
                 </div>
 
             </div>
-            <Footer></Footer>
+            <Footer />
         </div>
     )
 }

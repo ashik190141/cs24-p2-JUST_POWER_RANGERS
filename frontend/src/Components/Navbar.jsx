@@ -39,10 +39,10 @@ const Navbar = () => {
             UserRole === 'System Admin' && <li><NavLink to={'/dashboard/admin-home'}>Dashboard</NavLink></li>
         }
         {
-            UserRole === 'Land Manager' && <li><NavLink to={'/dashboard/land-data-entry'}>Dashboard</NavLink></li>
+            UserRole === 'Land Manager' && <li><NavLink to={'/dashboard/my-landfill-info'}>Dashboard</NavLink></li>
         }
         {
-            UserRole === 'Sts Manager' && <li><NavLink to={'/dashboard/data-entry-sts-manager'}>Dashboard</NavLink></li>
+            UserRole === 'Sts Manager' && <li><NavLink to={'/dashboard/my-sts-info'}>Dashboard</NavLink></li>
         }
     </>
     return (
@@ -52,12 +52,12 @@ const Navbar = () => {
                     <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
                     </div>
-                    <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                    <ul tabIndex={0} className={`menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow ${theme == 'light' ? "bg-gray-600" : "bg-base-300"} rounded-box w-40`}>
                         {items}
                     </ul>
                 </div>
                 <div className="flex justify-center items-center">
-                    <Link to={'/'}><img className="w-12 h-12 cursor-pointer" src={img} alt="" /></Link>
+                    <Link to={'/'}><img className="w-10 h-10 md:w-16 md:h-[56px] cursor-pointer" src={img} alt="" /></Link>
                     <Link to={'/'} className="btn btn-ghost text-xl">EcoSync</Link>
                 </div>
             </div>

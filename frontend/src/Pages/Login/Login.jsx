@@ -105,7 +105,7 @@ const Login = () => {
             <SectionTitle title={"Login Now"} subTitle={'Need Access?'}></SectionTitle>
 
             <div className="flex flex-col md:flex-row-reverse justify-center items-center gap-5 px-4">
-                <div className="bg-gray-400 w-full md:w-4/12 md:pr-10 text-center p-10 rounded-lg">
+                <div className="bg-gray-400 w-full md:w-4/12 md:pr-10 text-center p-10 mb-2 rounded-lg">
                     <h2 className="text-3xl text-base-100 font-bold">Login Now!</h2>
                     <form onSubmit={handleLogin}>
                         <div className="relative">

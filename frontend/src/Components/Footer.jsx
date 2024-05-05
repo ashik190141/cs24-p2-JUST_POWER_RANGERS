@@ -27,7 +27,7 @@ const Footer = () => {
                     <a className="link link-hover">Cookie policy</a>
                 </nav>
             </footer>
-            <footer className="footer px-10 py-4 border-t bg-[#092111] text-white">
+            <footer className="footer px-10 py-2 bg-[#092111] text-white">
                 <aside className="items-center grid-flow-col">
                     <img className='w-16 h-16' src={img} alt="" />
                     <p>EcoSync Ltd. <br />Providing reliable Service since 2024</p>
