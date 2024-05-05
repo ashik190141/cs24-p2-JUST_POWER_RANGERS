@@ -1006,7 +1006,7 @@ async function run() {
       res.send(result);
     });
 
-    // =======================Update a Sts👇==========================>
+    // =======================Update a landfill👇==========================>
     // admin access
     app.put('/update-landfill-info/:id', async (req, res) => {
       let newLanfillInfo = req.body;
@@ -1109,6 +1109,102 @@ async function run() {
         res.json({
           result: false,
           message: "STS Update Error",
+        });
+      }
+    });
+
+
+    // =======================Delete a Sts👇==========================>
+    // admin access
+    app.delete("/delete-sts/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const stsInfo = await stsCollection.findOne(query);
+
+      const stsManagers = stsInfo.manager;
+      const stsVehicles = stsInfo.vehicles;
+
+      for (let i = 0; i < stsManagers.length; i++){
+        const managerUserId = stsManagers[i]
+        const findManagerQuery = { _id: new ObjectId(managerUserId) }
+        const updatedInfo = {
+          $set: {
+            assigned:true
+          }
+        }
+        const updateUserInfoResult = await usersCollection.updateOne(findManagerQuery, updatedInfo);
+        if (updateUserInfoResult.modifiedCount == 0) {
+          return res.json({
+            result: false,
+            message:"something went wrong"
+          })
+        }
+      }
+
+      for (let i = 0; i < stsVehicles.length; i++) {
+        const vehicleRegNum = stsVehicles[i].vehicleRegNum;
+        const findVehicleQuery = { vehicleRegNum: vehicleRegNum };
+        const updatedInfo = {
+          $set: {
+            assigned: false,
+            stsName: null
+          },
+        };
+        const updateVehicleInfoResult = await vehiclesCollection.updateOne(
+          findVehicleQuery,
+          updatedInfo
+        );
+        if (updateVehicleInfoResult.modifiedCount == 0) {
+          return res.json({
+            result: false,
+            message: "something went wrong",
+          });
+        }
+      }
+
+      const deleteSts = await stsCollection.deleteOne(query);
+      if (deleteSts.deletedCount > 0) {
+        return res.json({
+          result: true,
+          message: "Delete STS Successfully",
+        });
+      }
+    });
+
+    // =======================Delete a Landfill👇==========================>
+    // admin access
+    app.delete("/delete-landfill/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const landfillInfo = await landfillCollection.findOne(query);
+
+      const landfillManagers = landfillInfo.manager;
+
+      for (let i = 0; i < landfillManagers.length; i++) {
+        const managerUserId = landfillManagers[i];
+        const findManagerQuery = { _id: new ObjectId(managerUserId) };
+        const updatedInfo = {
+          $set: {
+            assigned: false,
+          },
+        };
+        const updateUserInfoResult = await usersCollection.updateOne(
+          findManagerQuery,
+          updatedInfo
+        );
+        if (updateUserInfoResult.modifiedCount == 0) {
+          return res.json({
+            result: false,
+            message: "something went wrong",
+          });
+        }
+      }
+
+      const deleteLandfill = await landfillCollection.deleteOne(query);
+      if (deleteLandfill.deletedCount > 0) {
+        return res.json({
+          result: true,
+          message: "Delete Landfill Successfully",
         });
       }
     });
