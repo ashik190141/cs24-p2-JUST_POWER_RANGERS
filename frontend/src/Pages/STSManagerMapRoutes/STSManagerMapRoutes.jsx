@@ -16,6 +16,11 @@ const STSManagerMapRoutes = () => {
     const [destinationInfo, setDestinationInfo] = useState([]);
     let [stsId, isLoading] = GetMyStsInfo();
 
+    let [theme, setTheme] = useState(localStorage.getItem("theme"));
+    useEffect(() => {
+        setTheme(localStorage.getItem("theme"));
+    }, [theme]);
+
     console.log(stsId?.lat);
     const a = stsId?.lat;
     const b = stsId?.lng;
@@ -158,6 +163,7 @@ const STSManagerMapRoutes = () => {
                     <div className="w-full md:w-10/12 mx-auto pt-5">
                         <Box sx={{ height: 400, width: "100%" }}>
                             <DataGrid
+                                sx={{ color: `${theme == "dark" ? "white" : "dark"}` }}
                                 rows={rows}
                                 columns={columns}
                                 initialState={{

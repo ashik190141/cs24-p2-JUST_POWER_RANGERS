@@ -14,8 +14,6 @@ const Counter = () => {
     let userNumber = allUser?.length;
     let landfillNumber = allLandfill?.length;
     let vehicleNumber = allVehicle?.length;
-
-    console.log(allStsCollection)
     return (
         <div>
             <SectionTitle title={"System Info"} subTitle={"Our Dynamic"}></SectionTitle>

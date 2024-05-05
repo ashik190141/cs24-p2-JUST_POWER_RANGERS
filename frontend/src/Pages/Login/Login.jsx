@@ -106,12 +106,12 @@ const Login = () => {
 
             <div className="flex flex-col md:flex-row-reverse justify-center items-center gap-5 px-4">
                 <div className="bg-gray-400 w-full md:w-4/12 md:pr-10 text-center p-10 rounded-lg">
-                    <h2 className="text-3xl font-bold">Login Now!</h2>
+                    <h2 className="text-3xl text-base-100 font-bold">Login Now!</h2>
                     <form onSubmit={handleLogin}>
                         <div className="relative">
-                            <p className="text-left text-lg font-semibold">User Email</p>
+                            <p className="text-left text-base-100 text-lg font-semibold">User Email</p>
                             <AiOutlineMail className="absolute bottom-4 left-2"></AiOutlineMail>
-                            <input className="w-full p-2 pl-7 text-black rounded-lg my-1"
+                            <input className="w-full p-2 pl-7 text-base rounded-lg my-1"
                                 type="email"
                                 name="email"
                                 placeholder="Type your email"
@@ -119,9 +119,9 @@ const Login = () => {
                         </div>
                         <hr className="my-3" />
                         <div className="relative">
-                            <p className="text-left text-lg font-semibold">Password</p>
+                            <p className="text-left text-base-100 text-lg font-semibold">Password</p>
                             <RiLockPasswordFill className="absolute bottom-4 left-2"></RiLockPasswordFill>
-                            <input className="w-full p-2 pl-6 text-black rounded-lg my-1"
+                            <input className="w-full p-2 pl-6 text-base rounded-lg my-1"
                                 type={showPassword ? 'text' : 'password'}
                                 name="password"
                                 placeholder="Type your password"

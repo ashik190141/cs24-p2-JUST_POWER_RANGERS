@@ -11,7 +11,7 @@ const Dashboard = () => {
     let {user} = useAuth();
 
     return (
-        <div className='max-w-screen-2xl mx-auto min-h-screen sm:px-4 md:px-0 bg-white'>
+        <div className='max-w-screen-2xl mx-auto min-h-screen sm:px-4 md:px-0 bg-base-300'>
             <Navbar></Navbar>
             <div className="max-w-full mx-auto flex">
                 <div className="w-64 h-screen bg-[#092111] text-white sticky top-0">
@@ -113,7 +113,7 @@ const Dashboard = () => {
                     }
 
                 </div>
-                <div className="flex-1 bg-gray-200">
+                <div className="flex-1 bg-base-300">
                     <Outlet></Outlet>
                 </div>
 
