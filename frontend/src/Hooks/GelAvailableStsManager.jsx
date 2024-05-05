@@ -5,15 +5,14 @@ import useAxiosPublic from "./useAxiosPublic";
 const GelAvailableStsManager = () => {
     let axiosPublic = useAxiosPublic();
 
-    const { data: availableStsManager = [] } = useQuery({
+    const { data: availableStsManager = [], isPending: isAvailableStsManagerPending, refetch } = useQuery({
         queryKey: ['getAvailableStsManager'],
         queryFn: async () => {
             const res = await axiosPublic.get('/available-sts-manager');
             return res.data.data;
         }
-    })
-    console.log(availableStsManager);
-    return [availableStsManager];
+    });
+    return [availableStsManager, isAvailableStsManagerPending, refetch];
 };
 
 export default GelAvailableStsManager;
