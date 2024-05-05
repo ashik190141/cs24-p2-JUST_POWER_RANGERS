@@ -1036,6 +1036,44 @@ async function run() {
       }
     });
 
+    //Get Single Sts Info
+    app.get('/update-sts/:id', async (req, res) => {
+      let id = req.params.id;
+      let query = { _id: new ObjectId(id) };
+      let result = await stsCollection.findOne(query);
+      res.send(result);
+    })
+
+    // =======================Create a Sts👇==========================>
+    // admin access
+    app.put('/update-sts-info/:id', async (req, res) => {
+      let newStsInfo = req.body;
+      let id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedInfo = {
+        $set: {
+          name: newStsInfo.name,
+          wardNumber: newStsInfo.wardNumber,
+          capacity: newStsInfo.capacity,
+          lat: newStsInfo.lat,
+          lng: newStsInfo.lng
+        }
+      }
+      let result = await stsCollection.updateOne(query, updatedInfo, options);
+      if (result.modifiedCount > 0) {
+        res.json({
+          result: true,
+          message: "STS Updated Successfully",
+        });
+      } else {
+        res.json({
+          result: false,
+          message: "STS Update Error",
+        });
+      }
+    });
+
     // ===================Data Entry of Sts Manager👇=================>
     //sts manager
     app.post("/create-entry-vehicles-leaving", async (req, res) => {

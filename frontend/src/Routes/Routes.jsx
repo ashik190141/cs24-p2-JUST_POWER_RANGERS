@@ -30,6 +30,7 @@ import STSManagerMapRoutes from "../Pages/STSManagerMapRoutes/STSManagerMapRoute
 import StsManagerMinimumVehicle from "../Pages/StsManagerMinimumVehicle/StsManagerMinimumVehicle";
 import ManageAllSts from "../Pages/Manage-All-Sts/ManageAllSts";
 import ManageAllLandfill from "../Pages/Manage-All-Landfill/ManageAllLandfill";
+import UpdateSingleSts from "../Pages/Update-Sts/UpdateSingleSts";
 
 const router = createBrowserRouter([
     {
@@ -124,6 +125,12 @@ const router = createBrowserRouter([
                 //This will be Admin Route
                 path: "manage-all-sts",
                 element: <SystemAdminRoute><ManageAllSts></ManageAllSts></SystemAdminRoute>
+            },
+            {
+                //This will be Admin Route
+                path: "update-sts/:id",
+                element: <SystemAdminRoute><UpdateSingleSts></UpdateSingleSts></SystemAdminRoute>,
+                loader: ({ params }) => fetch(`http://localhost:5000/update-sts/${params.id}`)
             },
             {
                 //This will be Admin Route
