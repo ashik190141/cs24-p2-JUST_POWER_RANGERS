@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import { useQuery } from "@tanstack/react-query";
 import SectionTitle from "../../Components/SectionTitle";
 
+
 const AddNewUser = () => {
     const { register, handleSubmit, reset } = useForm();
     let axiosPublic = useAxiosPublic();
@@ -34,7 +35,8 @@ const AddNewUser = () => {
                 timer: 1500
             });
             reset();
-        }else{
+
+        } else {
             Swal.fire({
                 position: "center",
                 icon: "error",
@@ -43,8 +45,6 @@ const AddNewUser = () => {
                 timer: 1500
             });
         }
-
-
     }
     return (
         <div>

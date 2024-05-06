@@ -14,7 +14,7 @@ app.use(cors(
     origin: [
       'http://localhost:5173',
       'http://localhost:3000',
-      'http://localhost:3001',
+      'http://localhost:3001'
     ],
     credentials: true,
   }
@@ -294,7 +294,6 @@ async function run() {
     });
 
     // ======================Login User👇============================>
-    // ===============================Login User👇===================================
     app.post("/auth/login", async (req, res) => {
       try {
         const { email, password } = req.body;
@@ -540,7 +539,7 @@ async function run() {
 
     // =====================Get All User👇=============================>
     // User Management Endpoints
-    app.get("/users", verifyToken, async (req, res) => {
+    app.get("/users", async (req, res) => {
       const result = await usersCollection.find().toArray();
       res.send(result);
     });
@@ -999,6 +998,101 @@ async function run() {
       }
     });
 
+    //Get single Lanfill info
+    app.get('/update-landfill/:id', async (req, res) => {
+      let id = req.params.id;
+      let query = { _id: new ObjectId(id) };
+      let result = await landfillCollection.findOne(query);
+      res.send(result);
+    });
+
+    // =======================Update a landfill👇==========================>
+    // admin access
+    app.put('/update-landfill-info/:id', async (req, res) => {
+      let newLanfillInfo = req.body;
+      let id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedInfo = {
+        $set: {
+          name: newLanfillInfo.name,
+          capacity: newLanfillInfo.capacity,
+          lat: newLanfillInfo.lat,
+          lng: newLanfillInfo.lng,
+          startTime: newLanfillInfo.startTime,
+          endTime: newLanfillInfo.endTime,
+        }
+      }
+      let result = await landfillCollection.updateOne(query, updatedInfo, options);
+      if (result.modifiedCount > 0) {
+        res.json({
+          result: true,
+          message: "Landfill Updated Successfully",
+        });
+      } else {
+        res.json({
+          result: false,
+          message: "Landfill Update Error",
+        });
+      }
+    });
+
+    // =======================Delete a Landfill👇==========================>
+    // admin access
+    app.delete("/delete-landfill/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const landfillInfo = await landfillCollection.findOne(query);
+
+      const landfillManagers = landfillInfo.manager;
+
+      for (let i = 0; i < landfillManagers.length; i++) {
+        const managerUserId = landfillManagers[i];
+        const findManagerQuery = { _id: new ObjectId(managerUserId) };
+        const updatedInfo = {
+          $set: {
+            assigned: false,
+          },
+        };
+        const updateUserInfoResult = await usersCollection.updateOne(
+          findManagerQuery,
+          updatedInfo
+        );
+        if (updateUserInfoResult.modifiedCount == 0) {
+          return res.json({
+            result: false,
+            message: "something went wrong",
+          });
+        }
+      }
+
+      const deleteLandfill = await landfillCollection.deleteOne(query);
+      if (deleteLandfill.deletedCount > 0) {
+        return res.json({
+          result: true,
+          message: "Delete Landfill Successfully",
+        });
+      }
+    });
+
+    // =======================My Landfill Info👇==========================>
+    // Sts Manager
+    app.get('/my-landfill-managers/:id', async (req, res) => {
+      let id = req.params.id;
+      let query = { _id: new ObjectId(id) };
+      let myLandfill = await landfillCollection.findOne(query);
+      let count = myLandfill.manager.length;
+
+      let managers = [];
+      for (let i = 0; i < count; i++) {
+        let managerId = myLandfill.manager[i];
+        let manager = await usersCollection.findOne({ _id: new ObjectId(managerId) });
+        managers.push(manager.userName);
+      }
+      console.log(managers)
+      res.send(managers);
+    });
+
     // =======================Create a Sts👇==========================>
     // admin access
     app.post("/create-sts", async (req, res) => {
@@ -1036,6 +1130,177 @@ async function run() {
         }
       }
     });
+
+    //Get Single Sts Info
+    app.get('/update-sts/:id', async (req, res) => {
+      let id = req.params.id;
+      let query = { _id: new ObjectId(id) };
+      let result = await stsCollection.findOne(query);
+      res.send(result);
+    })
+
+    // =======================Update a Sts👇==========================>
+    // admin access
+    app.put('/update-sts-info/:id', async (req, res) => {
+      let newStsInfo = req.body;
+      let id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      let sts = await stsCollection.findOne(query);
+
+      if (newStsInfo.vehicle != 'default') {
+        let vehicleQuery = { _id: new ObjectId(newStsInfo.vehicle) };
+        let vehicleInfo = await vehiclesCollection.findOne(vehicleQuery);
+        let updatedVehicle = {
+          $set: {
+            stsName: sts.name,
+            assigned: true,
+          }
+        }
+        let updateVehicle = await vehiclesCollection.updateOne(vehicleQuery, updatedVehicle, options);
+        if (updateVehicle.modifiedCount > 0) {
+          let updatedSts = {
+            $push: {
+              vehicles: vehicleInfo
+            },
+            $set: {
+              name: newStsInfo.name,
+              wardNumber: newStsInfo.wardNumber,
+              capacity: newStsInfo.capacity,
+              lat: newStsInfo.lat,
+              lng: newStsInfo.lng
+            }
+          }
+          let updateSts = await stsCollection.updateOne(query, updatedSts, options);
+          if (updateSts.modifiedCount > 0) {
+            return res.json({
+              result: true,
+              message: "STS Updated Successfully",
+            })
+          } else {
+            return res.json({
+              result: false,
+              message: "STS Update Error",
+            })
+          }
+        }
+
+      } else {
+        let updatedSts = {
+          $set: {
+            name: newStsInfo.name,
+            wardNumber: newStsInfo.wardNumber,
+            capacity: newStsInfo.capacity,
+            lat: newStsInfo.lat,
+            lng: newStsInfo.lng
+          }
+        }
+        let updateSts = await stsCollection.updateOne(query, updatedSts, options);
+        if (updateSts.modifiedCount > 0) {
+          return res.json({
+            result: true,
+            message: "STS Updated Successfully",
+          })
+        } else {
+          return res.json({
+            result: false,
+            message: "STS Update Error",
+          })
+        }
+      }
+    });
+
+
+    // =======================Delete a Sts👇==========================>
+    // admin access
+    app.delete("/delete-sts/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const stsInfo = await stsCollection.findOne(query);
+
+      const stsManagers = stsInfo.manager;
+      const stsVehicles = stsInfo.vehicles;
+
+      for (let i = 0; i < stsManagers.length; i++) {
+        const managerUserId = stsManagers[i]
+        const findManagerQuery = { _id: new ObjectId(managerUserId) }
+        const updatedInfo = {
+          $set: {
+            assigned: false
+          }
+        }
+        const updateUserInfoResult = await usersCollection.updateOne(findManagerQuery, updatedInfo);
+        if (updateUserInfoResult.modifiedCount == 0) {
+          return res.json({
+            result: false,
+            message: "something went wrong"
+          })
+        }
+      }
+
+      for (let i = 0; i < stsVehicles.length; i++) {
+        const vehicleRegNum = stsVehicles[i].vehicleRegNum;
+        const findVehicleQuery = { vehicleRegNum: vehicleRegNum };
+        const updatedInfo = {
+          $set: {
+            assigned: false,
+            stsName: null
+          },
+        };
+        const updateVehicleInfoResult = await vehiclesCollection.updateOne(
+          findVehicleQuery,
+          updatedInfo
+        );
+        if (updateVehicleInfoResult.modifiedCount == 0) {
+          return res.json({
+            result: false,
+            message: "something went wrong",
+          });
+        }
+      }
+
+      const deleteSts = await stsCollection.deleteOne(query);
+      if (deleteSts.deletedCount > 0) {
+        return res.json({
+          result: true,
+          message: "Delete STS Successfully",
+        });
+      }
+    });
+
+    // =======================My Sts Info👇==========================>
+    // Sts Manager
+    app.get('/my-sts-managers/:id', async (req, res) => {
+      let id = req.params.id;
+      let query = { _id: new ObjectId(id) };
+      let mySts = await stsCollection.findOne(query);
+      let count = mySts.manager.length;
+
+      let managers = [];
+      for (let i = 0; i < count; i++) {
+        let managerId = mySts.manager[i];
+        let manager = await usersCollection.findOne({ _id: new ObjectId(managerId) });
+        managers.push(manager.userName);
+      }
+      console.log(managers)
+      res.send(managers);
+    });
+
+    // =======================My Sts Info👇==========================>
+    // Sts Manager
+    app.get('/my-sts-vehicles/:id', async (req, res) => {
+      let id = req.params.id;
+      let query = { _id: new ObjectId(id) };
+      let mySts = await stsCollection.findOne(query);
+      let count = mySts.vehicles.length;
+
+      let vehicles = [];
+      for (let i = 0; i < count; i++) {
+        vehicles.push(mySts.vehicles[i].vehicleRegNum);
+      }
+      res.send(vehicles);
+    })
+
 
     // ===================Data Entry of Sts Manager👇=================>
     //sts manager
@@ -1424,8 +1689,7 @@ async function run() {
         for (let j = 0; j < stsManagers.length; j++) {
           if (stsManagers[j] == getUserInfo._id.toString()) {
             vehicleInfo = allStsCollection[i].vehicles;
-            target = allStsCollection[i].capacity
-            // console.log(vehicleInfo);
+            target = allStsCollection[i].capacity;
           }
         }
       }

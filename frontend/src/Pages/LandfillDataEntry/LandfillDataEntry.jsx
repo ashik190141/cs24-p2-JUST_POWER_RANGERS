@@ -131,7 +131,7 @@ const LandfillDataEntry = () => {
                                         {
                                             allStsCollection?.map((sts) => {
                                                 return (
-                                                    <option className="text-black" key={sts._id} value={sts?.name}>{sts?.name}</option>
+                                                    <option key={sts._id} value={sts?.name}>{sts?.name}</option>
                                                 )
                                             })
                                         }
@@ -148,7 +148,7 @@ const LandfillDataEntry = () => {
                                         {
                                             stsVehicle?.map((vehicle) => {
                                                 return (
-                                                    <option className="text-black" key={vehicle?._id} value={vehicle?.vehicleRegNum
+                                                    <option key={vehicle?._id} value={vehicle?.vehicleRegNum
                                                     }>{vehicle?.vehicleRegNum
                                                         }</option>
                                                 )
