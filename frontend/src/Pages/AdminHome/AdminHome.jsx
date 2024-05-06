@@ -26,38 +26,43 @@ const AdminHome = () => {
   }));
 
   const columns = [
-    { field: "id", headerName: "ID", width: 60, color: "primary"},
+    {
+      field: "id",
+      headerName: "ID",
+      width: 50,
+      color: "primary"
+    },
     {
       field: "vehicleNum",
       headerName: "Vehicle Number",
-      width: 160,
+      width: 180,
       editable: false,
       sortable: true,
     },
     {
       field: "stsName",
       headerName: "STS Name",
-      width: 160,
+      width: 150,
       editable: false,
       sortable: true,
     },
     {
       field: "fuelCost",
       headerName: "Total Fuel Cost",
-      width: 120,
+      width: 130,
       editable: false,
       sortable: true,
     },
     {
       field: "stsWasteWeight",
-      headerName: "Total Waste of STS",
+      headerName: "Total Waste (STS)",
       sortable: true,
-      width: 160,
+      width: 150,
     },
     {
       field: "landfillWasteWeight",
-      headerName: "Total Waste of Landfill",
-      width: 160,
+      headerName: "Total Waste (Landfill)",
+      width: 150,
       editable: false,
       sortable: true,
     },
@@ -90,11 +95,11 @@ const AdminHome = () => {
         <title>EcoSync | Admin Home</title>
       </Helmet>
       <SectionTitle
-        title={"Admin Home"}
+        title={"Vehicle Update"}
         subTitle={"Real time monitoring"}
       ></SectionTitle>
       <div className={`w-full px-4 mx-auto pt-5 text-${theme == "dark" ? "white" : "black"}`}>
-        <Box sx={{ height: 400 }}>
+        <Box sx={{ height: 500 }}>
           <DataGrid
             sx={{ color: `${theme == "dark" ? "white" : "dark"}` }}
             rows={rows}
@@ -102,7 +107,7 @@ const AdminHome = () => {
             initialState={{
               pagination: {
                 paginationModel: {
-                  pageSize: 5,
+                  pageSize: 10,
                 },
               },
             }}

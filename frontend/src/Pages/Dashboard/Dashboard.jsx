@@ -107,7 +107,7 @@ const Dashboard = () => {
             <div className="max-w-full mx-auto flex">
 
                 {/* This is for Small device */}
-                <div className="drawer md:hidden fixed z-50">
+                <div className="drawer md:hidden fixed z-[999]">
                     <input id="my-drawer" type="checkbox" className="drawer-toggle" />
                     <div className="drawer-content">
                         <label

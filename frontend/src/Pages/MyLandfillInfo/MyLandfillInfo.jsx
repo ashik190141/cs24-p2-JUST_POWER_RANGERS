@@ -89,12 +89,12 @@ const MyLandfillInfo = () => {
                 <title>EcoSync | My Landfill Info</title>
             </Helmet>
             <SectionTitle title={"My Landfill Info"} subTitle={"need details?"}></SectionTitle>
-            <div className="w-full md:w-10/12 mx-auto">
+            <div className="w-full md:w-10/12 mx-auto my-10 px-2">
                 {
                     isLandfillPending ? <div className="text-center h-screen">
                         <span className="loading loading-spinner loading-lg"></span>
                     </div> : <div className="text-lg">
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 my-10 font-semibold text-white">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 my-10 font-semibold text-white">
                             <h1 className="bg-green-800 text-xl p-8 text-center rounded-lg">
                                 Landfil Name: {myLandfill?.name}</h1>
                             <h1 className="bg-violet-950 text-xl p-8 text-center rounded-lg">

@@ -163,12 +163,12 @@ const MyStsInfo = () => {
                 <title>EcoSync | My Sts Info</title>
             </Helmet>
             <SectionTitle title={"My Sts Info"} subTitle={"need details?"}></SectionTitle>
-            <div className="w-full md:w-10/12 mx-auto">
+            <div className="w-full md:w-10/12 mx-auto px-2">
                 {
                     isLoading ? <div className="text-center h-screen">
                         <span className="loading loading-spinner loading-lg"></span>
                     </div> : <div className="text-lg">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-20 my-10 font-semibold text-white">
+                        <div className="grid grid-cols-3 gap-20 my-10 font-semibold text-white">
                             <h1 className="bg-green-800 text-xl p-10 text-center rounded-lg">StsName: {stsId?.name}</h1>
                             <h1 className="bg-yellow-800 text-xl p-10 text-center rounded-lg">Ward Number: {stsId?.wardNumber}</h1>
                             <h1 className="bg-emerald-800 text-xl p-10 text-center rounded-lg">Waste Capacity: {stsId?.capacity}</h1>

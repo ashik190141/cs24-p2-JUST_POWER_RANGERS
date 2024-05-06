@@ -4,17 +4,16 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import L from "leaflet";
 import "leaflet-routing-machine";
-import { useQuery } from '@tanstack/react-query';
-import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
 import { Helmet } from "react-helmet-async";
 import GetMyStsInfo from "../../Hooks/GetMyStsInfo";
+import GetAllLandfill from "../../Hooks/GetAllLandfill";
 
 const STSManagerMapRoutes = () => {
-    let axiosPublic = useAxiosPublic()
     const [destinationInfo, setDestinationInfo] = useState([]);
     let [stsId, isLoading] = GetMyStsInfo();
+    let [allLandfill, isPending] = GetAllLandfill();
 
     let [theme, setTheme] = useState(localStorage.getItem("theme"));
     useEffect(() => {
@@ -25,23 +24,15 @@ const STSManagerMapRoutes = () => {
     const a = stsId?.lat;
     const b = stsId?.lng;
 
-    const { data: landfill = [], isPending } = useQuery({
-        queryKey: ["Get all Landfill"],
-        queryFn: async () => {
-            const res = await axiosPublic.get(`/get-all-landfill`);
-            return res.data;
-        },
-    });
-
     const mapContainerRef = useRef(null);
     const map = useRef(null);
     const [taxiLatLng, setTaxiLatLng] = useState([a, b]);
 
     const destinations = [];
-    for (let i = 0; i < landfill?.length; i++) {
-        let a = landfill[i]?.lat;
-        let b = landfill[i]?.lng;
-        let c = landfill[i]?.name;
+    for (let i = 0; i < allLandfill?.length; i++) {
+        let a = allLandfill[i]?.lat;
+        let b = allLandfill[i]?.lng;
+        let c = allLandfill[i]?.name;
         destinations.push([a, b, c]);
     }
 
@@ -156,9 +147,11 @@ const STSManagerMapRoutes = () => {
                     </div>
 
                 </> : <>
-
+                    
                     {" "}
                     <div ref={mapContainerRef} style={{ height: "80vh" }} />
+
+                    <h1 className="text-3xl text-rose-900 text-center my-5 font-bold">Optimum Routes</h1>
 
                     <div className="w-full md:w-10/12 mx-auto pt-5">
                         <Box sx={{ height: 400, width: "100%" }}>

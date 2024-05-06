@@ -115,7 +115,7 @@ const LandfillDataEntry = () => {
                         <span className="loading loading-spinner loading-lg"></span>
                     </div>
                 </> : <div>
-                    <div className="w-10/12 mx-auto my-10">
+                    <div className="w-full md:w-10/12 mx-auto my-10 px-2">
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div className="flex gap-10">
                                 <div className="flex-1">

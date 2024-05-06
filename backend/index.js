@@ -1634,10 +1634,10 @@ async function run() {
           fuelCost: fuelCost,
           stsWasteWeight: totalWasteVolume,
           landfillWasteWeight: totalWasteVolumeOfLandfill,
-          landLocation: lastLocation || "Can Not Enter Any Landfill or STS",
-          arrival: nearestTime?.arrival || "Can Not Enter Any Landfill or STS",
+          landLocation: lastLocation || "No Entry",
+          arrival: nearestTime?.arrival || "No Entry",
           departure:
-            nearestTime?.departure || "Can Not Enter Any Landfill or STS",
+            nearestTime?.departure || "No Entry",
         };
         result.push(truckCostInfo);
       }
