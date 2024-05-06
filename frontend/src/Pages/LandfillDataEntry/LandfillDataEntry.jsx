@@ -30,7 +30,8 @@ const LandfillDataEntry = () => {
         const foundItem = allStsCollection.find(item => item.name === stsName);
         let wardNo = foundItem.wardNumber;
         let res = await axiosPublic.get(`/sts-vehicles/${wardNo}`)
-        setStsVehicle(res.data.data);
+        let usableVehicle = res?.data?.data?.filter(vehicle => vehicle.type == "Compactor" || vehicle.type == "Dump Truck");
+        setStsVehicle(usableVehicle);
     }
 
     let downloadPDF = () => {

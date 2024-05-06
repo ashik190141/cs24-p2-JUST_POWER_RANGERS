@@ -22,6 +22,8 @@ const StsDataEntry = () => {
     },
   });
 
+  let usableVehicle = stsId?.vehicles?.filter(vehicle => vehicle.type == "Compactor" || vehicle.type == "Dump Truck");
+
 
   const { register, handleSubmit, reset } = useForm();
   const [arrival, setArrival] = useState('00:00');
@@ -109,7 +111,7 @@ const StsDataEntry = () => {
                   <option disabled value="default">
                     Select Type
                   </option>
-                  {stsId?.vehicles?.map((sts, index) => {
+                  {usableVehicle?.map((sts, index) => {
                     return (
                       <option
                         className="text-black"
