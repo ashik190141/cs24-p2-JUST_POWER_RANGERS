@@ -5,7 +5,7 @@ services:
     build: 
       context: ./backend
     ports:
-      - "8000:8000"
+      - "5000:5000"
     environment:
       - NODE_ENV=development
       - DB_USER=CodeSamuraiP2
@@ -24,10 +24,20 @@ services:
 
 
   frontend:
-    build:
+    build: 
       context: ./frontend
+      dockerfile: ./Dockerfile
     ports:
       - "3000:3000"
+    restart: on-failure
+    depends_on:
+      - backend
+    command: npm run dev
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
 
   mongo:
     image: mongo:latest

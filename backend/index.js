@@ -7,13 +7,14 @@ const nodeMailer = require("nodemailer");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 5000;
 
 app.use(cors(
   {
     origin: [
       'http://localhost:5173',
-      'http://localhost:3000'
+      'http://localhost:3000',
+      'http://localhost:3001'
     ],
     credentials: true,
   }
@@ -89,11 +90,7 @@ let yyyy = today.getFullYear();
 let currentDate = `${dd}/${mm}/${yyyy}`;
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-//This is for Ashik
-// const uri =
-//   `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.nhg2oh1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
-//This is for Shojib
 const uri =
   `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.oglq0ui.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -224,7 +221,7 @@ async function run() {
               .then(() => {
                 return res.json({
                   result: true,
-                  message: "check your email",
+                  message: "User Created Successfully",
                 });
               })
               .catch((error) => {
@@ -284,7 +281,7 @@ async function run() {
                 .then(() => {
                   return res.json({
                     result: true,
-                    message: "check your email",
+                    message: "User Created Successfully",
                   });
                 })
                 .catch((error) => {
@@ -297,7 +294,6 @@ async function run() {
     });
 
     // ======================Login User👇============================>
-    // ===============================Login User👇===================================
     app.post("/auth/login", async (req, res) => {
       try {
         const { email, password } = req.body;
@@ -311,12 +307,15 @@ async function run() {
         if (user.role == 'unassigned') {
           return res.json({
             result: false,
-            message: "You can not login now!"
+            message: "You are unassigned now!"
           })
         }
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-          return res.status(401).json({ message: "Invalid email or password" });
+          return res.json({
+            result: false,
+            message: "Invalid password"
+          });
         }
 
         const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
@@ -430,8 +429,6 @@ async function run() {
     });
 
 
-
-
     // =====================Reset Password Confirm👇===================>
     app.put("/auth/reset-password/confirm", async (req, res) => {
       const userInfo = req.body;
@@ -497,7 +494,6 @@ async function run() {
     })
 
     // =====================Change PassWord👇==========================>
-    //Completed successfully
     app.put("/auth/change-password", verifyToken, async (req, res) => {
       const information = req.body;
       const query = { email: information.email };
@@ -543,7 +539,7 @@ async function run() {
 
     // =====================Get All User👇=============================>
     // User Management Endpoints
-    app.get("/users", verifyToken, async (req, res) => {
+    app.get("/users", async (req, res) => {
       const result = await usersCollection.find().toArray();
       res.send(result);
     });
@@ -577,9 +573,94 @@ async function run() {
     // admin access
     app.delete("/users/:userId", verifyToken, verifyAdmin, async (req, res) => {
       const id = req.params.userId;
-      const query = { _id: new ObjectId(id) };
-      const result = await usersCollection.deleteOne(query);
-      res.send(result);
+      const query = { _id: new ObjectId(id) }
+      const allLandfill = await landfillCollection.find().toArray();
+      const allSts = await stsCollection.find().toArray();
+      let userInfo = await usersCollection.findOne(query);
+      let flag = 0;
+      let deleted = 0;
+      if (userInfo.assigned) {
+        if (userInfo.role === 'Sts Manager') {
+          let newStsManager = [];
+          let newSts;
+          for (let i = 0; i < allSts.length; i++) {
+            const managers = allSts[i].manager;
+            for (let j = 0; j < managers.length; j++) {
+              if (managers[j] == id) {
+                newStsManager = allSts[i].manager?.filter(mId => mId !== id);
+                allSts[i].manager = newStsManager;
+                newSts = allSts[i];
+                flag = 1;
+                break;
+              }
+            }
+            if (flag) break;
+          }
+          const UpdatedDocument = {
+            $set: {
+              manager: newSts.manager
+            }
+          }
+          let LandQuery = { name: newSts.name };
+          let removed = await stsCollection.updateOne(LandQuery, UpdatedDocument);
+          if (removed.modifiedCount > 0) {
+            const result = await usersCollection.deleteOne(query);
+            if (result.deletedCount > 0) {
+              deleted = 1;
+            }
+          }
+        } else if (userInfo.role === 'Land Manager') {
+          let NewLandManager = [];
+          let newLand;
+          for (let i = 0; i < allLandfill.length; i++) {
+            const managers = allLandfill[i].manager;
+            for (let j = 0; j < managers.length; j++) {
+              if (managers[j] == id) {
+                NewLandManager = allLandfill[i].manager?.filter(mId => mId !== id);
+                allLandfill[i].manager = NewLandManager;
+                newLand = allLandfill[i];
+                flag = 1;
+                break
+              }
+            }
+            if (flag) break;
+          }
+          const UpdatedDocument = {
+            $set: {
+              manager: newLand.manager
+            }
+          }
+          let LandQuery = { name: newLand.name };
+          let removed = await landfillCollection.updateOne(LandQuery, UpdatedDocument);
+          if (removed.modifiedCount > 0) {
+            const result = await usersCollection.deleteOne(query);
+            if (result.deletedCount > 0) {
+              deleted = 1;
+            }
+          }
+        } else {
+          const result = await usersCollection.deleteOne(query);
+          if (result.deletedCount > 0) {
+            deleted = 1;
+          }
+        }
+      } else {
+        const result = await usersCollection.deleteOne(query);
+        if (result.deletedCount > 0) {
+          deleted = 1;
+        }
+      }
+      if (deleted == 1) {
+        res.json({
+          result: true,
+          message: "Successfully Deleted User"
+        });
+      } else {
+        res.json({
+          result: false,
+          message: "Something went wrong"
+        });
+      }
     });
 
     // ===================Update Role to User👇=======================>
@@ -689,7 +770,6 @@ async function run() {
           }
           let LandQuery = { name: newLand.name };
           let removed = await landfillCollection.updateOne(LandQuery, UpdatedDocument);
-          console.log(removed);
           let newSts;
           if (removed.modifiedCount > 0) {
             for (let i = 0; i < allSts.length; i++) {
@@ -918,6 +998,101 @@ async function run() {
       }
     });
 
+    //Get single Lanfill info
+    app.get('/update-landfill/:id', async (req, res) => {
+      let id = req.params.id;
+      let query = { _id: new ObjectId(id) };
+      let result = await landfillCollection.findOne(query);
+      res.send(result);
+    });
+
+    // =======================Update a landfill👇==========================>
+    // admin access
+    app.put('/update-landfill-info/:id', async (req, res) => {
+      let newLanfillInfo = req.body;
+      let id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedInfo = {
+        $set: {
+          name: newLanfillInfo.name,
+          capacity: newLanfillInfo.capacity,
+          lat: newLanfillInfo.lat,
+          lng: newLanfillInfo.lng,
+          startTime: newLanfillInfo.startTime,
+          endTime: newLanfillInfo.endTime,
+        }
+      }
+      let result = await landfillCollection.updateOne(query, updatedInfo, options);
+      if (result.modifiedCount > 0) {
+        res.json({
+          result: true,
+          message: "Landfill Updated Successfully",
+        });
+      } else {
+        res.json({
+          result: false,
+          message: "Landfill Update Error",
+        });
+      }
+    });
+
+    // =======================Delete a Landfill👇==========================>
+    // admin access
+    app.delete("/delete-landfill/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const landfillInfo = await landfillCollection.findOne(query);
+
+      const landfillManagers = landfillInfo.manager;
+
+      for (let i = 0; i < landfillManagers.length; i++) {
+        const managerUserId = landfillManagers[i];
+        const findManagerQuery = { _id: new ObjectId(managerUserId) };
+        const updatedInfo = {
+          $set: {
+            assigned: false,
+          },
+        };
+        const updateUserInfoResult = await usersCollection.updateOne(
+          findManagerQuery,
+          updatedInfo
+        );
+        if (updateUserInfoResult.modifiedCount == 0) {
+          return res.json({
+            result: false,
+            message: "something went wrong",
+          });
+        }
+      }
+
+      const deleteLandfill = await landfillCollection.deleteOne(query);
+      if (deleteLandfill.deletedCount > 0) {
+        return res.json({
+          result: true,
+          message: "Delete Landfill Successfully",
+        });
+      }
+    });
+
+    // =======================My Landfill Info👇==========================>
+    // Sts Manager
+    app.get('/my-landfill-managers/:id', async (req, res) => {
+      let id = req.params.id;
+      let query = { _id: new ObjectId(id) };
+      let myLandfill = await landfillCollection.findOne(query);
+      let count = myLandfill.manager.length;
+
+      let managers = [];
+      for (let i = 0; i < count; i++) {
+        let managerId = myLandfill.manager[i];
+        let manager = await usersCollection.findOne({ _id: new ObjectId(managerId) });
+        managers.push(manager.userName);
+      }
+      console.log(managers)
+      res.send(managers);
+    });
+
     // =======================Create a Sts👇==========================>
     // admin access
     app.post("/create-sts", async (req, res) => {
@@ -955,6 +1130,177 @@ async function run() {
         }
       }
     });
+
+    //Get Single Sts Info
+    app.get('/update-sts/:id', async (req, res) => {
+      let id = req.params.id;
+      let query = { _id: new ObjectId(id) };
+      let result = await stsCollection.findOne(query);
+      res.send(result);
+    })
+
+    // =======================Update a Sts👇==========================>
+    // admin access
+    app.put('/update-sts-info/:id', async (req, res) => {
+      let newStsInfo = req.body;
+      let id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      let sts = await stsCollection.findOne(query);
+
+      if (newStsInfo.vehicle != 'default') {
+        let vehicleQuery = { _id: new ObjectId(newStsInfo.vehicle) };
+        let vehicleInfo = await vehiclesCollection.findOne(vehicleQuery);
+        let updatedVehicle = {
+          $set: {
+            stsName: sts.name,
+            assigned: true,
+          }
+        }
+        let updateVehicle = await vehiclesCollection.updateOne(vehicleQuery, updatedVehicle, options);
+        if (updateVehicle.modifiedCount > 0) {
+          let updatedSts = {
+            $push: {
+              vehicles: vehicleInfo
+            },
+            $set: {
+              name: newStsInfo.name,
+              wardNumber: newStsInfo.wardNumber,
+              capacity: newStsInfo.capacity,
+              lat: newStsInfo.lat,
+              lng: newStsInfo.lng
+            }
+          }
+          let updateSts = await stsCollection.updateOne(query, updatedSts, options);
+          if (updateSts.modifiedCount > 0) {
+            return res.json({
+              result: true,
+              message: "STS Updated Successfully",
+            })
+          } else {
+            return res.json({
+              result: false,
+              message: "STS Update Error",
+            })
+          }
+        }
+
+      } else {
+        let updatedSts = {
+          $set: {
+            name: newStsInfo.name,
+            wardNumber: newStsInfo.wardNumber,
+            capacity: newStsInfo.capacity,
+            lat: newStsInfo.lat,
+            lng: newStsInfo.lng
+          }
+        }
+        let updateSts = await stsCollection.updateOne(query, updatedSts, options);
+        if (updateSts.modifiedCount > 0) {
+          return res.json({
+            result: true,
+            message: "STS Updated Successfully",
+          })
+        } else {
+          return res.json({
+            result: false,
+            message: "STS Update Error",
+          })
+        }
+      }
+    });
+
+
+    // =======================Delete a Sts👇==========================>
+    // admin access
+    app.delete("/delete-sts/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const stsInfo = await stsCollection.findOne(query);
+
+      const stsManagers = stsInfo.manager;
+      const stsVehicles = stsInfo.vehicles;
+
+      for (let i = 0; i < stsManagers.length; i++) {
+        const managerUserId = stsManagers[i]
+        const findManagerQuery = { _id: new ObjectId(managerUserId) }
+        const updatedInfo = {
+          $set: {
+            assigned: false
+          }
+        }
+        const updateUserInfoResult = await usersCollection.updateOne(findManagerQuery, updatedInfo);
+        if (updateUserInfoResult.modifiedCount == 0) {
+          return res.json({
+            result: false,
+            message: "something went wrong"
+          })
+        }
+      }
+
+      for (let i = 0; i < stsVehicles.length; i++) {
+        const vehicleRegNum = stsVehicles[i].vehicleRegNum;
+        const findVehicleQuery = { vehicleRegNum: vehicleRegNum };
+        const updatedInfo = {
+          $set: {
+            assigned: false,
+            stsName: null
+          },
+        };
+        const updateVehicleInfoResult = await vehiclesCollection.updateOne(
+          findVehicleQuery,
+          updatedInfo
+        );
+        if (updateVehicleInfoResult.modifiedCount == 0) {
+          return res.json({
+            result: false,
+            message: "something went wrong",
+          });
+        }
+      }
+
+      const deleteSts = await stsCollection.deleteOne(query);
+      if (deleteSts.deletedCount > 0) {
+        return res.json({
+          result: true,
+          message: "Delete STS Successfully",
+        });
+      }
+    });
+
+    // =======================My Sts Info👇==========================>
+    // Sts Manager
+    app.get('/my-sts-managers/:id', async (req, res) => {
+      let id = req.params.id;
+      let query = { _id: new ObjectId(id) };
+      let mySts = await stsCollection.findOne(query);
+      let count = mySts.manager.length;
+
+      let managers = [];
+      for (let i = 0; i < count; i++) {
+        let managerId = mySts.manager[i];
+        let manager = await usersCollection.findOne({ _id: new ObjectId(managerId) });
+        managers.push(manager.userName);
+      }
+      console.log(managers)
+      res.send(managers);
+    });
+
+    // =======================My Sts Info👇==========================>
+    // Sts Manager
+    app.get('/my-sts-vehicles/:id', async (req, res) => {
+      let id = req.params.id;
+      let query = { _id: new ObjectId(id) };
+      let mySts = await stsCollection.findOne(query);
+      let count = mySts.vehicles.length;
+
+      let vehicles = [];
+      for (let i = 0; i < count; i++) {
+        vehicles.push(mySts.vehicles[i].vehicleRegNum);
+      }
+      res.send(vehicles);
+    })
+
 
     // ===================Data Entry of Sts Manager👇=================>
     //sts manager
@@ -1254,7 +1600,6 @@ async function run() {
       let result = [];
       for (let i = 0; i < allVehicles.length; i++) {
         const vehicleNum = allVehicles[i].vehicleRegNum;
-
         const truckDumpingInfo = await truckDumpingCollection
           .find({
             $and: [
@@ -1329,6 +1674,50 @@ async function run() {
         }
       }
     });
+
+    app.get("/minimum-vehicle-and-cost/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const getUserInfo = await usersCollection.findOne(query);
+
+      let vehicleInfo;
+      let target;
+
+      const allStsCollection = await stsCollection.find().toArray();
+      for (let i = 0; i < allStsCollection.length; i++) {
+        const stsManagers = allStsCollection[i].manager;
+        for (let j = 0; j < stsManagers.length; j++) {
+          if (stsManagers[j] == getUserInfo._id.toString()) {
+            vehicleInfo = allStsCollection[i].vehicles;
+            target = allStsCollection[i].capacity;
+          }
+        }
+      }
+      const trucks = vehicleInfo.filter(
+        (truck) => truck.type == "Compactor" || truck.type == "Dump Truck"
+      );
+
+      let reqData = []
+
+      for (let i = 0; i < trucks.length; i++) {
+        let truck = trucks[i];
+        if (truck.type == "Compactor") {
+          truck.capacity = (truck.capacity);
+        }
+        const newInfoOfTruck = {
+          name: truck.vehicleRegNum,
+          capacity: truck.capacity,
+          cost: truck?.fualCostLoaded + truck?.fualCostUnloaded,
+        };
+        reqData.push(newInfoOfTruck)
+      }
+
+      res.json({
+        result: true,
+        trucks: reqData,
+        stsCapacity: target,
+      });
+    })
 
     await client.db("admin").command({ ping: 1 });
     console.log(

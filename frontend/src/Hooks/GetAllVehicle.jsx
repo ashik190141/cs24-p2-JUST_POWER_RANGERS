@@ -5,7 +5,7 @@ import useAxiosPublic from "./useAxiosPublic";
 const GetAllVehicle = () => {
     let axiosPublic = useAxiosPublic();
 
-    const { data: allVehicle = [] } = useQuery({
+    const { data: allVehicle = [], isPending: isVehiclePending, refetch } = useQuery({
         queryKey: ['allVehicle'],
         queryFn: async () => {
             const res = await axiosPublic.get('/get-all-vehicle');
@@ -13,7 +13,7 @@ const GetAllVehicle = () => {
         }
     })
 
-    return [allVehicle];
+    return [allVehicle, isVehiclePending, refetch];
 };
 
 export default GetAllVehicle;

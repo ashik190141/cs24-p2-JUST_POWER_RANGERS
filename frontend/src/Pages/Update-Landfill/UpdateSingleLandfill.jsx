@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
@@ -12,6 +13,7 @@ import SectionTitle from "../../Components/SectionTitle";
 import "leaflet/dist/leaflet.css";
 
 import Modal from "react-modal";
+import { useLoaderData, useNavigate } from "react-router-dom";
 
 const customStyles = {
   content: {
@@ -24,16 +26,14 @@ const customStyles = {
   },
 };
 
-import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
-import GetAvailableLandManager from "../../Hooks/GetAvailableLandManager";
 
-const AddNewLandFill = () => {
+const UpdateSingleLandfill = () => {
+    let landFillInfo = useLoaderData();
   const { register, handleSubmit, reset } = useForm();
   let axiosPublic = useAxiosPublic();
-  const [startValue, setStartValue] = useState('00:00');
-  const [endValue, setEndValue] = useState('00:00');
-
-  let [availableLandManager] = GetAvailableLandManager();
+  const [startValue, setStartValue] = useState(landFillInfo?.startTime);
+  const [endValue, setEndValue] = useState(landFillInfo?.endTime);
+  let navigate = useNavigate();
 
   let subtitle;
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -58,27 +58,15 @@ const AddNewLandFill = () => {
   };
 
   const onSubmit = async (data) => {
-    if (availableLandManager.length === 0) {
-      return Swal.fire({
-        position: "center",
-        icon: "error",
-        title: "Create a Landfill Manager First",
-        showConfirmButton: false,
-        timer: 2000
-      })
-
-    }
-
-    const landFillInfo = {
+    const newLandFillInfo = {
       name: data.landfillName,
       capacity: parseInt(data.capacity),
-      lat: parseFloat(data.lat),
-      lng: parseFloat(data.lng),
-      startTime: startValue,
-      endTime: endValue,
-      id: data.LandManager
+      lat: parseFloat(data.lat) || landFillInfo.lat,
+      lng: parseFloat(data.lng) || landFillInfo.lng,
+      startTime: startValue || landFillInfo.startTime,
+      endTime: endValue || landFillInfo.endTime,
     };
-    let res = await axiosPublic.post('/create-landfill', landFillInfo);
+    let res = await axiosPublic.put(`/update-landfill-info/${landFillInfo?._id}`, newLandFillInfo);
     if (res.data.result) {
       Swal.fire({
         position: "center",
@@ -89,8 +77,7 @@ const AddNewLandFill = () => {
       });
       reset();
       setClickedPosition(null);
-      setStartValue('00:00');
-      setEndValue('00:00');
+      navigate('/dashboard/manage-all-landfill');
     } else {
       Swal.fire({
         position: "center",
@@ -122,7 +109,7 @@ const AddNewLandFill = () => {
                 </label>
                 <input
                   type="text"
-                  placeholder="Enter Landfill Name"
+                  defaultValue={landFillInfo?.name}
                   {...register("landfillName", { required: true })}
                   className="w-full p-2 rounded-md placeholder:pl-2"
                 />
@@ -135,35 +122,13 @@ const AddNewLandFill = () => {
                 </label>
                 <input
                   type="number"
-                  placeholder="Enter Waste Capacity"
+                  defaultValue={landFillInfo?.capacity}
                   {...register("capacity", { required: true })}
                   className="w-full p-2 rounded-md placeholder:pl-2"
                 />
               </div>
             </div>
-            <div>
-              <div className="w-[508px] mb-5">
-                <label className="label">
-                  <span className="label-text text-xl font-semibold">
-                    Available Landfill Manager
-                  </span>
-                </label>
-                <select defaultValue="default"
-                  {...register('LandManager', { required: true })}
-                  className="w-full py-2 rounded-md">
-                  <option disabled value="default">Select Manager Name</option>
-                  {
-                    availableLandManager?.map((landManager, index) => {
-                      return (
-                        <option className="text-black" key={index} value={landManager?._id}>
-                          {landManager?.userName}</option>
-                      )
-                    })
-                  }
 
-                </select>
-              </div>
-            </div>
             <div className="my-5">
               <label className="label">
                 <span className="label-text text-xl font-semibold">
@@ -216,7 +181,7 @@ const AddNewLandFill = () => {
                   <TimePicker
                     className={"w-1/2"}
                     onChange={setStartValue}
-                    value={startValue}
+                    value={landFillInfo?.startTime}
                   />
                 </div>
               </div>
@@ -230,7 +195,7 @@ const AddNewLandFill = () => {
                   <TimePicker
                     className={"w-1/2"}
                     onChange={setEndValue}
-                    value={endValue}
+                    value={landFillInfo?.endTime}
                   />
                 </div>
               </div>
@@ -309,4 +274,4 @@ const PositionDisplay = ({ position }) => {
   );
 };
 
-export default AddNewLandFill;
+export default UpdateSingleLandfill;

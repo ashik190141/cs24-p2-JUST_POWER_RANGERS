@@ -3,26 +3,24 @@ import { useState, useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import L from "leaflet";
-import "leaflet-routing-machine"; // Import for side effects
-import useAuth from '../../Hooks/useAuth';
+import "leaflet-routing-machine";
 import { useQuery } from '@tanstack/react-query';
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
 import { Helmet } from "react-helmet-async";
+import GetMyStsInfo from "../../Hooks/GetMyStsInfo";
 
 const STSManagerMapRoutes = () => {
-    const { user } = useAuth();
     let axiosPublic = useAxiosPublic()
     const [destinationInfo, setDestinationInfo] = useState([]);
+    let [stsId, isLoading] = GetMyStsInfo();
 
-    const { data: stsId, isPending: isLoading } = useQuery({
-        queryKey: ["stsLocation"],
-        queryFn: async () => {
-            const res = await axiosPublic.get(`/sts-info/${user?.email}`);
-            return res.data.data;
-        },
-    });
+    let [theme, setTheme] = useState(localStorage.getItem("theme"));
+    useEffect(() => {
+        setTheme(localStorage.getItem("theme"));
+    }, [theme]);
+
     console.log(stsId?.lat);
     const a = stsId?.lat;
     const b = stsId?.lng;
@@ -46,6 +44,7 @@ const STSManagerMapRoutes = () => {
         let c = landfill[i]?.name;
         destinations.push([a, b, c]);
     }
+
 
     useEffect(() => {
         // const destinationInfo = [];
@@ -101,6 +100,7 @@ const STSManagerMapRoutes = () => {
     }, [taxiLatLng, destinations]);
 
 
+
     let newDetails = destinationInfo?.map((info, index) => {
         return {
             id: index + 1,
@@ -146,22 +146,24 @@ const STSManagerMapRoutes = () => {
 
     return (
         <div>
+            <Helmet>
+                <title>EcoSync | Optimize Route</title>
+            </Helmet>
             {
-                isPending || isLoading  ? <>
+                isPending || isLoading ? <>
                     <div className="text-center h-screen">
                         <span className="loading loading-spinner loading-lg"></span>
                     </div>
 
                 </> : <>
-                    <Helmet>
-                        <title>EcoSync | Optimize Route</title>
-                    </Helmet>
+
                     {" "}
                     <div ref={mapContainerRef} style={{ height: "80vh" }} />
 
                     <div className="w-full md:w-10/12 mx-auto pt-5">
                         <Box sx={{ height: 400, width: "100%" }}>
                             <DataGrid
+                                sx={{ color: `${theme == "dark" ? "white" : "dark"}` }}
                                 rows={rows}
                                 columns={columns}
                                 initialState={{

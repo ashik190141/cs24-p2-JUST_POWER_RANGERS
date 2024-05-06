@@ -1,28 +1,28 @@
-import { Helmet } from "react-helmet-async";
 import Swal from "sweetalert2";
-import useAxiosPublic from "../../Hooks/useAxiosPublic";
+import GetAllLandfill from "../../Hooks/GetAllLandfill";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import SectionTitle from "../../Components/SectionTitle";
-import GetAllUsers from "../../Hooks/GetAllUsers";
+import useAxiosPublic from "../../Hooks/useAxiosPublic";
 
 
-const ManageUser = () => {
-    let axiosPublic = useAxiosPublic();
+const ManageAllLandfill = () => {
+    let [allLandfill, isPending, refetch] = GetAllLandfill();
     let navigate = useNavigate();
-    let [allUser, isPending, refetch] = GetAllUsers();
+    let axiosPublic = useAxiosPublic();
 
-    let HandleDeleteUser = (id) => {
+    let HandleDeleteLandfill = (id) => {
         Swal.fire({
-            title: "Are you sure to delete user?",
+            title: 'Are you sure?',
             text: "You won't be able to revert this!",
-            icon: "warning",
+            icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, Delete!"
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                let res = await axiosPublic.delete(`/users/${id}`)
+                let res = await axiosPublic.delete(`/delete-landfill/${id}`)
                 if (res.data.result) {
                     Swal.fire({
                         title: "Deleted!",
@@ -39,15 +39,15 @@ const ManageUser = () => {
                     })
                 }
             }
-        });
-    };
+        })
 
+    }
     return (
         <div className="w-11/12 mx-auto my-5">
             <Helmet>
-                <title>EcoSync | Manage User</title>
+                <title>EcoSync | Manage Landfill</title>
             </Helmet>
-            <SectionTitle title={"Manage Users"} subTitle={'User Update?'}></SectionTitle>
+            <SectionTitle title={"Manage Landfill"} subTitle={'Need Update?'}></SectionTitle>
             {
                 isPending ? <>
                     <div className="text-center h-screen">
@@ -59,40 +59,38 @@ const ManageUser = () => {
                             <thead>
                                 <tr className="">
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Index</th>
-                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">User Name</th>
-                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">User Email</th>
-                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Role</th>
-                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Change Role</th>
-                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Update User</th>
-                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Delete User</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Landfill Name</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Capacity</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Start Time</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">End Time</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Update Landfill</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Delete Landfill</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {
-                                    allUser?.map((item, index) => <tr key={item?._id}>
+                                    allLandfill?.map((item, index) => <tr key={item?._id}>
                                         <th className="p-4 border-b border-blue-gray-50">{index + 1}</th>
                                         <td className=" border-b border-blue-gray-50">
-                                            {item?.userName}
+                                            {item?.name}
                                         </td>
                                         <td className="p-4 border-b border-blue-gray-50">
-                                            {item?.email}
+                                            {item?.capacity}
                                         </td>
                                         <td className="p-4 border-b border-blue-gray-50">
-                                            {item?.role}
+                                            {item?.startTime}
                                         </td>
                                         <td className="p-4 border-b border-blue-gray-50">
-                                            <button className="bg-green-600 text-white rounded-md px-4 py-2"
-                                                onClick={() => navigate(`/dashboard/users/${item?._id}`)}>
-                                                Change Role</button>
+                                            {item?.endTime}
                                         </td>
                                         <th className="p-4 border-b border-blue-gray-50">
                                             <button className="bg-blue-800 text-white rounded-md px-4 py-2"
-                                                onClick={() => navigate(`/update/${item?._id}`)}>
-                                                Update User</button>
+                                                onClick={() => navigate(`/dashboard/update-landfill/${item?._id}`)}>
+                                                Update</button>
                                         </th>
                                         <th className="p-4 border-b border-blue-gray-50">
                                             <button className="bg-red-600 text-white rounded-md px-4 py-2"
-                                                onClick={() => HandleDeleteUser(item?._id)}>Delete User</button>
+                                                onClick={() => HandleDeleteLandfill(item?._id)}>Delete</button>
                                         </th>
                                     </tr>
                                     )}
@@ -102,6 +100,7 @@ const ManageUser = () => {
                 </>
             }
         </div>
-    )
-}
-export default ManageUser;
+    );
+};
+
+export default ManageAllLandfill;

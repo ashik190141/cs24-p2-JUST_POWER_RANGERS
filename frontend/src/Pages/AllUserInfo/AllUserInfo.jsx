@@ -1,20 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
-import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import { Helmet } from "react-helmet-async";
 import SectionTitle from "../../Components/SectionTitle";
+import GetAllUsers from "../../Hooks/GetAllUsers";
+import { useEffect, useState } from 'react';
 
 const AllUserInfo = () => {
-    let axiosPublic = useAxiosPublic();
-    const { data: allUser = [], isPending } = useQuery({
-        queryKey: ['allUser'],
-        queryFn: async () => {
-            const res = await axiosPublic.get('/users');
-            return res.data;
-        }
-    });
-    console.log(allUser);
+    let [allUser, isPending] = GetAllUsers();
+
+    let [theme, setTheme] = useState(localStorage.getItem("theme"));
+    useEffect(() => {
+        setTheme(localStorage.getItem("theme"));
+    }, [theme]);
+
     let newDetails = allUser?.map((user, index) => {
         return {
             id: index + 1,
@@ -71,8 +69,10 @@ const AllUserInfo = () => {
                 isPending ? <>
                 </> : <>
                     <div className="w-full md:w-10/12 mx-auto">
-                        <Box sx={{ height: 600, width: '100%' }}>
+                        <Box
+                            sx={{ height: 600, width: '100%' }}>
                             <DataGrid
+                                sx={{ color: `${theme == "dark" ? "white" : "dark"}` }}
                                 rows={rows}
                                 columns={columns}
                                 initialState={{

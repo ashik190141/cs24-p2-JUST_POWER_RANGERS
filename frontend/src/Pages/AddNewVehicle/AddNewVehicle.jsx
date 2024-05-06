@@ -36,7 +36,8 @@ const AddNewVehicle = () => {
             capacity: parseInt(capacity),
             fualCostLoaded: parseInt(data.fualCostLoaded),
             fualCostUnloaded: parseInt(data.fualCostUnloaded),
-            stsName: data.stsName
+            stsName: data.stsName,
+            assigned: true
         };
         let res = await axiosPublic.post('/create-vehicles', vehicleInfo);
         if (res.data.result) {

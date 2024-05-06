@@ -27,13 +27,20 @@ import AllUserInfo from "../Pages/AllUserInfo/AllUserInfo";
 import LandfillManagerRoute from "./LandfilManagerRoute";
 import StsManagerRoute from "./StsManagerRoute";
 import STSManagerMapRoutes from "../Pages/STSManagerMapRoutes/STSManagerMapRoutes";
+import StsManagerMinimumVehicle from "../Pages/StsManagerMinimumVehicle/StsManagerMinimumVehicle";
+import ManageAllSts from "../Pages/Manage-All-Sts/ManageAllSts";
+import ManageAllLandfill from "../Pages/Manage-All-Landfill/ManageAllLandfill";
+import UpdateSingleSts from "../Pages/Update-Sts/UpdateSingleSts";
+import UpdateSingleLandfill from "../Pages/Update-Landfill/UpdateSingleLandfill";
+import MyStsInfo from "../Pages/MyStsInfo/MyStsInfo";
+import MyLandfillInfo from "../Pages/MyLandfillInfo/MyLandfillInfo";
 
 const router = createBrowserRouter([
     {
         path: "/",
         errorElement: <Error></Error>,
         element: <MainLayout></MainLayout>,
-        children:[
+        children: [
             {
                 path: "/",
                 element: <Home></Home>
@@ -45,7 +52,7 @@ const router = createBrowserRouter([
             {
                 path: "/update/:id",
                 element: <PrivateRoutes><UpdateProfile></UpdateProfile></PrivateRoutes>,
-                loader: ({params})=> fetch(`http://localhost:8000/users/${params.id}`)
+                loader: ({ params }) => fetch(`http://localhost:5000/users/${params.id}`)
             },
             {
                 path: "/profile/change-password",
@@ -75,8 +82,8 @@ const router = createBrowserRouter([
     },
     {
         path: "/dashboard",
-        element: <Dashboard></Dashboard>,
-        children:[
+        element: <PrivateRoutes><Dashboard></Dashboard></PrivateRoutes>,
+        children: [
             {
                 //This will be Admin Route
                 path: "admin-home",
@@ -119,26 +126,66 @@ const router = createBrowserRouter([
             },
             {
                 //This will be Admin Route
+                path: "manage-all-sts",
+                element: <SystemAdminRoute><ManageAllSts></ManageAllSts></SystemAdminRoute>
+            },
+            {
+                //This will be Admin Route
+                path: "update-sts/:id",
+                element: <SystemAdminRoute><UpdateSingleSts></UpdateSingleSts></SystemAdminRoute>,
+                loader: ({ params }) => fetch(`http://localhost:5000/update-sts/${params.id}`)
+            },
+            {
+                //This will be Admin Route
+                path: "manage-all-landfill",
+                element: <SystemAdminRoute><ManageAllLandfill></ManageAllLandfill></SystemAdminRoute>
+            },
+            {
+                //This will be Admin Route
+                path: "update-landfill/:id",
+                element: <SystemAdminRoute><UpdateSingleLandfill></UpdateSingleLandfill></SystemAdminRoute>,
+                loader: ({ params }) => fetch(`http://localhost:5000/update-landfill/${params.id}`)
+            },
+            {
+                //This will be Admin Route
                 path: "users/:id",
                 element: <SystemAdminRoute><UserDetails></UserDetails></SystemAdminRoute>,
-                loader: ({params})=> fetch(`http://localhost:8000/users/${params.id}`)
+                loader: ({ params }) => fetch(`http://localhost:5000/users/${params.id}`)
+            },
+            {
+                //This will be Sts Manager Route
+                path: "my-sts-info",
+                element: <StsManagerRoute><MyStsInfo></MyStsInfo></StsManagerRoute>
+
             },
             {
                 //This will be Sts Manager Route
                 path: "data-entry-sts-manager",
                 element: <StsManagerRoute><StsDataEntry></StsDataEntry></StsManagerRoute>
-                
+
             },
             {
                 //This will be Sts Manager Route
                 path: "view-routes",
                 element: <StsManagerRoute><STSManagerMapRoutes></STSManagerMapRoutes></StsManagerRoute>,
-              },
+            },
+            {
+                //This will be Sts Manager Route
+                path: "min-vehicle-and-cost/:email",
+                element: <StsManagerRoute><StsManagerMinimumVehicle></StsManagerMinimumVehicle></StsManagerRoute>,
+                loader: ({ params }) => fetch(`http://localhost:5000/minimum-vehicle-and-cost/${params?.email}`),
+            },
+            {
+                //This will be Land Manager Route
+                path: "my-landfill-info",
+                element: <LandfillManagerRoute><MyLandfillInfo></MyLandfillInfo></LandfillManagerRoute>
+
+            },
             {
                 //This will be Land Manager Route
                 path: "land-data-entry",
                 element: <LandfillManagerRoute><LandfillDataEntry></LandfillDataEntry></LandfillManagerRoute>
-                
+
             },
         ]
     }

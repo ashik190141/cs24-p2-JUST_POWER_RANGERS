@@ -50,16 +50,18 @@ const StsDataEntry = () => {
         let res = await axiosPublic.post('/create-entry-vehicles-leaving', stsDataEntryInfo);
         if (res.data.result) {
             Swal.fire({
-                position: "top-middle",
+                position: "center",
                 icon: "success",
                 title: res.data.message,
                 showConfirmButton: false,
                 timer: 2000
             });
             reset();
+            setArrival('00:00');
+            setDeparture('00:00');
         } else {
             Swal.fire({
-                position: "top-middle",
+                position: "center",
                 icon: "error",
                 title: res.data.message,
                 showConfirmButton: false,
@@ -164,7 +166,7 @@ const StsDataEntry = () => {
                     </span>
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     placeholder="Enter Weight of Waste"
                     {...register("volumeWaste", { required: true })}
                     required

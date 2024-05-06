@@ -40,7 +40,7 @@ const LandfillDataEntry = () => {
           Landfill Name: ${pdfData.landName}
           Weight of Waste: ${pdfData.waste}
           Truck Arrival: ${pdfData.arrival}
-          Truck Arrival: ${pdfData.departure}
+          Truck Departure: ${pdfData.departure}
           Total Bill: ${totalBill}
           Distance: ${totalDistance}
         `;
@@ -92,8 +92,8 @@ const LandfillDataEntry = () => {
             setArrival('00:00');
             setDeparture('00:00');
             setDisable(false);
-            setTotalBill(res.data.bill);
-            setTotalDistance(res.data.distance);
+            setTotalBill(res.data.bill.toFixed(2));
+            setTotalDistance(res.data.distance.toFixed(2));
         } else {
             Swal.fire({
                 position: "center",
@@ -131,7 +131,7 @@ const LandfillDataEntry = () => {
                                         {
                                             allStsCollection?.map((sts) => {
                                                 return (
-                                                    <option className="text-black" key={sts._id} value={sts?.name}>{sts?.name}</option>
+                                                    <option key={sts._id} value={sts?.name}>{sts?.name}</option>
                                                 )
                                             })
                                         }
@@ -148,7 +148,7 @@ const LandfillDataEntry = () => {
                                         {
                                             stsVehicle?.map((vehicle) => {
                                                 return (
-                                                    <option className="text-black" key={vehicle?._id} value={vehicle?.vehicleRegNum
+                                                    <option key={vehicle?._id} value={vehicle?.vehicleRegNum
                                                     }>{vehicle?.vehicleRegNum
                                                         }</option>
                                                 )
