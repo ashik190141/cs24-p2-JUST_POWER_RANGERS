@@ -1,8 +1,11 @@
 import { useState } from "react";
-
+import img1 from '../../assets/Home/1.jpg'
+import img2 from '../../assets/Home/2.jpg'
+import img3 from '../../assets/Home/3.jpg'
+import img4 from '../../assets/Home/4.jpg'
 export const CarouselMain = () => {
   const [currentSlider, setCurrentSlider] = useState(0);
-  const sliders = [{img: "https://images.unsplash.com/photo-1620509048004-415ebb9e2755?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", tags: "Room",}, {img: "https://images.unsplash.com/photo-1637681262973-a516e647e826?q=80&w=1335&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", tags: "Room",}, {img: "https://images.unsplash.com/photo-1610141160723-d2d346e73766?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", tags: "Room",}, {img: "https://images.unsplash.com/photo-1605600659908-0ef719419d41?q=80&w=1336&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", tags: "Room",},];
+  const sliders = [{img: img1, tags: "Room",}, {img: img2, tags: "Room",}, {img: img3, tags: "Room",}, {img: img4, tags: "Room",},];
     const nextSlider = () => setCurrentSlider((currentSlider) => (currentSlider === sliders.length - 1 ? 0 : currentSlider + 1));
     return (
         <div className="sm:w-2/3 h-[540px] md:h-[670px] flex items-center relative overflow-hidden">

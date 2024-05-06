@@ -1,11 +1,17 @@
 import img from "../../assets/Home/dustan-woodhouse-RUqoVelx59I-unsplash.jpg";
 import img1 from "../../assets/Home/chris-leboutillier-TUJud0AWAPI-unsplash.jpg";
 import img2 from "../../assets/Home/xianyu-hao-betJpW6fuoY-unsplash.jpg";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+AOS.init();
 
 const Effect = () => {
+
   return (
     <div className='grid grid-cols-1 md:grid-cols-3 gap-10 my-10'>
-      <div className="px-4 font-play glass py-8 max-w-[450px] shadow-lg font-sans space-y-3 mx-auto bg-[#bcb382]">
+      <div data-aos="fade-up"
+        data-aos-duration="3000"
+        className="px-4 font-play glass py-8 max-w-[450px] shadow-lg font-sans space-y-3 mx-auto bg-[#bcb382]">
         <div className="flex gap-3 items-start justify-center">
 
           <div className="flex flex-col justify-center w-full h-52 lg:h-[280px] relative">
@@ -21,7 +27,9 @@ const Effect = () => {
           </div>
         </div>
       </div>
-      <div className="px-4 font-play glass py-8 max-w-[450px] shadow-lg font-sans space-y-3 mx-auto bg-[#bcb382]">
+      <div data-aos="fade-up"
+        data-aos-duration="3000"
+        className="px-4 font-play glass py-8 max-w-[450px] shadow-lg font-sans space-y-3 mx-auto bg-[#bcb382]">
         <div className="flex items-start justify-center">
 
           <div className="flex flex-col justify-center w-full h-52 lg:h-[280px] relative">
@@ -37,7 +45,9 @@ const Effect = () => {
         </div>
       </div>
 
-      <div className="px-4 font-play glass py-8 max-w-[450px] shadow-lg font-sans space-y-3 mx-auto bg-[#bcb382]">
+      <div data-aos="fade-up"
+        data-aos-duration="3000"
+        className="px-4 font-play glass py-8 max-w-[450px] shadow-lg font-sans space-y-3 mx-auto bg-[#bcb382]">
         <div className="flex items-start gap-2 justify-center">
 
           <div className="flex flex-col justify-center w-full h-52 lg:h-[280px] relative">

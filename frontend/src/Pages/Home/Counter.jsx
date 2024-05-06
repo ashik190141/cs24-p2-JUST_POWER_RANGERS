@@ -4,6 +4,9 @@ import GetAllSts from '../../Hooks/GetAllSts';
 import GetAllUsers from '../../Hooks/GetAllUsers';
 import GetAllLandfill from '../../Hooks/GetAllLandfill';
 import GetAllVehicle from '../../Hooks/GetAllVehicle';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+AOS.init();
 
 const Counter = () => {
     let [allStsCollection] = GetAllSts();
@@ -19,7 +22,8 @@ const Counter = () => {
             <SectionTitle title={"System Info"} subTitle={"Our Dynamic"}></SectionTitle>
             <div
                 className='bg-gradient-to-r from-emerald-600 to-cyan-900 my-5 py-8 mx-6 grid grid-cols-2 md:grid-cols-4 gap-10 justify-center items-center rounded-md'>
-                <div className='text-center bg-white rounded-full p-3'>
+                <div data-aos="fade-left" data-aos-duration="3000"
+                    className='text-center bg-white rounded-full p-3'>
                     <h1 className='text-2xl font-bold mb-2'>Number of Users</h1>
                     <div className='h-12 w-12 md:h-20 md:w-20 rounded-full mx-auto bg-sky-900 text-white p-3 md:p-6'>
                         <CountUp
@@ -30,9 +34,11 @@ const Counter = () => {
                     </div>
 
                 </div>
-                <div className='text-center bg-white rounded-full p-3'>
+                <div data-aos="fade-left" data-aos-duration="3000"
+                    className='text-center bg-white rounded-full p-3'>
                     <h1 className='text-2xl font-bold mb-2'>Number of STS</h1>
-                    <div className='h-12 w-12 md:h-20 md:w-20 rounded-full mx-auto bg-sky-900 text-white p-3 md:p-6'>
+                    <div
+                        className='h-12 w-12 md:h-20 md:w-20 rounded-full mx-auto bg-sky-900 text-white p-3 md:p-6'>
                         <CountUp
                             className='text-xl font-bold'
                             start={0}
@@ -40,7 +46,8 @@ const Counter = () => {
                             duration={5} />
                     </div>
                 </div>
-                <div className='text-center bg-white rounded-full p-3'>
+                <div data-aos="fade-right" data-aos-duration="3000"
+                    className='text-center bg-white rounded-full p-3'>
                     <h1 className='text-2xl font-bold mb-2'>Number of Landfil</h1>
                     <div className='h-12 w-12 md:h-20 md:w-20 rounded-full mx-auto bg-sky-900 text-white p-3 md:p-6'>
                         <CountUp
@@ -50,7 +57,8 @@ const Counter = () => {
                             duration={5} />
                     </div>
                 </div>
-                <div className='text-center bg-white rounded-full p-3'>
+                <div data-aos="fade-right" data-aos-duration="3000"
+                    className='text-center bg-white rounded-full p-3'>
                     <h1 className='text-2xl font-bold mb-2'>Number of Vehicle</h1>
                     <div className='h-12 w-12 md:h-20 md:w-20 rounded-full mx-auto bg-sky-900 text-white p-3 md:p-6'>
                         <CountUp
