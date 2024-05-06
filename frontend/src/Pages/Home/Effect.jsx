@@ -9,7 +9,7 @@ const Effect = () => {
 
   return (
     <div className='grid grid-cols-1 md:grid-cols-3 gap-10 my-10'>
-      <div data-aos="fade-up"
+      <div data-aos="flip-up"
         data-aos-duration="3000"
         className="px-4 font-play glass py-8 max-w-[450px] shadow-lg font-sans space-y-3 mx-auto bg-[#bcb382]">
         <div className="flex gap-3 items-start justify-center">
@@ -27,7 +27,7 @@ const Effect = () => {
           </div>
         </div>
       </div>
-      <div data-aos="fade-up"
+      <div data-aos="flip-up"
         data-aos-duration="3000"
         className="px-4 font-play glass py-8 max-w-[450px] shadow-lg font-sans space-y-3 mx-auto bg-[#bcb382]">
         <div className="flex items-start justify-center">
@@ -45,7 +45,7 @@ const Effect = () => {
         </div>
       </div>
 
-      <div data-aos="fade-up"
+      <div data-aos="flip-up"
         data-aos-duration="3000"
         className="px-4 font-play glass py-8 max-w-[450px] shadow-lg font-sans space-y-3 mx-auto bg-[#bcb382]">
         <div className="flex items-start gap-2 justify-center">

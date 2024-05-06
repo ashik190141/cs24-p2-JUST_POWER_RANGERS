@@ -1722,7 +1722,23 @@ async function run() {
         trucks: reqData,
         stsCapacity: target,
       });
-    })
+    });
+
+    // =====================Counter for home page👇======================>
+    app.get("/counter",  async (req, res) => {
+      let info = [];
+      let users = (await usersCollection.find().toArray()).length;
+      info.push(users);
+      let landfills = (await landfillCollection.find().toArray()).length;
+      info.push(landfills);
+      let sts = (await stsCollection.find().toArray()).length;
+      info.push(sts);
+      let vehicles = (await vehiclesCollection.find().toArray()).length;
+      info.push(vehicles);
+      res.json({
+        data: info,
+      })
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(

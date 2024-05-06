@@ -57,7 +57,7 @@ const Navbar = () => {
                     </ul>
                 </div>
                 <div className="flex justify-center items-center">
-                    <Link to={'/'}><img className="w-10 h-10 md:w-16 md:h-[56px] cursor-pointer" src={img} alt="" /></Link>
+                    <Link to={'/'}><img className="w-10 h-10 md:w-[56px] md:h-[56px] cursor-pointer" src={img} alt="" /></Link>
                     <Link to={'/'} className="btn btn-ghost text-xl">EcoSync</Link>
                 </div>
             </div>
