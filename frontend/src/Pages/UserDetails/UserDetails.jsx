@@ -11,6 +11,14 @@ import { useEffect, useState } from "react";
 const UserDetails = () => {
     let user = useLoaderData();
 
+    const { data: userDetails = null, refetch } = useQuery({
+        queryKey: ['user-details'],
+        queryFn: async () => {
+            const res = await axiosPublic.get(`/users/${user._id}`);
+            return res.data;
+        }
+    });
+
     const { data: availableRole = [] } = useQuery({
         queryKey: ['get-all-availableRole'],
         queryFn: async () => {
@@ -61,14 +69,14 @@ const UserDetails = () => {
         let email = user.email;
         let role = data.updatedRole;
         let place = selectedLocation;
-        
-        if(data.updatedRole !== 'Sts Manager' && data.updatedRole !== 'Land Manager'){
+
+        if (data.updatedRole !== 'Sts Manager' && data.updatedRole !== 'Land Manager') {
             place = null;
         }
-        else{
+        else {
             place = selectedLocation;
         }
-        let updatedRole ={
+        let updatedRole = {
             email,
             role,
             place
@@ -102,6 +110,7 @@ const UserDetails = () => {
                 timer: 1500
             });
             reset();
+            refetch();
         } else {
             Swal.fire({
                 position: "center",
@@ -114,16 +123,16 @@ const UserDetails = () => {
 
     }
     return (
-        <div className="w-full md:w-10/12 mx-auto">
+        <div className="w-full md:w-10/12 mx-auto px-2 my-10">
             <Helmet>
                 <title>EcoSync | User Profile</title>
             </Helmet>
-            <SectionTitle title={user?.userName} subTitle={'user Name'}></SectionTitle>
+            <SectionTitle title={userDetails?.userName} subTitle={'user Name'}></SectionTitle>
             <div className="">
                 <div className="my-5">
-                    <h1 className="text-2xl">User Name: <span className="font-bold">{user?.userName}</span></h1>
-                    <h1 className="text-2xl">User Email: <span className="font-bold">{user?.email}</span></h1>
-                    <h1 className="text-2xl">Current Role: <span className="font-bold">{user?.role}</span></h1>
+                    <h1 className="text-2xl">User Name: <span className="font-bold">{userDetails?.userName}</span></h1>
+                    <h1 className="text-2xl">User Email: <span className="font-bold">{userDetails?.email}</span></h1>
+                    <h1 className="text-2xl">Current Role: <span className="font-bold">{userDetails?.role}</span></h1>
                 </div>
                 <div>
                     <h1 className="text-4xl font-bold">Update User Role</h1>
@@ -140,7 +149,7 @@ const UserDetails = () => {
                                     className="w-full py-2 rounded-md">
                                     <option disabled value="null">Select New Role</option>
                                     {
-                                        user.role != 'unassigned' && <option  value="unassigned">Un-Assigned</option>
+                                        user.role != 'unassigned' && <option value="unassigned">Un-Assigned</option>
                                     }
                                     {
                                         availableRole?.map((role) => {

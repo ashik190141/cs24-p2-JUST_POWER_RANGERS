@@ -42,12 +42,12 @@ const AddNewRole = () => {
             </Helmet>
             <SectionTitle title={"Add New Role"} subTitle={'Need More Worker?'}></SectionTitle>
             <div>
-                <div className="w-10/12 mx-auto my-10">
+                <div className="w-full md:w-10/12 mx-auto my-10 px-2">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="flex gap-10 my-8">
                             <div className="flex-1">
                                 <label className="label">
-                                    <span className="label-text text-xl font-semibold">Role Name*</span>
+                                    <span className="label-text text-base md:text-xl font-semibold">Role Name*</span>
                                 </label>
                                 <select
                                     defaultValue="unassigned"
@@ -63,7 +63,7 @@ const AddNewRole = () => {
                             </div>
                             <div className="flex-1">
                                 <label className="label">
-                                    <span className="label-text text-xl font-semibold">Allocations number</span>
+                                    <span className="label-text text-base md:text-xl font-semibold">Allocations number</span>
                                 </label>
                                 <input
                                     type="text"

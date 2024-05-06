@@ -5,6 +5,7 @@ import Footer from '../../Components/Footer';
 import Permission from '../../Hooks/Permission';
 import useAuth from '../../Hooks/useAuth';
 import { CgProfile } from "react-icons/cg";
+import { VscThreeBars } from "react-icons/vsc";
 
 const Dashboard = () => {
     let [userRole] = Permission();
@@ -104,12 +105,45 @@ const Dashboard = () => {
         <div className='max-w-screen-2xl mx-auto min-h-screen sm:px-4 md:px-0 bg-base-300'>
             <Navbar></Navbar>
             <div className="max-w-full mx-auto flex">
-                <div className="w-64 min-h-screen bg-[#092111] text-white sticky top-0">
+
+                {/* This is for Small device */}
+                <div className="drawer md:hidden fixed z-50">
+                    <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+                    <div className="drawer-content">
+                        <label
+                            htmlFor="my-drawer"
+                            className="btn bg-gray-400 text-black rounded-full drawer-button">
+                            <VscThreeBars className='text-xl' /></label>
+                    </div>
+                    <div className="drawer-side">
+                        <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
+                        <ul className="menu p-4 w-60 min-h-full bg-base-200 text-base-content flex flex-col mt-5 px-6 space-y-3">
+                            {
+                                userRole === "System Admin" && <>
+                                    {systemAdmin}
+                                </>
+
+                            }
+                            {
+                                userRole === "Sts Manager" && <>
+                                    {stsManager}
+                                </>
+                            }
+                            {
+                                userRole === "Land Manager" && <>
+                                    {landManager}
+                                </>
+                            }
+                        </ul>
+                    </div>
+                </div>
+
+                {/* This is for Medium and Large device */}
+                <div className="hidden md:inline-block w-64 min-h-screen bg-[#092111] text-white sticky top-0">
                     <div className='text-center my-5'>
                         <h1 className='text-3xl font-bold'>EcoSync</h1>
                         <p className='text-xl'>Web App</p>
                     </div>
-
                     {
                         userRole === "System Admin" && <>
                             <ul className='menu flex flex-col mt-5 px-6 space-y-3'>

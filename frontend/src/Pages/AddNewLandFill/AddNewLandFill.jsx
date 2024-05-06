@@ -106,12 +106,9 @@ const AddNewLandFill = () => {
       <Helmet>
         <title>EcoSync | Add Landfill</title>
       </Helmet>
-      <SectionTitle
-        title={"Add New Landfill"}
-        subTitle={"More Waste?"}
-      ></SectionTitle>
+      <SectionTitle title={"Add New Landfill"} subTitle={"More Waste?"}></SectionTitle>
       <div>
-        <div className="w-10/12 mx-auto my-5">
+        <div className="w-full md:w-10/12 mx-auto my-10 px-2">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex gap-10 my-5">
               <div className="flex-1">
@@ -142,7 +139,7 @@ const AddNewLandFill = () => {
               </div>
             </div>
             <div>
-              <div className="w-[508px] mb-5">
+              <div className="w-full md:w-[508px] mb-5">
                 <label className="label">
                   <span className="label-text text-xl font-semibold">
                     Available Landfill Manager
@@ -173,7 +170,7 @@ const AddNewLandFill = () => {
               {!clickedPosition && (
                 <p
                   onClick={openModal}
-                  className="btn w-[508px] p-2 rounded-md placeholder:pl-2"
+                  className="btn w-full md:w-[508px] p-2 rounded-md placeholder:pl-2"
                 >
                   Open Map
                 </p>
@@ -187,7 +184,7 @@ const AddNewLandFill = () => {
                       value={clickedPosition?.lat}
                       {...register("lat", { required: true })}
                       required
-                      className="w-[508px] p-2 rounded-md placeholder:pl-2"
+                      className="w-full md:w-[508px] p-2 rounded-md placeholder:pl-2"
                     />
                   )}
                 </div>
@@ -199,7 +196,7 @@ const AddNewLandFill = () => {
                       value={clickedPosition?.lng}
                       {...register("lng", { required: true })}
                       required
-                      className="w-[508px] p-2 rounded-md placeholder:pl-2"
+                      className="w-full md:w-[508px] p-2 rounded-md placeholder:pl-2"
                     />
                   )}
                 </div>

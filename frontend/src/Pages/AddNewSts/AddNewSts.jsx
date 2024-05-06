@@ -90,12 +90,9 @@ const AddNewSts = () => {
       <Helmet>
         <title>EcoSync | Add Sts</title>
       </Helmet>
-      <SectionTitle
-        title={"Add New Sts"}
-        subTitle={"More Waste in City?"}
-      ></SectionTitle>
+      <SectionTitle title={"Add New Sts"} subTitle={"More Waste in City?"}></SectionTitle>
       <div>
-        <div className="w-10/12 mx-auto my-10">
+        <div className="w-full md:w-10/12 mx-auto my-10 px-2">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex gap-10 my-8">
               <div className="flex-1">
@@ -173,7 +170,7 @@ const AddNewSts = () => {
                 </label>
                 {!clickedPosition && <p
                   onClick={openModal}
-                  className="btn w-[508px] p-2 rounded-md placeholder:pl-2"
+                  className="btn w-full md:w-[508px] p-2 rounded-md placeholder:pl-2"
                 >
                   Open Map
                 </p>}
@@ -184,7 +181,7 @@ const AddNewSts = () => {
                     value={clickedPosition?.lat}
                     {...register("lat", { required: true })}
                     required
-                    className="w-[508px] p-2 rounded-md placeholder:pl-2 mr-10"
+                    className="w-full md:w-[508px] p-2 rounded-md placeholder:pl-2 md:mr-10"
                   />
                 )}
                 {clickedPosition && (
@@ -194,7 +191,7 @@ const AddNewSts = () => {
                     value={clickedPosition?.lng}
                     {...register("lng", { required: true })}
                     required
-                    className="w-[500px] p-2 rounded-md placeholder:pl-2 "
+                    className="w-full md:w-[500px] p-2 rounded-md placeholder:pl-2 "
                   />
                 )}
               </div>
