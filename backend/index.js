@@ -136,6 +136,7 @@ async function run() {
     // ===================== Verify Admin👇===========================>
     const verifyAdmin = async (req, res, next) => {
       const email = req.decoded?.email;
+      console.log("Verify Admin Email:", email);
       const query = { email: email };
       const user = await usersCollection.findOne(query);
       const isAdmin = user?.role === "System Admin";
@@ -538,14 +539,14 @@ async function run() {
 
     // =====================Get All User👇=============================>
     // User Management Endpoints
-    app.get("/users", async (req, res) => {
+    app.get("/users", verifyToken, verifyAdmin, async (req, res) => {
       const result = await usersCollection.find().toArray();
       res.send(result);
     });
 
     // ===========Get Single User And All Available Roles👇============>
     // admin access
-    app.get("/users/:userId", async (req, res) => {
+    app.get("/users/:userId", verifyToken, verifyAdmin, async (req, res) => {
       try {
         const userId = req.params.userId;
         //All Available Users
@@ -664,7 +665,7 @@ async function run() {
 
     // ===================Update Role to User👇=======================>
     //admin access
-    app.put("/users/:userId/roles", async (req, res) => {
+    app.put("/users/:userId/roles", verifyToken, verifyAdmin, async (req, res) => {
       const updatedRoleInfo = req.body;
       const id = req.params.userId;
       const query = { _id: new ObjectId(id) };
@@ -935,7 +936,7 @@ async function run() {
 
 
     // =====================Create a Vehicle👇========================>
-    app.post("/create-vehicles", async (req, res) => {
+    app.post("/create-vehicles", verifyToken, verifyAdmin, async (req, res) => {
       const vehicles = req.body;
       const sts = vehicles.stsName;
 
@@ -970,7 +971,7 @@ async function run() {
 
     // ====================Create a Landfill👇========================>
     //admin access
-    app.post("/create-landfill", async (req, res) => {
+    app.post("/create-landfill", verifyToken, verifyAdmin, async (req, res) => {
       const landfillInfo = req.body;
       const id = landfillInfo.id;
 
@@ -998,8 +999,9 @@ async function run() {
     });
 
     //Get single Lanfill info
-    app.get('/update-landfill/:id', async (req, res) => {
+    app.get('/update-landfill/:id', verifyToken, verifyAdmin, async (req, res) => {
       let id = req.params.id;
+      console.log("Id: ", id)
       let query = { _id: new ObjectId(id) };
       let result = await landfillCollection.findOne(query);
       res.send(result);
@@ -1007,7 +1009,7 @@ async function run() {
 
     // =======================Update a landfill👇==========================>
     // admin access
-    app.put('/update-landfill-info/:id', async (req, res) => {
+    app.put('/update-landfill-info/:id', verifyToken, verifyAdmin, async (req, res) => {
       let newLanfillInfo = req.body;
       let id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -1038,7 +1040,7 @@ async function run() {
 
     // =======================Delete a Landfill👇==========================>
     // admin access
-    app.delete("/delete-landfill/:id", async (req, res) => {
+    app.delete("/delete-landfill/:id", verifyToken, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const landfillInfo = await landfillCollection.findOne(query);
@@ -1076,7 +1078,7 @@ async function run() {
 
     // =======================My Landfill Info👇==========================>
     // Sts Manager
-    app.get('/my-landfill-managers/:id', async (req, res) => {
+    app.get('/my-landfill-managers/:id', verifyToken, async (req, res) => {
       let id = req.params.id;
       let query = { _id: new ObjectId(id) };
       let myLandfill = await landfillCollection.findOne(query);
@@ -1093,7 +1095,7 @@ async function run() {
 
     // =======================Create a Sts👇==========================>
     // admin access
-    app.post("/create-sts", async (req, res) => {
+    app.post("/create-sts", verifyToken, verifyAdmin, async (req, res) => {
       const stsInfo = req.body;
       const id = stsInfo.id;
 
@@ -1130,7 +1132,7 @@ async function run() {
     });
 
     //Get Single Sts Info
-    app.get('/update-sts/:id', async (req, res) => {
+    app.get('/update-sts/:id', verifyToken, verifyAdmin, async (req, res) => {
       let id = req.params.id;
       let query = { _id: new ObjectId(id) };
       let result = await stsCollection.findOne(query);
@@ -1139,7 +1141,7 @@ async function run() {
 
     // =======================Update a Sts👇==========================>
     // admin access
-    app.put('/update-sts-info/:id', async (req, res) => {
+    app.put('/update-sts-info/:id', verifyToken, verifyAdmin, async (req, res) => {
       let newStsInfo = req.body;
       let id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -1211,7 +1213,7 @@ async function run() {
 
     // =======================Delete a Sts👇==========================>
     // admin access
-    app.delete("/delete-sts/:id", async (req, res) => {
+    app.delete("/delete-sts/:id", verifyToken, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const stsInfo = await stsCollection.findOne(query);
@@ -1268,7 +1270,7 @@ async function run() {
 
     // =======================My Sts Info👇==========================>
     // Sts Manager
-    app.get('/my-sts-managers/:id', async (req, res) => {
+    app.get('/my-sts-managers/:id', verifyToken, async (req, res) => {
       let id = req.params.id;
       let query = { _id: new ObjectId(id) };
       let mySts = await stsCollection.findOne(query);
@@ -1285,7 +1287,7 @@ async function run() {
 
     // =======================My Sts Info👇==========================>
     // Sts Manager
-    app.get('/my-sts-vehicles/:id', async (req, res) => {
+    app.get('/my-sts-vehicles/:id', verifyToken, async (req, res) => {
       let id = req.params.id;
       let query = { _id: new ObjectId(id) };
       let mySts = await stsCollection.findOne(query);
@@ -1301,7 +1303,7 @@ async function run() {
 
     // ===================Data Entry of Sts Manager👇=================>
     //sts manager
-    app.post("/create-entry-vehicles-leaving", async (req, res) => {
+    app.post("/create-entry-vehicles-leaving", verifyToken, async (req, res) => {
       const stsVehicleLeavingInfo = req.body;
       stsVehicleLeavingInfo.date = currentDate;
       const result = await stsLeavingCollection.insertOne(
@@ -1321,24 +1323,24 @@ async function run() {
     });
 
     // ======================Get All The Sts👇========================>
-    app.get('/get-all-sts', async (req, res) => {
+    app.get('/get-all-sts', verifyToken, async (req, res) => {
       const result = await stsCollection.find().toArray();
       res.send(result);
     });
 
     // ======================Get All The Sts👇========================>
-    app.get('/get-all-landfill', async (req, res) => {
+    app.get('/get-all-landfill', verifyToken, async (req, res) => {
       const result = await landfillCollection.find().toArray();
       res.send(result);
     });
 
     // =====================Get All The Vehicle👇=====================>
-    app.get('/get-all-vehicle', async (req, res) => {
+    app.get('/get-all-vehicle', verifyToken, async (req, res) => {
       const result = await vehiclesCollection.find().toArray();
       res.send(result);
     });
 
-    app.get("/available-sts-manager", async (req, res) => {
+    app.get("/available-sts-manager", verifyToken, verifyAdmin, async (req, res) => {
       const allUsers = await usersCollection.find().toArray();
       const availableSTSManager = allUsers.filter(user => user.assigned == false && user.role == 'Sts Manager');
       res.json({
@@ -1347,7 +1349,7 @@ async function run() {
       })
     })
 
-    app.get("/available-landfill-manager", async (req, res) => {
+    app.get("/available-landfill-manager", verifyToken, verifyAdmin, async (req, res) => {
       const allUsers = await usersCollection.find().toArray();
       const availableLandfillManager = allUsers.filter(
         (user) => user.assigned == false && user.role == "Land Manager"
@@ -1360,7 +1362,7 @@ async function run() {
 
     // =======================Get The Bill👇==========================>
     //landfill manager
-    app.post("/create-truck-dumping", async (req, res) => {
+    app.post("/create-truck-dumping", verifyToken, async (req, res) => {
       const truckDumpingInfo = req.body;
       const allTrackDumpingInfo = await truckDumpingCollection.find().toArray();
       const checkingDate = allTrackDumpingInfo.filter(truck => truck.vehicleRegNum == truckDumpingInfo.vehicleRegNum && truck?.date == currentDate);
@@ -1418,7 +1420,7 @@ async function run() {
     // ===================Get all vehicle of a sts👇==================>
 
     // =======================Get A Profile👇=========================>
-    app.get("/sts-vehicles/:id", async (req, res) => {
+    app.get("/sts-vehicles/:id", verifyToken, async (req, res) => {
       const wardNumber = req.params.id;
       const query = { wardNumber: wardNumber };
       const sts = await stsCollection.findOne(query);
@@ -1428,10 +1430,12 @@ async function run() {
       })
     });
 
-
     //profile management endpoints
-    app.get("/profile", async (req, res) => {
+    app.get("/profile", verifyToken, async (req, res) => {
       const email = req.query.email;
+      if (req.decoded.email != email) {
+        return res.status(403).send({ message: 'Forbidded access' })
+      }
       const query = { email: email };
       const result = await usersCollection.findOne(query);
       res.send(result);
@@ -1439,7 +1443,7 @@ async function run() {
 
     // =====================Update User Profile👇=====================>
     //update login user info
-    app.put("/users/:userId", async (req, res) => {
+    app.put("/users/:userId", verifyToken, async (req, res) => {
       const id = req.params.userId;
       const query = { _id: new ObjectId(id) };
       const updatedUserInfo = req.body;
@@ -1474,7 +1478,7 @@ async function run() {
 
     // ==================Create a Role with Role Id👇===================>
     // role
-    app.post("/rbac/roles", async (req, res) => {
+    app.post("/rbac/roles", verifyToken, verifyAdmin, async (req, res) => {
       const defineRoleBody = req.body;
       let query = { roleName: defineRoleBody.roleName };
       let exist = await rolesCollection.findOne(query);
@@ -1508,7 +1512,7 @@ async function run() {
     });
 
     // =====================Check User Role👇======================>
-    app.post("/rbac/permissions", async (req, res) => {
+    app.post("/rbac/permissions", verifyToken, async (req, res) => {
       const permissionBody = req.body;
       const query = { email: permissionBody.email };
       const getUser = await usersCollection.findOne(query);
@@ -1527,8 +1531,11 @@ async function run() {
     });
 
     // =====================Check Landfill Manager's Landfill👇======================>
-    app.get("/landfill-manager/:email", async (req, res) => {
+    app.get("/landfill-manager/:email", verifyToken, async (req, res) => {
       const email = req.params.email;
+      if (req.decoded.email !== email) {
+        return res.status(403).send({ message: 'Forbidded access' });
+      }
       const userInfo = await usersCollection.findOne({ email: email });
       const id = userInfo._id.toString();
 
@@ -1561,8 +1568,11 @@ async function run() {
     });
 
     // =====================Check Sts Manager's Sts and vehicle👇======================>
-    app.get("/stsid/:email", async (req, res) => {
+    app.get("/stsid/:email", verifyToken, async (req, res) => {
       const email = req.params.email;
+      if (req?.decoded?.email !== email) {
+        return res.status(403).send({ message: 'Forbidded access' });
+      }
       const query = { email: email };
       const getUserInfo = await usersCollection.findOne(query);
       const id = getUserInfo._id.toString();
@@ -1584,7 +1594,7 @@ async function run() {
 
     // =====================Admin Real Time Monitoring👇======================>
     //Dashboard Monitoring
-    app.get("/dashboard", async (req, res) => {
+    app.get("/dashboard", verifyToken, verifyAdmin, async (req, res) => {
       const allVehicles = await vehiclesCollection.find().toArray();
       let result = [];
       for (let i = 0; i < allVehicles.length; i++) {
@@ -1634,10 +1644,10 @@ async function run() {
           fuelCost: fuelCost,
           stsWasteWeight: totalWasteVolume,
           landfillWasteWeight: totalWasteVolumeOfLandfill,
-          landLocation: lastLocation || "Can Not Enter Any Landfill or STS",
-          arrival: nearestTime?.arrival || "Can Not Enter Any Landfill or STS",
+          landLocation: lastLocation || "No Entry",
+          arrival: nearestTime?.arrival || "No Entry",
           departure:
-            nearestTime?.departure || "Can Not Enter Any Landfill or STS",
+            nearestTime?.departure || "No Entry",
         };
         result.push(truckCostInfo);
       }
@@ -1645,8 +1655,11 @@ async function run() {
     });
 
     // =====================Sts Manager View Optimal Path👇======================>
-    app.get("/sts-info/:email", async (req, res) => {
+    app.get("/sts-info/:email", verifyToken, async (req, res) => {
       const email = req.params.email;
+      if (req.decoded.email !== email) {
+        return res.status(403).send({ message: 'Forbidded access' });
+      }
       const query = { email: email };
       const getUserInfo = await usersCollection.findOne(query);
 
@@ -1664,8 +1677,11 @@ async function run() {
       }
     });
 
-    app.get("/minimum-vehicle-and-cost/:email", async (req, res) => {
+    app.get("/minimum-vehicle-and-cost/:email", verifyToken, async (req, res) => {
       const email = req.params.email;
+      if (req.decoded.email !== email) {
+        return res.status(403).send({ message: 'Forbidded access' });
+      }
       const query = { email: email };
       const getUserInfo = await usersCollection.findOne(query);
 
@@ -1706,7 +1722,23 @@ async function run() {
         trucks: reqData,
         stsCapacity: target,
       });
-    })
+    });
+
+    // =====================Counter for home page👇======================>
+    app.get("/counter",  async (req, res) => {
+      let info = [];
+      let users = (await usersCollection.find().toArray()).length;
+      info.push(users);
+      let landfills = (await landfillCollection.find().toArray()).length;
+      info.push(landfills);
+      let sts = (await stsCollection.find().toArray()).length;
+      info.push(sts);
+      let vehicles = (await vehiclesCollection.find().toArray()).length;
+      info.push(vehicles);
+      res.json({
+        data: info,
+      })
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(

@@ -30,7 +30,8 @@ const LandfillDataEntry = () => {
         const foundItem = allStsCollection.find(item => item.name === stsName);
         let wardNo = foundItem.wardNumber;
         let res = await axiosPublic.get(`/sts-vehicles/${wardNo}`)
-        setStsVehicle(res.data.data);
+        let usableVehicle = res?.data?.data?.filter(vehicle => vehicle.type == "Compactor" || vehicle.type == "Dump Truck");
+        setStsVehicle(usableVehicle);
     }
 
     let downloadPDF = () => {
@@ -115,7 +116,7 @@ const LandfillDataEntry = () => {
                         <span className="loading loading-spinner loading-lg"></span>
                     </div>
                 </> : <div>
-                    <div className="w-10/12 mx-auto my-10">
+                    <div className="w-full md:w-10/12 mx-auto my-10 px-2">
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div className="flex gap-10">
                                 <div className="flex-1">

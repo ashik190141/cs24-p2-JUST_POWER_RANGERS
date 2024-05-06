@@ -136,14 +136,11 @@ const StsManagerMinimumVehicle = () => {
             <Helmet>
                 <title>EcoSync | Minimum Vehicle</title>
             </Helmet>
-            <SectionTitle
-                title={"Minimum Vehicle"}
-                subTitle={"Need More Transportations?"}
-            ></SectionTitle>
+            <SectionTitle title={"Minimum Vehicle"}subTitle={"Clean all waste"}></SectionTitle>
 
-            <div className="bg-gray-100 p-4 ">
-                <table className="w-full md:w-11/12 mx-auto">
-                    <thead className="bg-gray-200 grid grid-cols-3">
+            <div className="p-4 w-full md:w-11/12 mx-auto px-2">
+                <table className="w-full table-zebra">
+                    <thead className="bg-gray-400 grid grid-cols-3">
                             <th className=" py-2">Truck Reg Number</th>
                             <th className=" py-2">Count</th>
                             <th className=" py-2">Total Cost (per KM)</th>
@@ -152,7 +149,7 @@ const StsManagerMinimumVehicle = () => {
                         {uniqueSubsets?.map((subset, index) => (
                             <tr
                                 key={index}
-                                className="border-b border-gray-300 relative"
+                                className="border-b relative"
                             >
                                 <td>
                                     {Object.entries(
@@ -160,18 +157,18 @@ const StsManagerMinimumVehicle = () => {
                                     ).map(([truckName, count], idx) => (
                                         <div
                                             key={idx}
-                                            className="grid grid-cols-3"
+                                            className="grid grid-cols-2"
                                         >
-                                            <td className="pl-10 py-2">
+                                            <td className="py-2">
                                                 {truckName}
                                             </td>
-                                            <td className="py-2 pl-40">
-                                                {count}
+                                            <td className="py-2">
+                                                {count} Times
                                             </td>
                                         </div>
                                     ))}
                                 </td>
-                                <td className=" absolute right-48 top-3">
+                                <td className="absolute right-12 md:right-48 top-3">
                                     {calculateSubsetInfo(subset).totalCost}
                                 </td>
                             </tr>

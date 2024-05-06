@@ -64,9 +64,9 @@ const AddNewVehicle = () => {
             <Helmet>
                 <title>EcoSync | Add Vehicle</title>
             </Helmet>
-            <SectionTitle title={"Add New Vehicle"} subTitle={'Need More Transportations?'}></SectionTitle>
+            <SectionTitle title={"Add New Vehicle"} subTitle={'Need Transportations?'}></SectionTitle>
             <div>
-                <div className="w-10/12 mx-auto my-10">
+                <div className="w-full md:w-10/12 mx-auto my-10 px-2">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="flex gap-10">
                             <div className="flex-1">
@@ -150,7 +150,7 @@ const AddNewVehicle = () => {
                                     placeholder="Enter Fual Cost (UnLoaded)"
                                     {...register('fualCostUnloaded', { required: true })}
                                     required
-                                    className="w-[508px] p-2 rounded-md placeholder:pl-2" />
+                                    className="w-full p-2 rounded-md placeholder:pl-2" />
                             </div>
                         </div>
 
