@@ -36,7 +36,6 @@ const Login = () => {
         }
         setLoading(true);
         let res = await axiosPublic.post('/auth/login', loginInfo);
-        console.log(res);
             if(res.data?.success){
                 setUser(user);
                 localStorage.setItem("user", JSON.stringify(user));

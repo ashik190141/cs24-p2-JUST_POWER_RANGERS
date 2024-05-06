@@ -32,7 +32,6 @@ const UpdateSingleSts = () => {
     let navigate = useNavigate();
     let [allVehicle] = GetAllVehicle();
     let availableVehicle = allVehicle.filter(vehicle => vehicle.assigned == false);
-    console.log(availableVehicle);
 
     let subtitle;
     const [modalIsOpen, setIsOpen] = useState(false);

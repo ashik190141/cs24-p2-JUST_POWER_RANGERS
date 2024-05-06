@@ -18,7 +18,6 @@ const StsDataEntry = () => {
       queryKey: ["stsId"],
       queryFn: async () => {
         const res = await axiosPublic.get(`/stsid/${user.email}`);
-        console.log(res.data);
         return res.data;
       },
     });

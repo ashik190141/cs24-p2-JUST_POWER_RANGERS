@@ -10,7 +10,6 @@ const StsManagerMinimumVehicle = () => {
     // const { user } = useAuth();
     let allData = useLoaderData();
     let oldTrucks = allData?.trucks;
-    console.log(allData);
 
     let subsets = [];
     let uniqueSubsets = [];

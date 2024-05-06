@@ -17,33 +17,70 @@ const AllUserInfo = () => {
         return {
             id: index + 1,
             userName: user?.userName,
+            gender: user?.gender,
             email: user?.email,
             phone: user?.phone,
             role: user?.role,
-            assigned: user?.assigned
+            assigned: user?.assigned,
+            address: user?.address,
+            district: user?.district,
+            division: user?.division,
         }
     })
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 90 },
+        {
+            field: 'id',
+            headerName: 'ID',
+            width: 50
+        },
         {
             field: 'userName',
             headerName: 'User Name',
-            width: 300,
+            width: 180,
+            editable: false,
+            sortable: true,
+        },
+        {
+            field: 'gender',
+            headerName: 'Gender',
+            width: 80,
             editable: false,
             sortable: true,
         },
         {
             field: 'email',
             headerName: 'User Email',
-            width: 300,
+            width: 250,
             editable: false,
             sortable: true,
         },
         {
+            field: 'phone',
+            headerName: 'Phone Number',
+            width: 160,
+            editable: false,
+            sortable: true,
+        },
+        {
+            field: 'district',
+            headerName: 'District',
+            width: 130,
+            editable: false,
+            sortable: true,
+        },
+        {
+            field: 'division',
+            headerName: 'Division',
+            width: 130,
+            editable: false,
+            sortable: true,
+        },
+
+        {
             field: 'role',
             headerName: 'User Role',
-            width: 200,
+            width: 150,
             editable: false,
             sortable: true,
         },
@@ -51,7 +88,7 @@ const AllUserInfo = () => {
             field: 'assigned',
             headerName: 'Assigned',
             sortable: false,
-            width: 150,
+            width: 100,
         },
     ];
 
@@ -68,9 +105,9 @@ const AllUserInfo = () => {
             {
                 isPending ? <>
                 </> : <>
-                    <div className="w-full md:w-10/12 mx-auto">
+                    <div className="w-full px-4 mx-auto">
                         <Box
-                            sx={{ height: 600, width: '100%' }}>
+                            sx={{ height: 700, width: '100%' }}>
                             <DataGrid
                                 sx={{ color: `${theme == "dark" ? "white" : "dark"}` }}
                                 rows={rows}
