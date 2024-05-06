@@ -13,7 +13,7 @@ const AdminHome = () => {
   }, [theme]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/dashboard")
+    fetch("http://localhost:5000/dashboard",{credentials: 'include'})
       .then(res => res.json())
       .then(data => {
         setTruckDetails(data)

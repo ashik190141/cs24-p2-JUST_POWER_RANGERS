@@ -29,7 +29,7 @@ import GelAvailableStsManager from "../../Hooks/GelAvailableStsManager";
 const AddNewSts = () => {
   const { register, handleSubmit, reset } = useForm();
   let axiosPublic = useAxiosPublic();
-  let [availableStsManager] = GelAvailableStsManager();
+  let [availableStsManager, , refetch] = GelAvailableStsManager();
 
   let subtitle;
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -67,7 +67,7 @@ const AddNewSts = () => {
     let res = await axiosPublic.post('/create-sts', stsInfo);
     if (res.data.result) {
       Swal.fire({
-        position: "top-middle",
+        position: "center",
         icon: "success",
         title: res.data.message,
         showConfirmButton: false,
@@ -75,9 +75,10 @@ const AddNewSts = () => {
       });
       reset();
       setClickedPosition(null);
+      refetch();
     } else {
       Swal.fire({
-        position: "top-middle",
+        position: "center",
         icon: "error",
         title: res.data.message,
         showConfirmButton: false,
@@ -88,7 +89,7 @@ const AddNewSts = () => {
   return (
     <div>
       <Helmet>
-        <title>EcoSync | Add Sts</title>
+        <title>EcoSync | Add New Sts</title>
       </Helmet>
       <SectionTitle title={"Add New Sts"} subTitle={"More Waste in City?"}></SectionTitle>
       <div>
@@ -181,7 +182,7 @@ const AddNewSts = () => {
                     value={clickedPosition?.lat}
                     {...register("lat", { required: true })}
                     required
-                    className="w-full md:w-[508px] p-2 rounded-md placeholder:pl-2 md:mr-10"
+                    className="w-full md:w-[508px] mb-2 p-2 rounded-md placeholder:pl-2 md:mr-10"
                   />
                 )}
                 {clickedPosition && (
@@ -191,7 +192,7 @@ const AddNewSts = () => {
                     value={clickedPosition?.lng}
                     {...register("lng", { required: true })}
                     required
-                    className="w-full md:w-[500px] p-2 rounded-md placeholder:pl-2 "
+                    className="w-full md:w-[508px] p-2 rounded-md placeholder:pl-2 "
                   />
                 )}
               </div>

@@ -127,15 +127,15 @@ const UserDetails = () => {
             <Helmet>
                 <title>EcoSync | User Profile</title>
             </Helmet>
-            <SectionTitle title={userDetails?.userName} subTitle={'user Name'}></SectionTitle>
-            <div className="">
-                <div className="my-5">
-                    <h1 className="text-2xl">User Name: <span className="font-bold">{userDetails?.userName}</span></h1>
-                    <h1 className="text-2xl">User Email: <span className="font-bold">{userDetails?.email}</span></h1>
-                    <h1 className="text-2xl">Current Role: <span className="font-bold">{userDetails?.role}</span></h1>
+            <SectionTitle title={"Update Role"} subTitle={'Get Change'}></SectionTitle>
+            <div className="text-lg">
+                <div className="my-5 grid grid-cols-2 md:grid-cols-3 gap-10 font-semibold text-white">
+                    <h1 className="bg-green-800 text-xl p-8 text-center rounded-lg">User Name: <span className="font-bold">{userDetails?.userName}</span></h1>
+                    <h1 className="bg-violet-950 text-xl p-8 text-center rounded-lg">User Email: <span className="font-bold">{userDetails?.email}</span></h1>
+                    <h1 className="bg-yellow-800 text-xl p-8 text-center rounded-lg">Current Role: <span className="font-bold">{userDetails?.role}</span></h1>
                 </div>
                 <div>
-                    <h1 className="text-4xl font-bold">Update User Role</h1>
+                    <h1 className="text-3xl text-rose-900 text-center mt-10 mb-5 font-bold">Update User Role</h1>
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="flex gap-10 mb-5">
                             <div className="flex-1">

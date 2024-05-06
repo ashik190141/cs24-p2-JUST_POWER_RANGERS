@@ -52,7 +52,7 @@ const router = createBrowserRouter([
             {
                 path: "/update/:id",
                 element: <PrivateRoutes><UpdateProfile></UpdateProfile></PrivateRoutes>,
-                loader: ({ params }) => fetch(`http://localhost:5000/users/${params.id}`)
+                loader: ({ params }) => fetch(`http://localhost:5000/users/${params.id}`, { credentials: "include" })
             },
             {
                 path: "/profile/change-password",
@@ -133,7 +133,7 @@ const router = createBrowserRouter([
                 //This will be Admin Route
                 path: "update-sts/:id",
                 element: <SystemAdminRoute><UpdateSingleSts></UpdateSingleSts></SystemAdminRoute>,
-                loader: ({ params }) => fetch(`http://localhost:5000/update-sts/${params.id}`)
+                loader: ({ params }) => fetch(`http://localhost:5000/update-sts/${params.id}`, { credentials: "include" })
             },
             {
                 //This will be Admin Route
@@ -144,13 +144,13 @@ const router = createBrowserRouter([
                 //This will be Admin Route
                 path: "update-landfill/:id",
                 element: <SystemAdminRoute><UpdateSingleLandfill></UpdateSingleLandfill></SystemAdminRoute>,
-                loader: ({ params }) => fetch(`http://localhost:5000/update-landfill/${params.id}`)
+                loader: ({ params }) => fetch(`http://localhost:5000/update-landfill/${params.id}`, { credentials: "include" })
             },
             {
                 //This will be Admin Route
                 path: "users/:id",
                 element: <SystemAdminRoute><UserDetails></UserDetails></SystemAdminRoute>,
-                loader: ({ params }) => fetch(`http://localhost:5000/users/${params.id}`)
+                loader: ({ params }) => fetch(`http://localhost:5000/users/${params.id}`, { credentials: "include" })
             },
             {
                 //This will be Sts Manager Route
@@ -173,7 +173,7 @@ const router = createBrowserRouter([
                 //This will be Sts Manager Route
                 path: "min-vehicle-and-cost/:email",
                 element: <StsManagerRoute><StsManagerMinimumVehicle></StsManagerMinimumVehicle></StsManagerRoute>,
-                loader: ({ params }) => fetch(`http://localhost:5000/minimum-vehicle-and-cost/${params?.email}`),
+                loader: ({ params }) => fetch(`http://localhost:5000/minimum-vehicle-and-cost/${params?.email}`, { credentials: "include" }),
             },
             {
                 //This will be Land Manager Route

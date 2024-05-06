@@ -120,14 +120,14 @@ const STSManagerMapRoutes = () => {
         },
         {
             field: "distance",
-            headerName: "Distance",
+            headerName: "Distance (Km)",
             width: 200,
             editable: false,
             sortable: true,
         },
         {
             field: "time",
-            headerName: "Time",
+            headerName: "Time (Hr)",
             sortable: true,
             width: 150,
         },
