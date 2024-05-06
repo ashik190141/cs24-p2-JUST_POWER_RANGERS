@@ -87,7 +87,6 @@ const LandfillDataEntry = () => {
                 showConfirmButton: false,
                 timer: 1500
             });
-            console.log(res.data);
             reset();
             setArrival('00:00');
             setDeparture('00:00');

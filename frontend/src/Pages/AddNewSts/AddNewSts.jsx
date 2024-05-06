@@ -64,7 +64,6 @@ const AddNewSts = () => {
       lng: parseFloat(data.lng),
       id: data.stsmanager
     };
-    console.log(stsInfo);
     let res = await axiosPublic.post('/create-sts', stsInfo);
     if (res.data.result) {
       Swal.fire({

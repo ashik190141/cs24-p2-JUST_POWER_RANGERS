@@ -92,9 +92,7 @@ const UserDetails = () => {
                 timer: 1500
             });
         }
-        console.log(updatedRole);
         let res = await axiosPublic.put(`/users/${user._id}/roles`, updatedRole)
-        console.log(res);
         if (res.data.result) {
             Swal.fire({
                 position: "center",

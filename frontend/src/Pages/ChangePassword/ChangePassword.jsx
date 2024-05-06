@@ -36,10 +36,9 @@ const ChangePassword = () => {
             oldPassword,
             newPassword,
         }
-        console.log(passInfo);
+
 
         let res = await axiosPublic.put('/auth/change-password', passInfo);
-        console.log(res);
         if (res.data.result) {
             Swal.fire({
                 icon: 'success',

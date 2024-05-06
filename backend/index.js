@@ -148,7 +148,6 @@ async function run() {
     // =====================Create New User 👇=======================>
     app.post("/users", verifyToken, verifyAdmin, async (req, res) => {
       const user = req.body;
-      console.log(user);
       const roleQuery = { roleName: user.role };
 
       const plainPassword = user.password;
@@ -1087,9 +1086,8 @@ async function run() {
       for (let i = 0; i < count; i++) {
         let managerId = myLandfill.manager[i];
         let manager = await usersCollection.findOne({ _id: new ObjectId(managerId) });
-        managers.push(manager.userName);
+        managers.push(manager);
       }
-      console.log(managers)
       res.send(managers);
     });
 
@@ -1280,9 +1278,8 @@ async function run() {
       for (let i = 0; i < count; i++) {
         let managerId = mySts.manager[i];
         let manager = await usersCollection.findOne({ _id: new ObjectId(managerId) });
-        managers.push(manager.userName);
+        managers.push(manager);
       }
-      console.log(managers)
       res.send(managers);
     });
 
@@ -1296,7 +1293,7 @@ async function run() {
 
       let vehicles = [];
       for (let i = 0; i < count; i++) {
-        vehicles.push(mySts.vehicles[i].vehicleRegNum);
+        vehicles.push(mySts.vehicles[i]);
       }
       res.send(vehicles);
     })
@@ -1365,8 +1362,6 @@ async function run() {
     //landfill manager
     app.post("/create-truck-dumping", async (req, res) => {
       const truckDumpingInfo = req.body;
-      console.log(truckDumpingInfo)
-
       const allTrackDumpingInfo = await truckDumpingCollection.find().toArray();
       const checkingDate = allTrackDumpingInfo.filter(truck => truck.vehicleRegNum == truckDumpingInfo.vehicleRegNum && truck?.date == currentDate);
 
@@ -1377,7 +1372,6 @@ async function run() {
 
         const stsQuery = { name: truckDumpingInfo.stsName };
         const stsInfo = await stsCollection.findOne(stsQuery);
-        console.log(stsInfo);
 
         const landfillQuery = { name: truckDumpingInfo.landName };
         const landfillInfo = await landfillCollection.findOne(landfillQuery);
@@ -1447,7 +1441,6 @@ async function run() {
     //update login user info
     app.put("/users/:userId", async (req, res) => {
       const id = req.params.userId;
-      console.log(id);
       const query = { _id: new ObjectId(id) };
       const updatedUserInfo = req.body;
       const options = { upsert: true };
@@ -1538,20 +1531,16 @@ async function run() {
       const email = req.params.email;
       const userInfo = await usersCollection.findOne({ email: email });
       const id = userInfo._id.toString();
-      console.log(id);
 
       const allLandfillCollection = await landfillCollection.find().toArray();
 
       let landfill = null;
       for (let i = 0; i < allLandfillCollection.length; i++) {
         const landfillManagers = allLandfillCollection[i].manager;
-        console.log("Landfill Managers :", landfillManagers);
         for (let j = 0; j < landfillManagers.length; j++) {
           let land = landfillManagers[j];
-          console.log("Landfill id", land);
           if (land === id) {
             landfill = allLandfillCollection[i];
-            console.log("Landfill", landfill);
             break;
           }
           // if (!landfill) break;

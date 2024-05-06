@@ -43,7 +43,7 @@ const ManageUser = () => {
     };
 
     return (
-        <div className="w-11/12 mx-auto my-5">
+        <div className="w-full px-4 mx-auto my-5">
             <Helmet>
                 <title>EcoSync | Manage User</title>
             </Helmet>
@@ -55,7 +55,7 @@ const ManageUser = () => {
                     </div>
                 </> : <>
                     <div className="mt-10">
-                        <table className="w-full min-w-max table-auto text-left">
+                        <table className="w-full min-w-max table-auto table-zebra text-left">
                             <thead>
                                 <tr className="">
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Index</th>
