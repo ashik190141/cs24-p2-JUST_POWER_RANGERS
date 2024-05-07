@@ -13,7 +13,7 @@ const AdminHome = () => {
   }, [theme]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/dashboard",{credentials: 'include'})
+    fetch("http://localhost:5000/dashboard", { credentials: 'include' })
       .then(res => res.json())
       .then(data => {
         setTruckDetails(data)
@@ -94,14 +94,11 @@ const AdminHome = () => {
       <Helmet>
         <title>EcoSync | Admin Home</title>
       </Helmet>
-      <SectionTitle
-        title={"Vehicle Update"}
-        subTitle={"Real time monitoring"}
-      ></SectionTitle>
-      <div className={`w-full px-4 mx-auto pt-5 text-${theme == "dark" ? "white" : "black"}`}>
-        <Box sx={{ height: 500 }}>
+      <SectionTitle title={"Vehicle Update"} subTitle={"Real time monitoring"}></SectionTitle>
+      <div className={`w-full px-4 max-w-[425px] md:max-w-full overflow-x-auto mx-auto pt-5 text-${theme == "dark" ? "white" : "black"}`}>
+        <Box sx={{ height: 500, width: '100%' }}>
           <DataGrid
-            sx={{ color: `${theme == "dark" ? "white" : "dark"}` }}
+            sx={{ color: `${theme == "dark" ? "white" : "dark"}`, }}
             rows={rows}
             columns={columns}
             initialState={{

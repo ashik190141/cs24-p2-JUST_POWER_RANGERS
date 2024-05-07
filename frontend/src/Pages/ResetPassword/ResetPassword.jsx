@@ -66,12 +66,12 @@ const ResetPassword = () => {
             </Helmet>
             <SectionTitle title={"Reset Password"} subTitle={'Always remember password!'}></SectionTitle>
             <div className="flex justify-center items-center my-5">
-                <div className="bg-gray-400 w-full md:w-4/12 md:pr-10 text-center p-10 rounded-lg">
-                    <h2 className="text-3xl font-bold">Set New Password</h2>
+                <div className="bg-base-300 w-full md:w-4/12 md:pr-10 text-center p-10 rounded-lg">
+                    <h2 className="text-3xl font-bold mb-5">Set New Password</h2>
                     <form onSubmit={SetPassword}>
                         <div>
                             <p className="text-left text-lg font-semibold">New Password</p>
-                            <input className="w-full p-2 pl-7 text-black rounded-lg my-3 outline-none"
+                            <input className="w-full p-2 pl-7 rounded-lg my-3 outline-none"
                                 type="password"
                                 name="new_password"
                                 placeholder="New Password"
@@ -79,7 +79,7 @@ const ResetPassword = () => {
                         </div>
                         <div>
                             <p className="text-left text-lg font-semibold">Confirm Password</p>
-                            <input className="w-full p-2 pl-7 text-black rounded-lg my-3 outline-none"
+                            <input className="w-full p-2 pl-7 rounded-lg my-3 outline-none"
                                 type="password"
                                 name="confirm_password"
                                 placeholder="Confirm Password"

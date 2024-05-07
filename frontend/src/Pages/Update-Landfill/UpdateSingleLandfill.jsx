@@ -91,12 +91,9 @@ const UpdateSingleLandfill = () => {
   return (
     <div>
       <Helmet>
-        <title>EcoSync | Add Landfill</title>
+        <title>EcoSync | Update Landfill</title>
       </Helmet>
-      <SectionTitle
-        title={"Add New Landfill"}
-        subTitle={"More Waste?"}
-      ></SectionTitle>
+      <SectionTitle title={"Change Landfill Info"} subTitle={"Need Update?"} ></SectionTitle>
       <div>
         <div className="w-10/12 mx-auto my-5">
           <form onSubmit={handleSubmit(onSubmit)}>

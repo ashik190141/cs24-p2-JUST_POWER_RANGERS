@@ -153,7 +153,7 @@ const STSManagerMapRoutes = () => {
 
                     <h1 className="text-3xl text-rose-900 text-center my-5 font-bold">Optimum Routes</h1>
 
-                    <div className="w-full md:w-10/12 mx-auto pt-5">
+                    <div className="w-full md:w-10/12 mx-auto pt-5 max-w-[425px] md:max-w-full overflow-x-auto">
                         <Box sx={{ height: 400, width: "100%" }}>
                             <DataGrid
                                 sx={{ color: `${theme == "dark" ? "white" : "dark"}` }}

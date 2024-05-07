@@ -54,13 +54,14 @@ const ManageAllLandfill = () => {
                         <span className="loading loading-spinner loading-lg"></span>
                     </div>
                 </> : <>
-                    <div className="mt-10">
-                        <table className="w-full min-w-max table-auto text-left">
+                    <div className="my-10 max-w-[425px] md:max-w-full">
+                        <table className="w-full table table-zebra text-center">
                             <thead>
                                 <tr className="">
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Index</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Landfill Name</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Capacity</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Managers</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Start Time</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">End Time</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Update Landfill</th>
@@ -76,6 +77,9 @@ const ManageAllLandfill = () => {
                                         </td>
                                         <td className="p-4 border-b border-blue-gray-50">
                                             {item?.capacity}
+                                        </td>
+                                        <td className="p-4 border-b border-blue-gray-50">
+                                            {item?.manager?.length}
                                         </td>
                                         <td className="p-4 border-b border-blue-gray-50">
                                             {item?.startTime}

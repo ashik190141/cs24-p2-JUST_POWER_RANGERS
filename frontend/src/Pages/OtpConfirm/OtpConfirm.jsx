@@ -39,12 +39,12 @@ const OtpConfirm = () => {
                 }
             })
             .catch(err => {
-                 Swal.fire({
-                     icon: 'error',
-                     title: err.message,
-                     showConfirmButton: false,
-                     timer: 1500
-                 }) 
+                Swal.fire({
+                    icon: 'error',
+                    title: err.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                })
             })
     }
     return (
@@ -55,15 +55,14 @@ const OtpConfirm = () => {
             <SectionTitle title={"Confirm Otp"} subTitle={'check Your mail!'}></SectionTitle>
 
             <div className="flex justify-center items-center py-10">
-                <div className="bg-gray-400 w-full md:w-4/12 md:pr-10 text-center p-10 rounded-lg">
-                    <h2 className="text-3xl font-bold">Confirm OTP</h2>
+                <div className="bg-base-300 w-full md:w-4/12 md:pr-10 text-center p-10 rounded-lg">
                     <form onSubmit={verifyOTP}>
                         <div>
-                            <p className="text-left text-lg font-semibold">Confirm Otp</p>
-                            <input className="w-full p-2 pl-7 text-black rounded-lg my-3 outline-none"
+                            <p className="text-left text-lg font-semibold ">One Time Password</p>
+                            <input className="w-full p-2 pl-7 rounded-lg my-3 outline-none"
                                 type="text"
                                 name="otp"
-                                placeholder="Type your OTP from your email"
+                                placeholder="Type OTP from your email"
                                 required />
                         </div>
 
