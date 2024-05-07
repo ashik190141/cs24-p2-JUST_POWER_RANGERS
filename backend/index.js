@@ -1150,7 +1150,6 @@ async function run() {
 
       if (newStsInfo.vehicle != 'default') {
         let vehicleQuery = { _id: new ObjectId(newStsInfo.vehicle) };
-        let vehicleInfo = await vehiclesCollection.findOne(vehicleQuery);
         let updatedVehicle = {
           $set: {
             stsName: sts.name,

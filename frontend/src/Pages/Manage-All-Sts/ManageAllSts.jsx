@@ -63,7 +63,8 @@ const ManageAllSts = () => {
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Sts Name</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Word Number</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Capacity</th>
-                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Location</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Managers</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Vehicles</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Update Sts</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Delete Sts</th>
                                 </tr>
@@ -82,7 +83,10 @@ const ManageAllSts = () => {
                                             {item?.capacity}
                                         </td>
                                         <td className="p-4 border-b border-blue-gray-50">
-                                                {item?.name}
+                                                {item?.manager?.length}
+                                        </td>
+                                        <td className="p-4 border-b border-blue-gray-50">
+                                                {item?.vehicles?.length}
                                         </td>
                                         <th className="p-4 border-b border-blue-gray-50">
                                             <button className="bg-blue-800 text-white rounded-md px-4 py-2"

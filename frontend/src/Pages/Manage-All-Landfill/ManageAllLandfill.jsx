@@ -61,6 +61,7 @@ const ManageAllLandfill = () => {
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Index</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Landfill Name</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Capacity</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Managers</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Start Time</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">End Time</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Update Landfill</th>
@@ -76,6 +77,9 @@ const ManageAllLandfill = () => {
                                         </td>
                                         <td className="p-4 border-b border-blue-gray-50">
                                             {item?.capacity}
+                                        </td>
+                                        <td className="p-4 border-b border-blue-gray-50">
+                                            {item?.manager?.length}
                                         </td>
                                         <td className="p-4 border-b border-blue-gray-50">
                                             {item?.startTime}
