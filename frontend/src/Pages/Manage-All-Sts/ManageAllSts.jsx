@@ -55,8 +55,8 @@ const ManageAllSts = () => {
                         <span className="loading loading-spinner loading-lg"></span>
                     </div>
                 </> : <>
-                    <div className="mt-10">
-                        <table className="w-full min-w-max table-auto text-left">
+                    <div className="mt-10 max-w-[425px] md:max-w-full overflow-x-auto">
+                        <table className="table w-full table-zebra text-center">
                             <thead>
                                 <tr className="">
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Index</th>

@@ -546,7 +546,7 @@ async function run() {
 
     // ===========Get Single User And All Available Roles👇============>
     // admin access
-    app.get("/users/:userId", verifyToken, verifyAdmin, async (req, res) => {
+    app.get("/users/:userId", verifyToken, async (req, res) => {
       try {
         const userId = req.params.userId;
         //All Available Users
@@ -1159,9 +1159,10 @@ async function run() {
         }
         let updateVehicle = await vehiclesCollection.updateOne(vehicleQuery, updatedVehicle, options);
         if (updateVehicle.modifiedCount > 0) {
+          let updatedvehicle = await vehiclesCollection.findOne(vehicleQuery);
           let updatedSts = {
             $push: {
-              vehicles: vehicleInfo
+              vehicles: updatedvehicle
             },
             $set: {
               name: newStsInfo.name,

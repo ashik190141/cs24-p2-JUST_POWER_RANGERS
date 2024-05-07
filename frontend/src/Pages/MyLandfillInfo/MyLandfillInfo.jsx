@@ -89,23 +89,23 @@ const MyLandfillInfo = () => {
                 <title>EcoSync | My Landfill Info</title>
             </Helmet>
             <SectionTitle title={"My Landfill Info"} subTitle={"need details?"}></SectionTitle>
-            <div className="w-full md:w-10/12 mx-auto my-10 px-2">
+            <div className="w-full md:w-10/12 mx-auto my-10">
                 {
                     isLandfillPending ? <div className="text-center h-screen">
                         <span className="loading loading-spinner loading-lg"></span>
-                    </div> : <div className="text-lg">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 my-10 font-semibold text-white">
-                            <h1 className="bg-green-800 text-xl p-8 text-center rounded-lg">
+                    </div> : <div className="">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 my-10 font-semibold text-white px-2">
+                            <h1 className="bg-sky-950 text-xl p-8 text-center rounded-lg">
                                 Landfil Name: {myLandfill?.name}</h1>
-                            <h1 className="bg-violet-950 text-xl p-8 text-center rounded-lg">
+                            <h1 className="bg-teal-950 text-xl p-8 text-center rounded-lg">
                                 Waste Capacity: {myLandfill?.capacity}</h1>
                             <h1 className="bg-yellow-800 text-xl p-8 text-center rounded-lg">
                                 Start Time: {myLandfill?.startTime}</h1>
-                            <h1 className="bg-blue-950 text-xl p-8 text-center rounded-lg">
+                            <h1 className="bg-violet-950 text-xl p-8 text-center rounded-lg">
                                 End Time: {myLandfill?.endTime}</h1>
                         </div>
-                        <div>
-                            <h1 className="text-3xl text-rose-900 text-center mt-10 mb-5 font-bold">Managers Details</h1>
+                        <div className="max-w-[425px] md:max-w-full overflow-x-auto">
+                            <h1 className="text-3xl text-rose-900 text-center mb-5 font-bold">Managers Details</h1>
                             <Box
                                 sx={{ height: 300, width: '100%' }}>
                                 <DataGrid

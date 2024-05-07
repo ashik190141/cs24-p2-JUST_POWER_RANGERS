@@ -43,7 +43,7 @@ const ManageUser = () => {
     };
 
     return (
-        <div className="w-full px-4 mx-auto my-5">
+        <div className="w-full">
             <Helmet>
                 <title>EcoSync | Manage User</title>
             </Helmet>
@@ -54,10 +54,10 @@ const ManageUser = () => {
                         <span className="loading loading-spinner loading-lg"></span>
                     </div>
                 </> : <>
-                    <div className="mt-10">
-                        <table className="w-full min-w-max table-auto table-zebra text-left">
+                    <div className="my-10 w-full mx-auto px-2 md:px-10 max-w-[425px] md:max-w-full overflow-x-auto">
+                        <table className="table table-zebra">
                             <thead>
-                                <tr className="">
+                                <tr className="text-center">
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Index</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">User Name</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">User Email</th>
@@ -67,7 +67,7 @@ const ManageUser = () => {
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Delete User</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="text-center">
                                 {
                                     allUser?.map((item, index) => <tr key={item?._id}>
                                         <th className="p-4 border-b border-blue-gray-50">{index + 1}</th>
@@ -90,7 +90,7 @@ const ManageUser = () => {
                                                 onClick={() => navigate(`/update/${item?._id}`)}>
                                                 Update User</button>
                                         </th>
-                                        <th className="p-4 border-b border-blue-gray-50">
+                                        <th className="p-2 md:p-4 border-b border-blue-gray-50">
                                             <button className="bg-red-600 text-white rounded-md px-4 py-2"
                                                 onClick={() => HandleDeleteUser(item?._id)}>Delete User</button>
                                         </th>
@@ -99,6 +99,7 @@ const ManageUser = () => {
                             </tbody>
                         </table>
                     </div>
+    
                 </>
             }
         </div>

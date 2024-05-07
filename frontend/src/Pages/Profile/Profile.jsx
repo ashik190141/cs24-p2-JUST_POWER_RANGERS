@@ -31,50 +31,23 @@ const Profile = () => {
             {
                 isPending ? <div className="text-center h-screen">
                     <span className="loading loading-spinner loading-lg"></span>
-                </div> : <div className="w-full md:w-8/12 mx-auto">
-                    <div className="my-10 w-full md:w-10/12 mx-auto">
-                        <div className="flex gap-20 my-5">
-                            <div className="min-w-96">
-                                <h1 className="text-2xl"> <span className="font-bold">Name: </span>{userDetails?.userName}</h1>
-                            </div>
-                            <div className="text-left">
-                                <h1 className="text-2xl"><span className="font-bold">Email: </span>{userDetails?.email}</h1>
-                            </div>
-                        </div>
-                        <div className="flex gap-20 my-5">
-                            <div className="min-w-96">
-                                <h1 className="text-2xl"> <span className="font-bold">Current Role: </span>{userDetails?.role}</h1>
-                            </div>
-                            <div className="text-left">
-                                <h1 className="text-2xl"><span className="font-bold">Phone: </span>{userDetails?.phone}</h1>
-                            </div>
-                        </div>
-                        <div className="flex gap-20 my-5">
-                            <div className="min-w-96">
-                                <h1 className="text-2xl"> <span className="font-bold">Date of Birth: </span>{userDetails?.dateOfBirth}</h1>
-                            </div>
-                            <div className="text-left">
-                                <h1 className="text-2xl"><span className="font-bold">Gender: </span>{userDetails?.gender}</h1>
-                            </div>
-                        </div>
-                        <div className="flex gap-20 my-5">
-                            <div className="min-w-96">
-                                <h1 className="text-2xl"> <span className="font-bold">Address: </span>{userDetails?.address}</h1>
-                            </div>
-                            <div className="text-left">
-                                <h1 className="text-2xl"><span className="font-bold">Thana: </span>{userDetails?.thana}</h1>
-                            </div>
-                        </div>
-                        <div className="flex gap-20 my-5">
-                            <div className="min-w-96">
-                                <h1 className="text-2xl"> <span className="font-bold">District: </span>{userDetails?.district}</h1>
-                            </div>
-                            <div className="text-left">
-                                <h1 className="text-2xl"><span className="font-bold">Division: </span>{userDetails?.division}</h1>
+                </div> : <>
+                    <div className="w-full mx-auto">
+                        <div className="my-10 w-full md:w-10/12 mx-auto px-2">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-8 my-5">
+                                <h1 className="text-base md:text-xl bg-teal-800 p-5 rounded-md text-white"> <span className="font-bold">Name: </span>{userDetails?.userName}</h1>
+                                <h1 className="text-base md:text-xl bg-teal-800 p-5 rounded-md text-white"><span className="font-bold">Email: </span>{userDetails?.email}</h1>
+                                <h1 className="text-base md:text-xl bg-teal-800 p-5 rounded-md text-white"><span className="font-bold">Phone: </span>{userDetails?.phone}</h1>
+                                <h1 className="text-base md:text-xl bg-teal-800 p-5 rounded-md text-white"> <span className="font-bold">Date of Birth: </span>{userDetails?.dateOfBirth}</h1>
+                                <h1 className="text-base md:text-xl bg-teal-800 p-5 rounded-md text-white"><span className="font-bold">Gender: </span>{userDetails?.gender}</h1>
+                                <h1 className="text-base md:text-xl bg-teal-800 p-5 rounded-md text-white"> <span className="font-bold">Address: </span>{userDetails?.address}</h1>
+                                <h1 className="text-base md:text-xl bg-teal-800 p-5 rounded-md text-white"><span className="font-bold">Thana: </span>{userDetails?.thana}</h1>
+                                <h1 className="text-base md:text-xl bg-teal-800 p-5 rounded-md text-white"> <span className="font-bold">District: </span>{userDetails?.district}</h1>
+                                <h1 className="text-base md:text-xl bg-teal-800 p-5 rounded-md text-white"><span className="font-bold">Division: </span>{userDetails?.division}</h1>
                             </div>
                         </div>
                     </div>
-                    <div className="my-16 w-full md:w-10/12 mx-auto flex justify-start items-center">
+                    <div className="my-16 w-full md:w-10/12 mx-auto flex justify-center items-center px-2">
                         <div className="flex gap-20">
                             <button
                                 onClick={() => navigate(`/update/${userDetails?._id}`)}
@@ -88,7 +61,7 @@ const Profile = () => {
                             </button>
                         </div>
                     </div>
-                </div>
+                </>
             }
         </div>
     );

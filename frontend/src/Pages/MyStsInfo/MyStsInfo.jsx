@@ -163,17 +163,17 @@ const MyStsInfo = () => {
                 <title>EcoSync | My Sts Info</title>
             </Helmet>
             <SectionTitle title={"My Sts Info"} subTitle={"need details?"}></SectionTitle>
-            <div className="w-full md:w-10/12 mx-auto px-2">
+            <div className="w-full md:w-10/12 mx-auto ">
                 {
                     isLoading ? <div className="text-center h-screen">
                         <span className="loading loading-spinner loading-lg"></span>
-                    </div> : <div className="text-lg">
-                        <div className="grid grid-cols-3 gap-20 my-10 font-semibold text-white">
-                            <h1 className="bg-green-800 text-xl p-10 text-center rounded-lg">StsName: {stsId?.name}</h1>
-                            <h1 className="bg-yellow-800 text-xl p-10 text-center rounded-lg">Ward Number: {stsId?.wardNumber}</h1>
-                            <h1 className="bg-emerald-800 text-xl p-10 text-center rounded-lg">Waste Capacity: {stsId?.capacity}</h1>
+                    </div> : <div className="">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-5 md:gap-20 my-10 font-semibold text-white px-2">
+                            <h1 className="bg-indigo-950 text-base md:text-xl p-4 md:p-10 text-center rounded-lg">StsName: {stsId?.name}</h1>
+                            <h1 className="bg-yellow-800 text-base md:text-xl p-4 md:p-10 text-center rounded-lg">Ward Number: {stsId?.wardNumber}</h1>
+                            <h1 className="bg-sky-950 text-base md:text-xl p-4 md:p-10 text-center rounded-lg">Waste Capacity: {stsId?.capacity}</h1>
                         </div>
-                        <div>
+                        <div className="max-w-[425px] md:max-w-full overflow-x-auto">
                             <h1 className="text-3xl text-rose-900 text-center mt-10 mb-5 font-bold">Managers Details</h1>
                             <Box
                                 sx={{ height: 300, width: '100%' }}>
@@ -193,7 +193,7 @@ const MyStsInfo = () => {
                                 />
                             </Box>
                         </div>
-                        <div>
+                        <div className="max-w-[425px] md:max-w-full overflow-x-auto">
                         <h1 className="text-3xl text-rose-900 text-center mt-10 mb-5 font-bold">Vehicles Details</h1>
                             <Box
                                 sx={{ height: 300, width: '100%' }}>

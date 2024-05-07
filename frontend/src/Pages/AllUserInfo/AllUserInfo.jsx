@@ -105,7 +105,7 @@ const AllUserInfo = () => {
             {
                 isPending ? <>
                 </> : <>
-                    <div className="w-full px-4 mx-auto">
+                    <div className="w-full px-4 mx-auto max-w-[425px] md:max-w-full overflow-x-auto">
                         <Box
                             sx={{ height: 700, width: '100%' }}>
                             <DataGrid
