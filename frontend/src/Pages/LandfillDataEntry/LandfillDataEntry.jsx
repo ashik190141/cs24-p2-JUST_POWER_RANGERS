@@ -11,6 +11,7 @@ import { useState } from "react";
 import GetMyLandfill from "../../Hooks/GetMyLandfill";
 import jsPDF from 'jspdf';
 
+import img from '../../../public/logo.png'
 
 const LandfillDataEntry = () => {
     const { register, handleSubmit, reset } = useForm();
@@ -35,114 +36,24 @@ const LandfillDataEntry = () => {
         setStsVehicle(usableVehicle);
     }
 
-    // let downloadPDF = () => {
-    //     const content = `
-    //       STS Name: ${pdfData.stsName}
-    //       Vehicle Number: ${pdfData.vehicleRegNum}
-    //       Landfill Name: ${pdfData.landName}
-    //       Weight of Waste: ${pdfData.waste}
-    //       Truck Arrival: ${pdfData.arrival}
-    //       Truck Departure: ${pdfData.departure}
-    //       Total Bill: ${totalBill}
-    //       Distance: ${totalDistance}
-    //     `;
-
-    //     const pdf = new jsPDF();
-    //     pdf.text(content, 10, 10);
-    //     pdf.save('Total_bill.pdf');
-    // };
-
-    // let downloadPDF = () => {
-    //     // Create PDF document
-    //     const pdf = new jsPDF();
-
-    //     // Define styles for the PDF
-    //     const styles = {
-    //         header: {
-    //             fontSize: 24,
-    //             bold: true,
-    //             textColor: '#2e2e2e', // Dark gray text color
-    //             align: 'center', // Center alignment
-    //             padding: 5, // Padding around the text
-    //             backgroundColor: '#f0f0f0', // Light gray background color
-    //         },
-    //         item: {
-    //             fontSize: 14,
-    //             textColor: '#1e88e5', // Blue text color
-    //             padding: 7, // Padding around the text
-    //             bold: false, // Not bold
-    //         },
-    //         thanks: {
-    //             fontSize: 16,
-    //             textColor: '#008000', // Green text color
-    //             align: 'center', // Center alignment
-    //             padding: 10, // Padding around the text
-    //             bold: true, // Bold
-    //         },
-    //     };
-
-    //     // Define Y coordinate for positioning
-    //     let y = 40;
-
-    //     // Define content for the PDF
-    //     const content = [
-    //         { text: 'Bill Information', style: 'header' },
-    //         { text: ['STS Name:', pdfData.stsName], style: 'item' },
-    //         { text: ['Vehicle Number:', pdfData.vehicleRegNum], style: 'item' },
-    //         { text: ['Landfill Name:', pdfData.landName], style: 'item' },
-    //         { text: ['Weight of Waste:', pdfData.waste], style: 'item' },
-    //         { text: ['Truck Arrival:', pdfData.arrival], style: 'item' },
-    //         { text: ['Truck Departure:', pdfData.departure], style: 'item' },
-    //         { text: ['Total Bill:', totalBill], style: 'item' },
-    //         { text: ['Distance:', totalDistance], style: 'item' },
-    //         { text: 'Thanks from EcoSync!', style: 'thanks' },
-    //     ];
-
-    //     // Add content with specified styles
-    //     content.forEach((item) => {
-    //         const style = styles[item.style];
-    //         if (style) {
-    //             pdf.setTextColor(style.textColor || '#000000'); // Set text color
-    //             pdf.setFontSize(style.fontSize || 12); // Set font size
-    //             if (Array.isArray(item.text)) {
-    //                 const formattedText = item.text.join(' '); // Join the text lines
-    //                 if (style.align) {
-    //                     pdf.text(formattedText, pdf.internal.pageSize.width / 2, y, { align: style.align });
-    //                 } else {
-    //                     pdf.text(formattedText, 10, y, { align: 'left' });
-    //                 }
-    //                 y += pdf.getTextDimensions(formattedText).h + (style.padding || 0); // Adjust Y coordinate
-    //             } else if (typeof item.text === 'string') {
-    //                 if (style.align) {
-    //                     pdf.text(item.text, pdf.internal.pageSize.width / 2, y, { align: style.align });
-    //                 } else {
-    //                     pdf.text(item.text, 10, y, { align: 'left' });
-    //                 }
-    //                 y += pdf.getTextDimensions(item.text).h + (style.padding || 0); // Adjust Y coordinate
-    //             } else {
-    //                 console.error('Invalid style or text:', item);
-    //             }
-    //         } else {
-    //             console.error('Invalid style:', item.style);
-    //         }
-    //     });
-
-    //     // Save the PDF
-    //     pdf.save('Total_bill.pdf');
-    // };
-
     let downloadPDF = (thankyouText = "Thank you for using EcoSync!") => {
         const pdf = new jsPDF();
-    
-        // Define Y coordinate for positioning
-        let y = 20;
-    
+
+        // Add logo to the PDF
+        const logoWidth = 20; 
+        const logoHeight = 20; 
+        const logoX = 5; 
+        const logoY = 5; 
+        pdf.addImage(img, 'PNG', logoX, logoY, logoWidth, logoHeight);
+
+        let y = 10 + logoHeight + 5;
+
         // Add bill information to the PDF
         pdf.setFontSize(24);
         pdf.setTextColor('#333');
         pdf.text('Bill Information', pdf.internal.pageSize.getWidth() / 2, y, { align: 'center' });
         y += 20; // Increase Y coordinate for spacing
-    
+
         // Add bill details
         const billDetails = [
             { label: 'STS Name:', value: pdfData.stsName },
@@ -151,30 +62,28 @@ const LandfillDataEntry = () => {
             { label: 'Weight of Waste:', value: pdfData.waste.toString() }, // Convert to string
             { label: 'Truck Arrival:', value: pdfData.arrival },
             { label: 'Truck Departure:', value: pdfData.departure },
-            { label: 'Total Bill:', value: totalBill.toString() }, // Convert to string
-            { label: 'Distance:', value: totalDistance.toString() } // Convert to string
+            { label: 'Total Bill:', value: totalBill.toString() }, 
+            { label: 'Distance:', value: totalDistance.toString() } 
         ];
-    
+
         billDetails.forEach(detail => {
             pdf.setFontSize(14);
             pdf.setTextColor('#333');
             pdf.text(detail.label, 40, y);
             pdf.setTextColor('#666');
             pdf.text(detail.value, 120, y);
-            y += 10; // Increase Y coordinate for spacing
+            y += 10; 
         });
-    
+
         // Add thank you text
-        y += 20; // Increase Y coordinate for spacing
+        y += 10; // Increase Y coordinate for spacing
         pdf.setFontSize(16);
         pdf.setTextColor('#008000');
         pdf.text(thankyouText, pdf.internal.pageSize.getWidth() / 2, y, { align: 'center' });
-    
-        // Save PDF
+
         pdf.save('Total_bill.pdf');
     };
-    
-    
+
 
     const onSubmit = async (data) => {
         const landData = {
