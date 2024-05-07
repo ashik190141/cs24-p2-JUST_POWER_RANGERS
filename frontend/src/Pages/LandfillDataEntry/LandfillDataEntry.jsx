@@ -40,13 +40,12 @@ const LandfillDataEntry = () => {
         const pdf = new jsPDF();
 
         // Add logo to the PDF
-        const logoWidth = 20; // Width of the logo in millimeters
-        const logoHeight = 20; // Height of the logo in millimeters
-        const logoX = 5; // X coordinate of the logo
-        const logoY = 5; // Y coordinate of the logo
+        const logoWidth = 20; 
+        const logoHeight = 20; 
+        const logoX = 5; 
+        const logoY = 5; 
         pdf.addImage(img, 'PNG', logoX, logoY, logoWidth, logoHeight);
 
-        // Define Y coordinate for positioning
         let y = 10 + logoHeight + 5;
 
         // Add bill information to the PDF
@@ -63,8 +62,8 @@ const LandfillDataEntry = () => {
             { label: 'Weight of Waste:', value: pdfData.waste.toString() }, // Convert to string
             { label: 'Truck Arrival:', value: pdfData.arrival },
             { label: 'Truck Departure:', value: pdfData.departure },
-            { label: 'Total Bill:', value: totalBill.toString() }, // Convert to string
-            { label: 'Distance:', value: totalDistance.toString() } // Convert to string
+            { label: 'Total Bill:', value: totalBill.toString() }, 
+            { label: 'Distance:', value: totalDistance.toString() } 
         ];
 
         billDetails.forEach(detail => {
@@ -73,7 +72,7 @@ const LandfillDataEntry = () => {
             pdf.text(detail.label, 40, y);
             pdf.setTextColor('#666');
             pdf.text(detail.value, 120, y);
-            y += 10; // Increase Y coordinate for spacing
+            y += 10; 
         });
 
         // Add thank you text
@@ -82,10 +81,8 @@ const LandfillDataEntry = () => {
         pdf.setTextColor('#008000');
         pdf.text(thankyouText, pdf.internal.pageSize.getWidth() / 2, y, { align: 'center' });
 
-        // Save PDF
         pdf.save('Total_bill.pdf');
     };
-
 
 
     const onSubmit = async (data) => {
