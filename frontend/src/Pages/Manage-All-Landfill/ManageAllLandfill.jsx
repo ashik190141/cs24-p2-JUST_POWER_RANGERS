@@ -54,7 +54,7 @@ const ManageAllLandfill = () => {
                         <span className="loading loading-spinner loading-lg"></span>
                     </div>
                 </> : <>
-                    <div className="my-10 max-w-[425px] md:max-w-full">
+                    <div className="my-10 max-w-[425px] md:max-w-full overflow-auto max-h-screen">
                         <table className="w-full table table-zebra text-center">
                             <thead>
                                 <tr className="">

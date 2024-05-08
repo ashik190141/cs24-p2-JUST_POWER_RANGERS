@@ -7,26 +7,44 @@ import { useEffect, useState } from 'react';
 
 const AllUserInfo = () => {
     let [allUser, isPending] = GetAllUsers();
-
     let [theme, setTheme] = useState(localStorage.getItem("theme"));
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredUsers, setFilteredUsers] = useState([]);
+
     useEffect(() => {
         setTheme(localStorage.getItem("theme"));
     }, [theme]);
 
-    let newDetails = allUser?.map((user, index) => {
-        return {
-            id: index + 1,
-            userName: user?.userName,
-            gender: user?.gender,
-            email: user?.email,
-            phone: user?.phone,
-            role: user?.role,
-            assigned: user?.assigned,
-            address: user?.address,
-            district: user?.district,
-            division: user?.division,
-        }
-    })
+    useEffect(() => {
+        setFilteredUsers(allUser);
+    }, [allUser]);
+
+    const handleSearch = (e) => {
+        const query = e.target.value;
+        setSearchQuery(query);
+        const filtered = allUser?.filter(user =>
+            user.userName.toLowerCase().includes(query.toLowerCase()) ||
+            user.email.toLowerCase().includes(query.toLowerCase())
+        );
+        setFilteredUsers(filtered);
+    };
+
+    {
+        filteredUsers?.map((user, index) => {
+            return {
+                id: index + 1,
+                userName: user?.userName,
+                gender: user?.gender,
+                email: user?.email,
+                phone: user?.phone,
+                role: user?.role,
+                assigned: user?.assigned,
+                address: user?.address,
+                district: user?.district,
+                division: user?.division,
+            }
+        })
+    }
 
     const columns = [
         {
@@ -92,38 +110,57 @@ const AllUserInfo = () => {
         },
     ];
 
-    let rows = [...newDetails];
+    const rows = filteredUsers.map((user, index) => ({
+        ...user,
+        id: index + 1
+    }));
 
 
 
     return (
-        <div>
+        <div className='w-full md:w-10/12 mx-auto'>
             <Helmet>
                 <title>EcoSync | User Profile</title>
             </Helmet>
             <SectionTitle title={"All Users Info"} subTitle={"need details?"}></SectionTitle>
             {
                 isPending ? <>
-                </> : <>
-                    <div className="w-full px-4 mx-auto max-w-[425px] md:max-w-full overflow-x-auto">
-                        <Box
-                            sx={{ height: 700, width: '100%' }}>
-                            <DataGrid
-                                sx={{ color: `${theme == "dark" ? "white" : "dark"}` }}
-                                rows={rows}
-                                columns={columns}
-                                initialState={{
-                                    pagination: {
-                                        paginationModel: {
-                                            pageSize: 10,
-                                        },
-                                    },
-                                }}
-                                pageSizeOptions={[5, 10, 15, 20]}
-                                disableRowSelectionOnClick
-                            />
-                        </Box>
+                    <div className="text-center h-screen">
+                        <span className="loading loading-spinner loading-lg"></span>
                     </div>
+                </> : <>
+                    <div className='my-10 w-full mx-auto px-2 md:px-10 max-w-[425px] md:max-w-full overflow-auto max-h-screen'>
+                        <div className='min-h-20 text-center mx-auto my-5 max-w-[400px]'>
+                            <input
+                                type="text"
+                                placeholder="Search by name or email"
+                                value={searchQuery}
+                                onChange={handleSearch}
+                                className="w-full p-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 placeholder:text-center"
+                            />
+                        </div>
+                        <div className="w-full mx-auto max-w-[422px] md:max-w-full overflow-x-auto">
+                            <Box
+                                sx={{ height: 650, width: '100%' }}>
+                                <DataGrid
+                                    sx={{ color: `${theme == "dark" ? "white" : "dark"}` }}
+                                    rows={rows}
+                                    columns={columns}
+                                    initialState={{
+                                        pagination: {
+                                            paginationModel: {
+                                                pageSize: 10,
+                                            },
+                                        },
+                                    }}
+                                    pageSizeOptions={[5, 10, 15, 20]}
+                                    disableRowSelectionOnClick
+                                />
+                            </Box>
+                        </div>
+                    </div>
+
+
                 </>
             }
         </div>

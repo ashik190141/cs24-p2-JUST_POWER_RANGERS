@@ -55,7 +55,7 @@ const ManageAllSts = () => {
                         <span className="loading loading-spinner loading-lg"></span>
                     </div>
                 </> : <>
-                    <div className="mt-10 max-w-[425px] md:max-w-full overflow-x-auto">
+                    <div className="mt-10 max-w-[425px] md:max-w-full overflow-auto max-h-screen">
                         <table className="table w-full table-zebra text-center">
                             <thead>
                                 <tr className="">
