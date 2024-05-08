@@ -16,7 +16,7 @@ const Effect = () => {
 
           <div className="flex flex-col justify-center w-full h-52 lg:h-[280px] relative">
             <img className="size-48 bg-black/40 " src={img} alt="card navigate ui" />
-            <h6 className="text-lg font-bold py-2">Environment Polution</h6>
+            <h6 className="text-lg font-bold py-2">Environment Pollution</h6>
             <p className="text-[#2d4739] text-left text-sm"> <span className="font-bold">Biodiversity Decline:</span> Pollution disrupts ecosystems, leading to biodiversity loss and threatening the survival of various plant and animal species.</p>
 
           </div>
@@ -34,7 +34,7 @@ const Effect = () => {
 
           <div className="flex flex-col justify-center w-full h-52 lg:h-[280px] relative">
             <img className="size-48 bg-black/40 " src={img1} alt="card navigate ui" />
-            <h6 className="text-xl font-bold py-2">Air Polution</h6>
+            <h6 className="text-xl font-bold py-2">Air Pollution</h6>
             <p className="text-[#2d4739] text-sm"><span className="font-bold"> Health Impacts:</span> Air pollution leads to respiratory illnesses, cardiovascular problems, and premature deaths due to the inhalation of harmful pollutants.</p>
           </div>
 
@@ -52,7 +52,7 @@ const Effect = () => {
 
           <div className="flex flex-col justify-center w-full h-52 lg:h-[280px] relative">
             <img className="size-48 bg-black/40 " src={img2} alt="card navigate ui" />
-            <h6 className="text-xl font-bold py-2">Water Polution</h6>
+            <h6 className="text-xl font-bold py-2">Water Pollution</h6>
             <p className="text-[#2d4739] text-sm"><span className="font-bold">Ecosystem Degradation:</span>Polluted water harms aquatic life and disrupts entire ecosystems, leading to declines in biodiversity.</p>
           </div>
 
