@@ -34,6 +34,7 @@ import UpdateSingleSts from "../Pages/Update-Sts/UpdateSingleSts";
 import UpdateSingleLandfill from "../Pages/Update-Landfill/UpdateSingleLandfill";
 import MyStsInfo from "../Pages/MyStsInfo/MyStsInfo";
 import MyLandfillInfo from "../Pages/MyLandfillInfo/MyLandfillInfo";
+import AddNewContractor from "../Pages/AddNewContractor/AddNewContractor";
 
 const router = createBrowserRouter([
     {
@@ -108,6 +109,11 @@ const router = createBrowserRouter([
                 //This will be Admin Route
                 path: "create-sts",
                 element: <SystemAdminRoute><AddNewSts></AddNewSts></SystemAdminRoute>
+            },
+            {
+                //This will be Admin Route
+                path: "create-contractor",
+                element: <SystemAdminRoute><AddNewContractor></AddNewContractor></SystemAdminRoute>
             },
             {
                 //This will be Admin Route

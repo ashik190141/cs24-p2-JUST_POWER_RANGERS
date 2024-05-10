@@ -114,6 +114,7 @@ async function run() {
     const landfillCollection = client.db("DNCC").collection("landfill");
     const truckDumpingCollection = client.db("DNCC").collection("truckDumping");
     const rolesCollection = client.db("DNCC").collection("roles");
+    const contractorCompanyCollection = client.db("DNCC").collection("contractorCompany");
 
 
     // ===================== Verify Token👇 ==========================>
@@ -1725,7 +1726,7 @@ async function run() {
     });
 
     // =====================Counter for home page👇======================>
-    app.get("/counter",  async (req, res) => {
+    app.get("/counter", async (req, res) => {
       let info = [];
       let users = (await usersCollection.find().toArray()).length;
       info.push(users);
@@ -1738,6 +1739,29 @@ async function run() {
       res.json({
         data: info,
       })
+    });
+
+
+
+
+
+
+    //======================Final Round👇========================
+
+    app.post('/create-contractor-company', async (req, res) => {
+      const contractorCompany = req.body;
+      let result = await contractorCompanyCollection.insertOne(contractorCompany);
+      if (result.insertedId) {
+        res.json({
+          result: true,
+          message: "Contractor Company Created Successfully",
+        });
+      } else {
+        res.json({
+          result: false,
+          message: "Contractor Company Not Created",
+        });
+      }
     });
 
     await client.db("admin").command({ ping: 1 });
