@@ -1179,11 +1179,15 @@ async function run() {
               name: newStsInfo.name,
               wardNumber: newStsInfo.wardNumber,
               capacity: newStsInfo.capacity,
+              fine: newStsInfo.fine,
+              startTime: newStsInfo.startTime,
+              endTime: newStsInfo.endTime,
               lat: newStsInfo.lat,
               lng: newStsInfo.lng
             }
           }
           let updateSts = await stsCollection.updateOne(query, updatedSts, options);
+          console.log(updateSts);
           if (updateSts.modifiedCount > 0) {
             return res.json({
               result: true,
@@ -1203,11 +1207,15 @@ async function run() {
             name: newStsInfo.name,
             wardNumber: newStsInfo.wardNumber,
             capacity: newStsInfo.capacity,
+            startTime: newStsInfo.startTime,
+            endTime: newStsInfo.endTime,
+            fine: newStsInfo.fine,
             lat: newStsInfo.lat,
             lng: newStsInfo.lng
           }
         }
         let updateSts = await stsCollection.updateOne(query, updatedSts, options);
+        console.log(updateSts);
         if (updateSts.modifiedCount > 0) {
           return res.json({
             result: true,

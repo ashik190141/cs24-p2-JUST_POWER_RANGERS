@@ -24,12 +24,15 @@ const customStyles = {
 import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
 import { useState } from 'react';
 import GelAvailableStsManager from "../../Hooks/GelAvailableStsManager";
+import TimePicker from "react-time-picker";
 // center={[23.7654, 90.3917]} zoom={14}
 
 const AddNewSts = () => {
   const { register, handleSubmit, reset } = useForm();
   let axiosPublic = useAxiosPublic();
   let [availableStsManager, , refetch] = GelAvailableStsManager();
+  const [startValue, setStartValue] = useState('00:00');
+  const [endValue, setEndValue] = useState('00:00');
 
   let subtitle;
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -60,10 +63,14 @@ const AddNewSts = () => {
       name: data.stsName,
       wardNumber: data.wardNumber,
       capacity: parseInt(data.capacity),
+      fine: data.fine,
+      startTime: startValue,
+      endTime: endValue,
       lat: parseFloat(data.lat),
       lng: parseFloat(data.lng),
       id: data.stsmanager
     };
+    console.log(stsInfo);
     let res = await axiosPublic.post('/create-sts', stsInfo);
     if (res.data.result) {
       Swal.fire({
@@ -159,8 +166,50 @@ const AddNewSts = () => {
                 </select>
               </div>
             </div>
-            <div>
-
+            <div className="flex gap-10 my-5">
+              <div className="flex-1">
+                <label className="label">
+                  <span className="label-text text-xl font-semibold">
+                    Operation Start Time
+                  </span>
+                </label>
+                <div className="w-full">
+                  <TimePicker
+                    className={"w-1/2"}
+                    onChange={setStartValue}
+                    value={startValue}
+                  />
+                </div>
+              </div>
+              <div className="flex-1">
+                <label className="label">
+                  <span className="label-text text-xl font-semibold">
+                    Operation End Time
+                  </span>
+                </label>
+                <div className="w-full">
+                  <TimePicker
+                    className={"w-1/2"}
+                    onChange={setEndValue}
+                    value={endValue}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-10 my-8">
+              <div className="flex-1">
+                <label className="label">
+                  <span className="label-text text-xl font-semibold">
+                    Fine Amount
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  placeholder="Enter Fine Amount"
+                  {...register("fine", { required: true })}
+                  className="w-full md:w-[508px] p-2 rounded-md placeholder:pl-2"
+                />
+              </div>
             </div>
             <div className="my-5 flex">
               <div className="flex-1">

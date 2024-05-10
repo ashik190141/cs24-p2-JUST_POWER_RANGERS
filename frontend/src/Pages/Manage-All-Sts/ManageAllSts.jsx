@@ -65,6 +65,9 @@ const ManageAllSts = () => {
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Capacity</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Managers</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Vehicles</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Fine</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">Start Time</th>
+                                    <th className="border-b border-blue-gray-100 bg-blue-gray-50">End Time</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Update Sts</th>
                                     <th className="border-b border-blue-gray-100 bg-blue-gray-50">Delete Sts</th>
                                 </tr>
@@ -87,6 +90,15 @@ const ManageAllSts = () => {
                                         </td>
                                         <td className="p-4 border-b border-blue-gray-50">
                                                 {item?.vehicles?.length}
+                                        </td>
+                                        <td className="p-4 border-b border-blue-gray-50">
+                                                {item?.fine}
+                                        </td>
+                                        <td className="p-4 border-b border-blue-gray-50">
+                                                {item?.startTime}
+                                        </td>
+                                        <td className="p-4 border-b border-blue-gray-50">
+                                                {item?.endTime}
                                         </td>
                                         <th className="p-4 border-b border-blue-gray-50">
                                             <button className="bg-blue-800 text-white rounded-md px-4 py-2"

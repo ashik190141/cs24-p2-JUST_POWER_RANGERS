@@ -118,7 +118,7 @@ const AllUserInfo = () => {
 
 
     return (
-        <div className='w-full md:w-10/12 mx-auto'>
+        <div className='w-full mx-auto'>
             <Helmet>
                 <title>EcoSync | User Profile</title>
             </Helmet>
@@ -129,7 +129,7 @@ const AllUserInfo = () => {
                         <span className="loading loading-spinner loading-lg"></span>
                     </div>
                 </> : <>
-                    <div className='my-10 w-full mx-auto px-2 md:px-10 max-w-[425px] md:max-w-full overflow-auto max-h-screen'>
+                    <div className='my-10 w-full mx-auto px-2 md:px-5 max-w-[425px] md:max-w-full overflow-auto max-h-screen'>
                         <div className='min-h-20 text-center mx-auto my-5 max-w-[400px]'>
                             <input
                                 type="text"
@@ -139,7 +139,7 @@ const AllUserInfo = () => {
                                 className="w-full p-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 placeholder:text-center"
                             />
                         </div>
-                        <div className="w-full mx-auto max-w-[422px] md:max-w-full overflow-x-auto">
+                        <div className="`w-full px-4 max-w-[425px] md:max-w-full overflow-x-auto mx-auto pt-5">
                             <Box
                                 sx={{ height: 650, width: '100%' }}>
                                 <DataGrid

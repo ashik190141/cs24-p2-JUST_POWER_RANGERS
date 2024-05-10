@@ -11,6 +11,7 @@ import { useState } from 'react';
 import Modal from "react-modal";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import GetAllVehicle from "../../Hooks/GetAllVehicle";
+import TimePicker from "react-time-picker";
 
 const customStyles = {
     content: {
@@ -32,6 +33,8 @@ const UpdateSingleSts = () => {
     let navigate = useNavigate();
     let [allVehicle] = GetAllVehicle();
     let availableVehicle = allVehicle.filter(vehicle => vehicle.assigned == false);
+    const [startValue, setStartValue] = useState(StsInfo?.startTime);
+    const [endValue, setEndValue] = useState(StsInfo?.endTime);
 
     let subtitle;
     const [modalIsOpen, setIsOpen] = useState(false);
@@ -57,34 +60,38 @@ const UpdateSingleSts = () => {
 
     const onSubmit = async (data) => {
 
-        const newStsInfo = {
+        const updatedStsInfo = {
             name: data.stsName,
             wardNumber: data.wardNumber,
             capacity: parseInt(data.capacity),
             vehicle: data.vehicle,
-            lat:  parseFloat(data.lat) || StsInfo.lat,
-            lng:  parseFloat(data.lng) || StsInfo.lng,
+            fine: data.fine,
+            startTime: startValue || StsInfo?.startTime,
+            endTime: endValue || StsInfo?.endTime,
+            lat: parseFloat(data.lat) || StsInfo.lat,
+            lng: parseFloat(data.lng) || StsInfo.lng,
         };
-        let res = await axiosPublic.put(`/update-sts-info/${StsInfo._id}`, newStsInfo);
+        console.log(updatedStsInfo);
+        let res = await axiosPublic.put(`/update-sts-info/${StsInfo._id}`, updatedStsInfo);
         if (res.data.result) {
-          Swal.fire({
-            position: "center",
-            icon: "success",
-            title: res.data.message,
-            showConfirmButton: false,
-            timer: 2000
-          });
-          reset();
-          navigate('/dashboard/manage-all-sts');
-          setClickedPosition(null);
+            Swal.fire({
+                position: "center",
+                icon: "success",
+                title: res.data.message,
+                showConfirmButton: false,
+                timer: 2000
+            });
+            reset();
+            navigate('/dashboard/manage-all-sts');
+            setClickedPosition(null);
         } else {
-          Swal.fire({
-            position: "center",
-            icon: "error",
-            title: res.data.message,
-            showConfirmButton: false,
-            timer: 2000
-          });
+            Swal.fire({
+                position: "center",
+                icon: "error",
+                title: res.data.message,
+                showConfirmButton: false,
+                timer: 2000
+            });
         }
     }
     return (
@@ -141,30 +148,73 @@ const UpdateSingleSts = () => {
                                 />
                             </div>
                             <div className="flex-1">
-                <label className="label">
-                  <span className="label-text text-xl font-semibold">
-                    Available Vehicle
-                  </span>
-                </label>
-                <select defaultValue="default"
-                  {...register('vehicle')}
-                  className="w-full py-2 rounded-md">
-                  <option disabled value="default">Select Vehicle </option>
-                  {
-                    availableVehicle?.map((vehicle, index) => {
-                      return (
-                        <option className="text-black" key={index} value={vehicle?._id}>
-                          {vehicle?.vehicleRegNum}</option>
-                      )
-                    })
-                  }
+                                <label className="label">
+                                    <span className="label-text text-xl font-semibold">
+                                        Available Vehicle
+                                    </span>
+                                </label>
+                                <select defaultValue="default"
+                                    {...register('vehicle')}
+                                    className="w-full py-2 rounded-md">
+                                    <option disabled value="default">Select Vehicle </option>
+                                    {
+                                        availableVehicle?.map((vehicle, index) => {
+                                            return (
+                                                <option className="text-black" key={index} value={vehicle?._id}>
+                                                    {vehicle?.vehicleRegNum}</option>
+                                            )
+                                        })
+                                    }
 
-                </select>
-              </div>
+                                </select>
+                            </div>
                         </div>
-                        <div>
+                        <div className="flex gap-10 my-5">
+                            <div className="flex-1">
+                                <label className="label">
+                                    <span className="label-text text-xl font-semibold">
+                                        Fine
+                                    </span>
+                                </label>
+                                <input
+                                    type="number"
+                                    defaultValue={StsInfo?.fine}
+                                    {...register("fine", { required: true })}
+                                    className="w-full md:w-[510px] p-2 rounded-md placeholder:pl-2"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex gap-10 my-5">
+                                <div className="flex-1">
+                                    <label className="label">
+                                        <span className="label-text text-xl font-semibold">
+                                            Operation Start Time
+                                        </span>
+                                    </label>
+                                    <div className="w-full">
+                                        <TimePicker
+                                            className={"w-1/2"}
+                                            onChange={setStartValue}
+                                            value={StsInfo?.startTime}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex-1">
+                                    <label className="label">
+                                        <span className="label-text text-xl font-semibold">
+                                            Operation End Time
+                                        </span>
+                                    </label>
+                                    <div className="w-full">
+                                        <TimePicker
+                                            className={"w-1/2"}
+                                            onChange={setEndValue}
+                                            value={StsInfo?.endTime}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
 
-                        </div>
                         <div className="my-5 flex">
                             <div className="flex-1">
                                 <label className="label">
