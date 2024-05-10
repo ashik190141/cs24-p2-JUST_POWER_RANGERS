@@ -116,6 +116,7 @@ async function run() {
     const rolesCollection = client.db("DNCC").collection("roles");
     const contractorCompanyCollection = client.db("DNCC").collection("contractorCompany");
     const contractorManagerCollection = client.db("DNCC").collection("contractorManagers");
+    const employeeCollection = client.db("DNCC").collection("employees");
 
 
     // ===================== Verify Token👇 ==========================>
@@ -1524,29 +1525,22 @@ async function run() {
     // =====================Check User Role👇======================>
     app.post("/rbac/permissions", async (req, res) => {
       const permissionBody = req.body;
-      console.log(permissionBody)
-;
-      console.log(permissionBody.email);
       const query = { email: permissionBody.email };
       const getUser = await usersCollection.findOne(query);
-      console.log("Get User: ", getUser);
       let userManager = await contractorManagerCollection.findOne(query);
-      console.log("Manager User :", userManager);
       let role = null;
       if (getUser) {
         role = getUser?.role;
-      } 
-      if(userManager){
+      }
+      if (userManager) {
         role = userManager.role;
       }
-      console.log("Role: ",role)
       if (role) {
         res.json({
           result: true,
           message: role,
         });
-      }
-      else {
+      } else {
         res.json({
           result: false,
           message: `${permissionBody.email} is not exist`
@@ -1869,6 +1863,29 @@ async function run() {
       res.json({
         data: allCompany
       })
+    });
+    app.post('/create-employee', async (req, res) => {
+      let employeeInfo = req.body;
+      let exist = await employeeCollection.findOne({ employeeId: employeeInfo.employeeId });
+      if (exist) {
+        return res.json({
+          result: false,
+          message: `${employeeInfo.employeeId} is already registered`
+        });
+      }else{
+        const result = await employeeCollection.insertOne(employeeInfo);
+        if (result.insertedId) {
+          res.json({
+            result: true,
+            message: "Employee Created Successfully",
+          });
+        } else {
+          res.json({
+            result: false,
+            message: "Employee Not Created",
+          });
+        }
+      }
     });
 
 

@@ -8,7 +8,6 @@ const Permission = () => {
     let info = {
         email: user?.email
     };
-    console.log(user?.email)
 
     let axiosPublic = useAxiosPublic();
     const { data: UserRole, isPending: isUserRoleLoading } = useQuery({
@@ -16,7 +15,6 @@ const Permission = () => {
         // enabled: !loading,
         queryFn: async () => {
             const res = await axiosPublic.post('/rbac/permissions', info);
-            console.log("Res Data: ",res.data);
             return res.data.message;
         }
     })

@@ -114,13 +114,13 @@ const Dashboard = () => {
     let ContractorManager = <>
         <li >
             <NavLink className='flex items-center font-bold gap-2'
-                to='my-landfill-info' >
-                <CgProfile></CgProfile>My Landfill Info</NavLink>
+                to='comtractor-home' >
+                <FaHome></FaHome>Manager Home</NavLink>
         </li>
         <li >
             <NavLink className='flex items-center font-bold gap-2'
-                to='comtractor-home' >
-                <FaHome></FaHome>Manager Home</NavLink>
+                to='create-workforce' >
+                <FaUsers></FaUsers>Create Workforce</NavLink>
         </li>
     </>
 
