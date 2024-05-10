@@ -40,6 +40,7 @@ import CManagerRoute from "./CManagerRoute";
 import CManagerHome from "../Pages/CManagerHome/CManagerHome";
 import WorkforceRegistration from "../Pages/Workforce Registration/WorkforceRegistration";
 import ReceivedWasteEntry from "../Pages/ReceivedWasteEntry/ReceivedWasteEntry";
+import CollectionPlan from "../Pages/CollectionPlan/CollectionPlan";
 
 const router = createBrowserRouter([
     {
@@ -215,6 +216,11 @@ const router = createBrowserRouter([
                 //This will be Land Manager Route
                 path: "create-workforce",
                 element: <CManagerRoute><WorkforceRegistration></WorkforceRegistration></CManagerRoute>
+            },
+            {
+                //This will be Land Manager Route
+                path: "collection-plan",
+                element: <CManagerRoute><CollectionPlan></CollectionPlan></CManagerRoute>
             },
         ]
     }

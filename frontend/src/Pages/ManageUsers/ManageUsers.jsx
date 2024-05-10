@@ -4,12 +4,44 @@ import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import { useNavigate } from "react-router-dom";
 import SectionTitle from "../../Components/SectionTitle";
 import GetAllUsers from "../../Hooks/GetAllUsers";
-
+import GetAllVehicle from "../../Hooks/GetAllVehicle";
+import GetAllSts from "../../Hooks/GetAllSts";
+import GetAllLandfill from "../../Hooks/GetAllLandfill";
+import { PieChart, Pie, Cell, Legend } from 'recharts';
 
 const ManageUser = () => {
     let axiosPublic = useAxiosPublic();
     let navigate = useNavigate();
     let [allUser, isPending, refetch] = GetAllUsers();
+    let [allVehicle] = GetAllVehicle();
+    let [allStsCollection] = GetAllSts();
+    let [allLandfill] = GetAllLandfill();
+    let stsManager = allUser?.filter(user=>user.role ==="Sts Manager");
+    let landfillManager = allUser?.filter(user=>user.role ==="Land Manager");
+    
+
+    const data = [
+        { name: 'Total User', value: allUser.length },
+        { name: 'STS Manager', value: stsManager.length },
+        { name: 'Landfill Manager', value: landfillManager.length },
+        { name: 'Total Vehicles', value: allVehicle.length },
+        { name: 'Total STS', value: allStsCollection.length },
+        { name: 'Total Landfill', value: allLandfill.length },
+    ];
+    const COLORS = ['#2f1e37', '#7b6645', '#5a2636', '#253951', '#1e3931'];
+
+    const RADIAN = Math.PI / 180;
+    const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+        const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+        const x = cx + radius * Math.cos(-midAngle * RADIAN);
+        const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+        return (
+            <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+                {`${(percent * 100).toFixed(0)}%`}
+            </text>
+        );
+    };
 
     let HandleDeleteUser = (id) => {
         Swal.fire({
@@ -54,6 +86,25 @@ const ManageUser = () => {
                         <span className="loading loading-spinner loading-lg"></span>
                     </div>
                 </> : <>
+                <div className="w-full md:w-5/12 mx-auto mb-5">
+                <PieChart width={500} height={300}>
+                    <Pie
+                        data={data}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={renderCustomizedLabel}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                    >
+                        {data?.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                    </Pie>
+                    <Legend></Legend>
+                </PieChart>
+            </div>
                     <div className="my-10 w-full mx-auto px-2 md:px-10 max-w-[425px] md:max-w-full overflow-auto max-h-screen">
                         <table className="table table-zebra">
                             <thead>
