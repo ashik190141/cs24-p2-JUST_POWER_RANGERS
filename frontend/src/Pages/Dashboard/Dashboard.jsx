@@ -6,6 +6,7 @@ import Permission from '../../Hooks/Permission';
 import useAuth from '../../Hooks/useAuth';
 import { CgProfile } from "react-icons/cg";
 import { VscThreeBars } from "react-icons/vsc";
+import { FcManager } from "react-icons/fc";
 
 const Dashboard = () => {
     let [userRole] = Permission();
@@ -42,6 +43,11 @@ const Dashboard = () => {
             <NavLink className='flex items-center font-bold gap-2'
                 to='create-contractor' >
                 <FaNetworkWired></FaNetworkWired>Add New Contarctor</NavLink>
+        </li>
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
+                to='create-contractor-manager' >
+                <FcManager></FcManager>Add C.Manager</NavLink>
         </li>
         <li >
             <NavLink className='flex items-center font-bold gap-2'

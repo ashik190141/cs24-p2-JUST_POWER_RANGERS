@@ -115,6 +115,7 @@ async function run() {
     const truckDumpingCollection = client.db("DNCC").collection("truckDumping");
     const rolesCollection = client.db("DNCC").collection("roles");
     const contractorCompanyCollection = client.db("DNCC").collection("contractorCompany");
+    const contractorManagerCollection = client.db("DNCC").collection("contractorManagers");
 
 
     // ===================== Verify Token👇 ==========================>
@@ -188,7 +189,7 @@ async function run() {
             let mailGenerator = new Mailgen({
               theme: "default",
               product: {
-                name: "Dust Master",
+                name: "EcoSync",
                 link: "https://mailgen.js/",
               },
             });
@@ -248,7 +249,7 @@ async function run() {
               let mailGenerator = new Mailgen({
                 theme: "default",
                 product: {
-                  name: "Dust Master",
+                  name: "EcoSync",
                   link: "https://mailgen.js/",
                 },
               });
@@ -380,7 +381,7 @@ async function run() {
         let mailGenerator = new Mailgen({
           theme: "default",
           product: {
-            name: "Dust Master",
+            name: "EcoSync",
             link: "https://mailgen.js/",
           },
         });
@@ -1763,15 +1764,100 @@ async function run() {
         });
       }
     });
+    app.post('/create-contractor-manager', async (req, res) => {
+      const user = req.body;
+      const plainPassword = user.password;
+      const userEmail = { email: user.email };
+      const findUser = await contractorManagerCollection.findOne(userEmail);
+      if (findUser) {
+        return res.json({
+          result: false,
+          message: `${user.email} is already registered`
+        });
+      } else {
+        const userPassword = user.password;
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(userPassword, salt);
+        user.password = hashedPassword;
+        const result = await contractorManagerCollection.insertOne(user);
+        if (result.insertedId) {
+          let config = {
+            service: "gmail",
+            auth: {
+              user: `${process.env.email}`,
+              pass: `${process.env.password}`,
+            },
+          };
 
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
-  } finally {
-    // Ensures that the client will close when you finish/error
-    // await client.close();
-  }
+          let transporter = nodeMailer.createTransport(config);
+
+          let mailGenerator = new Mailgen({
+            theme: "default",
+            product: {
+              name: "EcoSync",
+              link: "https://mailgen.js/",
+            },
+          });
+
+          let response = {
+            body: {
+              intro: "Please, Verify Your Email",
+              table: {
+                data: [
+                  {
+                    email: user.email,
+                    password: plainPassword,
+                  },
+                ],
+              },
+              outro: "You can not login without the given information",
+            },
+          };
+
+          let mail = mailGenerator.generate(response);
+
+          let message = {
+            from: `${process.env.email}`,
+            to: user.email,
+            subject: "Check Email For Login",
+            html: mail,
+          };
+
+          transporter
+            .sendMail(message)
+            .then(() => {
+              return res.json({
+                result: true,
+                message: "Manager Created Successfully",
+              });
+            })
+            .catch((error) => {
+              return res.status(501).json({ error });
+            });
+        }else{
+          res.json({
+            result: false,
+            message: "Manager Not Created",
+          });
+        }
+      }
+    });
+  app.get('/get-all-company', async (req, res) => {
+    const allCompany = await contractorCompanyCollection.find().toArray();
+    res.json({
+      data: allCompany
+    })
+  })
+
+
+  await client.db("admin").command({ ping: 1 });
+  console.log(
+    "Pinged your deployment. You successfully connected to MongoDB!"
+  );
+} finally {
+  // Ensures that the client will close when you finish/error
+  // await client.close();
+}
 }
 run().catch(console.dir);
 
