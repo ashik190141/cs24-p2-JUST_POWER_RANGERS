@@ -3,11 +3,13 @@ import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
 import SectionTitle from "../../Components/SectionTitle";
+import GetAllSts from "../../Hooks/GetAllSts";
 
 
 const WorkforceRegistration = () => {
     const { register, handleSubmit, reset } = useForm();
     let axiosPublic = useAxiosPublic();
+    let [allStsCollection] = GetAllSts();
 
     const onSubmit = async (data) => {
 
@@ -20,6 +22,8 @@ const WorkforceRegistration = () => {
             payment: data.payment,
             phone: data.phone,
             collectionRoute: data.collectionRoute,
+            password: data.password,
+            email: data.email
         }
         let res = await axiosPublic.post('/create-employee', employeeInfo);
         if (res.data.result) {
@@ -107,7 +111,7 @@ const WorkforceRegistration = () => {
                                     <option disabled value="default">Select Job Name</option>
                                     <option value="driver">Driver</option>
                                     <option value="cleaner">Cleaner</option>
-                                    
+
                                 </select>
                             </div>
                             <div className="flex-1">
@@ -136,12 +140,43 @@ const WorkforceRegistration = () => {
                             </div>
                             <div className="flex-1">
                                 <label className="label">
-                                    <span className="label-text text-xl font-semibold">Assigned Collection Route*</span>
+                                    <span className="label-text text-xl font-semibold">Select a Area*</span>
+                                </label>
+                                <select defaultValue="default"
+                                    {...register('collectionRoute', { required: true })}
+                                    className="w-full py-2 rounded-md">
+                                    <option disabled value="default">Select Name</option>
+                                    {
+                                        allStsCollection?.map((sts, index) => {
+                                            return (
+                                                <option className="text-black" key={index} value={sts?.name}>{sts?.name}</option>
+                                            )
+                                        })
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+                        <div className="flex gap-10 my-5">
+                            <div className="flex-1">
+                                <label className="label">
+                                    <span className="label-text text-xl font-semibold">Email Address*</span>
                                 </label>
                                 <input
-                                    type="text"
-                                    placeholder="Enter Collection Route Name"
-                                    {...register('collectionRoute', { required: true })}
+                                    type="email"
+                                    placeholder="Enter Email Address"
+                                    {...register('email', { required: true })}
+                                    required
+                                    className="w-full p-2 rounded-md placeholder:pl-2" />
+                            </div>
+                            <div className="flex-1">
+                                <label className="label">
+                                    <span className="label-text text-xl font-semibold">Password*</span>
+                                </label>
+                                <input
+                                    type="password"
+                                    placeholder="Enter Password"
+                                    {...register('password', { required: true })}
                                     required
                                     className="w-full p-2 rounded-md placeholder:pl-2" />
                             </div>

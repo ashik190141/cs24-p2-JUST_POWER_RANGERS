@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { FaDatabase, FaDumpster, FaEdit, FaHome, FaInfo, FaMale, FaMap, FaNetworkWired, FaPlaceOfWorship, FaTasks, FaTruck, FaUsers } from 'react-icons/fa';
+import { FaDatabase, FaDumpster, FaEdit, FaHome, FaInfo, FaMale, FaMap, FaMoneyBill, FaNetworkWired, FaPlaceOfWorship, FaTasks, FaTruck, FaUsers } from 'react-icons/fa';
 import Navbar from '../../Components/Navbar';
 import Footer from '../../Components/Footer';
 import Permission from '../../Hooks/Permission';
@@ -101,6 +101,13 @@ const Dashboard = () => {
                 className="flex items-center font-bold gap-2"
                 to={`min-vehicle-and-cost/${user?.email}`}>
                 <FaTruck></FaTruck>Minimum Cost
+            </NavLink>
+        </li>
+        <li>
+            <NavLink
+                className="flex items-center font-bold gap-2"
+                to={`sts-generate-bill/${user?.email}`}>
+                <FaMoneyBill></FaMoneyBill> Generate Bill
             </NavLink>
         </li>
     </>

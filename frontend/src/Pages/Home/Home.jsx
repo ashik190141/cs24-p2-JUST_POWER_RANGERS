@@ -1,4 +1,3 @@
-
 import SectionTitle from '../../Components/SectionTitle';
 import { Banner } from './Banner';
 import Counter from './Counter';

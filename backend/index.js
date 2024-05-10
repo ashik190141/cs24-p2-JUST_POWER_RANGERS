@@ -119,6 +119,7 @@ async function run() {
     const employeeCollection = client.db("DNCC").collection("employees");
     const receivedWasteCollection = client.db("DNCC").collection("receivedWaste");
     const collectionPlanCollection = client.db("DNCC").collection("CollectionPlan");
+    const citizenCollection = client.db("DNCC").collection("citizen");
 
 
     // ===================== Verify Token👇 ==========================>
@@ -305,13 +306,17 @@ async function run() {
         let user = [];
         const exist = await usersCollection.findOne({ email });
         let userManager = await contractorManagerCollection.findOne({ email });
+        let employee  =await employeeCollection.findOne({email: email});
         if (exist) {
           user.push(exist);
         }
         if (userManager) {
           user.push(userManager);
         }
-        if (!user && !userManager) {
+        if (employee) {
+          user.push(employee);
+        }
+        if (!user && !userManager && !employee) {
           return res.json({
             result: false,
             message: "Invalid email or password"
@@ -1876,13 +1881,17 @@ async function run() {
     });
     app.post('/create-employee', async (req, res) => {
       let employeeInfo = req.body;
-      let exist = await employeeCollection.findOne({ employeeId: employeeInfo.employeeId });
+      let exist = await employeeCollection.findOne({ email: employeeInfo.email });
       if (exist) {
         return res.json({
           result: false,
-          message: `${employeeInfo.employeeId} is already registered`
+          message: `${employeeInfo.email} is already registered`
         });
       }else{
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(employeeInfo.password, salt);
+        employeeInfo.password = hashedPassword;
+
         const result = await employeeCollection.insertOne(employeeInfo);
         if (result.insertedId) {
           res.json({
@@ -1934,7 +1943,72 @@ async function run() {
           message: "Collection Plan Not Created"
         })
       }
-    })
+    });
+
+    // =====================Sts Manager Generate bill 👇 ======================>
+      app.get("/sts-generate-bill/:email", async (req, res) => {
+        const email = req.params.email;
+        // console.log(email);
+        const query = { email: email };
+        let fine = null;
+        let contractorId = null;
+        let paymentPerTon = null;
+        let stsName = null;
+        let stsID = null;
+        let requiredAmount = null;
+        let actualCollection = null;
+        const getUserInfo = await usersCollection.findOne(query);
+        // console.log(getUserInfo);
+        const allStsCollection = await stsCollection.find().toArray();
+        for (let i = 0; i < allStsCollection.length; i++) {
+            const stsManagers = allStsCollection[i].manager;
+            for (let j = 0; j < stsManagers.length; j++) {
+                if (stsManagers[j] == getUserInfo._id) {
+                    console.log(allStsCollection[i]);
+                    fine = allStsCollection[i].fine;
+                    stsName = allStsCollection[i].name;
+                    stsID = allStsCollection[i].wardNumber;
+                    // paymentPerTon = allStsCollection[i].payment;
+                    // console.log("STS",allStsCollection[i]);
+                    break;
+                }
+            }
+        }
+        // console.log(stsName);
+        const contractorCompany = await contractorCompanyCollection
+            .find({ stsName: stsName })
+            .toArray();
+        // console.log("contractorr company",contractorCompany);
+        let allCotractorList = [];
+
+        for (let i = 0; i < contractorCompany.length; i++) {
+            const contractId = contractorCompany[i].contractId;
+
+            const exist = await receivedWasteCollection.findOne({
+                constructorId: contractId,
+            });
+
+            if (exist) {
+                requiredAmount = contractorCompany[i].requiredWastePerDay;
+                paymentPerTon = contractorCompany[i].payment;
+                actualCollection = exist.wasteAmount;
+                contractorId = exist.constructorId;
+                // console.log("fff", contractorCompany[i]);
+                allCotractorList.push({
+                    name: contractorId,
+                    requiredAmount: requiredAmount,
+                    actualCollection: actualCollection,
+                    paymentPerTon: paymentPerTon,
+                    fine:fine
+                });
+            }
+        }
+        // console.log("all ", allCotractorList);
+        return res.json({
+            result: true,
+            data: allCotractorList,
+        });
+    });
 
 
     await client.db("admin").command({ ping: 1 });

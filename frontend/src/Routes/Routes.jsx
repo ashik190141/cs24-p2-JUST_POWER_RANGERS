@@ -41,6 +41,7 @@ import CManagerHome from "../Pages/CManagerHome/CManagerHome";
 import WorkforceRegistration from "../Pages/Workforce Registration/WorkforceRegistration";
 import ReceivedWasteEntry from "../Pages/ReceivedWasteEntry/ReceivedWasteEntry";
 import CollectionPlan from "../Pages/CollectionPlan/CollectionPlan";
+import STSGenerateBill from "../Pages/STSGenerateBill/STSGenerateBill";
 
 const router = createBrowserRouter([
     {
@@ -195,6 +196,12 @@ const router = createBrowserRouter([
                 path: "min-vehicle-and-cost/:email",
                 element: <StsManagerRoute><StsManagerMinimumVehicle></StsManagerMinimumVehicle></StsManagerRoute>,
                 loader: ({ params }) => fetch(`http://localhost:5000/minimum-vehicle-and-cost/${params?.email}`, { credentials: "include" }),
+            },
+            {
+                //This will be Sts Manager Route generate bill
+                path: "sts-generate-bill/:email",
+                element: <StsManagerRoute><STSGenerateBill></STSGenerateBill></StsManagerRoute>,
+                loader: ({ params }) => fetch(`http://localhost:5000/sts-generate-bill/${params?.email}`, { credentials: "include" }),
             },
             {
                 //This will be Land Manager Route
