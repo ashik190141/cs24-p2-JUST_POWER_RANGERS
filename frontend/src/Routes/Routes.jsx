@@ -36,6 +36,8 @@ import MyStsInfo from "../Pages/MyStsInfo/MyStsInfo";
 import MyLandfillInfo from "../Pages/MyLandfillInfo/MyLandfillInfo";
 import AddNewContractor from "../Pages/AddNewContractor/AddNewContractor";
 import AddNewContractorManager from "../Pages/AddContractorManager/AddNewContractorManager";
+import CManagerRoute from "./CManagerRoute";
+import CManagerHome from "../Pages/CManagerHome/CManagerHome";
 
 const router = createBrowserRouter([
     {
@@ -197,6 +199,12 @@ const router = createBrowserRouter([
                 //This will be Land Manager Route
                 path: "land-data-entry",
                 element: <LandfillManagerRoute><LandfillDataEntry></LandfillDataEntry></LandfillManagerRoute>
+
+            },
+            {
+                //This will be Land Manager Route
+                path: "comtractor-home",
+                element: <CManagerRoute><CManagerHome></CManagerHome></CManagerRoute>
 
             },
         ]

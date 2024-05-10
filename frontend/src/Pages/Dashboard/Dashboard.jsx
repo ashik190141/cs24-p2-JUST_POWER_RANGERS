@@ -111,6 +111,18 @@ const Dashboard = () => {
                 <FaEdit></FaEdit>Land Data Entry</NavLink>
         </li>
     </>
+    let ContractorManager = <>
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
+                to='my-landfill-info' >
+                <CgProfile></CgProfile>My Landfill Info</NavLink>
+        </li>
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
+                to='comtractor-home' >
+                <FaHome></FaHome>Manager Home</NavLink>
+        </li>
+    </>
 
     return (
         <div className='max-w-screen-2xl mx-auto min-h-screen sm:px-4 md:px-0 bg-base-300'>
@@ -145,6 +157,11 @@ const Dashboard = () => {
                                     {landManager}
                                 </>
                             }
+                            {
+                                userRole === "Contractor Manager" && <>
+                                    {ContractorManager}
+                                </>
+                            }
                         </ul>
                     </div>
                 </div>
@@ -173,6 +190,13 @@ const Dashboard = () => {
                         userRole === "Land Manager" && <>
                             <ul className='flex flex-col mt-10 px-6 space-y-3'>
                                 {landManager}
+                            </ul>
+                        </>
+                    }
+                    {
+                        userRole === "Contractor Manager" && <>
+                            <ul className='flex flex-col mt-10 px-6 space-y-3'>
+                                {ContractorManager}
                             </ul>
                         </>
                     }

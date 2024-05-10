@@ -299,20 +299,28 @@ async function run() {
     app.post("/auth/login", async (req, res) => {
       try {
         const { email, password } = req.body;
-        const user = await usersCollection.findOne({ email });
-        if (!user) {
+        let user = [];
+        const exist = await usersCollection.findOne({ email });
+        let userManager = await contractorManagerCollection.findOne({ email });
+        if (exist) {
+          user.push(exist);
+        }
+        if (userManager) {
+          user.push(userManager);
+        }
+        if (!user && !userManager) {
           return res.json({
             result: false,
             message: "Invalid email or password"
           });
         }
-        if (user.role == 'unassigned') {
+        if (user[0]?.role == 'unassigned') {
           return res.json({
             result: false,
             message: "You are unassigned now!"
           })
         }
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await bcrypt.compare(password, user[0]?.password);
         if (!isPasswordValid) {
           return res.json({
             result: false,
@@ -320,7 +328,7 @@ async function run() {
           });
         }
 
-        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ email: user[0]?.email }, process.env.JWT_SECRET, {
           expiresIn: process.env.EXPIRES_IN,
         });
 
@@ -1514,14 +1522,28 @@ async function run() {
     });
 
     // =====================Check User Role👇======================>
-    app.post("/rbac/permissions", verifyToken, async (req, res) => {
+    app.post("/rbac/permissions", async (req, res) => {
       const permissionBody = req.body;
+      console.log(permissionBody)
+;
+      console.log(permissionBody.email);
       const query = { email: permissionBody.email };
       const getUser = await usersCollection.findOne(query);
+      console.log("Get User: ", getUser);
+      let userManager = await contractorManagerCollection.findOne(query);
+      console.log("Manager User :", userManager);
+      let role = null;
       if (getUser) {
+        role = getUser?.role;
+      } 
+      if(userManager){
+        role = userManager.role;
+      }
+      console.log("Role: ",role)
+      if (role) {
         res.json({
           result: true,
-          message: getUser.role,
+          message: role,
         });
       }
       else {
@@ -1834,7 +1856,7 @@ async function run() {
             .catch((error) => {
               return res.status(501).json({ error });
             });
-        }else{
+        } else {
           res.json({
             result: false,
             message: "Manager Not Created",
@@ -1842,22 +1864,22 @@ async function run() {
         }
       }
     });
-  app.get('/get-all-company', async (req, res) => {
-    const allCompany = await contractorCompanyCollection.find().toArray();
-    res.json({
-      data: allCompany
-    })
-  })
+    app.get('/get-all-company', async (req, res) => {
+      const allCompany = await contractorCompanyCollection.find().toArray();
+      res.json({
+        data: allCompany
+      })
+    });
 
 
-  await client.db("admin").command({ ping: 1 });
-  console.log(
-    "Pinged your deployment. You successfully connected to MongoDB!"
-  );
-} finally {
-  // Ensures that the client will close when you finish/error
-  // await client.close();
-}
+    await client.db("admin").command({ ping: 1 });
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
+  } finally {
+    // Ensures that the client will close when you finish/error
+    // await client.close();
+  }
 }
 run().catch(console.dir);
 
