@@ -83,8 +83,13 @@ const Dashboard = () => {
         </li>
         <li >
             <NavLink className='flex items-center font-bold gap-2'
+                to='received-waste-entry' >
+                <FaDatabase></FaDatabase>Received Waste Entry</NavLink>
+        </li>
+        <li >
+            <NavLink className='flex items-center font-bold gap-2'
                 to='data-entry-sts-manager' >
-                <FaDatabase></FaDatabase>Sts Data Entry</NavLink>
+                <FaDatabase></FaDatabase>Leaving Waste Entry</NavLink>
         </li>
         <li >
             <NavLink className='flex items-center font-bold gap-2'

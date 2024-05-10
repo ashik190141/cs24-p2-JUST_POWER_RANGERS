@@ -96,7 +96,7 @@ const AdminHome = () => {
       </Helmet>
       <SectionTitle title={"Vehicle Updates"} subTitle={"Real time monitoring"}></SectionTitle>
       <div className={`w-full px-4 max-w-[425px] md:max-w-full overflow-x-auto mx-auto pt-5 text-${theme == "dark" ? "white" : "black"}`}>
-        <Box sx={{ height: 500, width: '100%' }}>
+        <Box sx={{ height: 600, width: '100%' }}>
           <DataGrid
             sx={{ color: `${theme == "dark" ? "white" : "dark"}`, }}
             rows={rows}

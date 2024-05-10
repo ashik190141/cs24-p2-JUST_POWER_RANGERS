@@ -39,6 +39,7 @@ import AddNewContractorManager from "../Pages/AddContractorManager/AddNewContrac
 import CManagerRoute from "./CManagerRoute";
 import CManagerHome from "../Pages/CManagerHome/CManagerHome";
 import WorkforceRegistration from "../Pages/Workforce Registration/WorkforceRegistration";
+import ReceivedWasteEntry from "../Pages/ReceivedWasteEntry/ReceivedWasteEntry";
 
 const router = createBrowserRouter([
     {
@@ -171,7 +172,11 @@ const router = createBrowserRouter([
                 //This will be Sts Manager Route
                 path: "my-sts-info",
                 element: <StsManagerRoute><MyStsInfo></MyStsInfo></StsManagerRoute>
-
+            },
+            {
+                //This will be Sts Manager Route
+                path: "received-waste-entry",
+                element: <StsManagerRoute><ReceivedWasteEntry></ReceivedWasteEntry></StsManagerRoute>
             },
             {
                 //This will be Sts Manager Route

@@ -117,6 +117,7 @@ async function run() {
     const contractorCompanyCollection = client.db("DNCC").collection("contractorCompany");
     const contractorManagerCollection = client.db("DNCC").collection("contractorManagers");
     const employeeCollection = client.db("DNCC").collection("employees");
+    const receivedWasteCollection = client.db("DNCC").collection("receivedWaste");
 
 
     // ===================== Verify Token👇 ==========================>
@@ -1887,6 +1888,28 @@ async function run() {
         }
       }
     });
+    app.get("/sts-constructor/:stsName", async (req, res) => {
+      const name = req.params.stsName;
+      const query = { stsName: name };
+      const result = await contractorCompanyCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    app.post('/received-waste', async(req,res)=>{
+      const wasteInfo = req.body;
+      const result = await receivedWasteCollection.insertOne(wasteInfo);
+      if(result.insertedId){
+        res.json({
+          result: true,
+          message: "Waste Received Successfully"
+        })
+      }else{
+        res.json({
+          result: false,
+          message: "Waste Not Received"
+        })
+      }
+    })
 
 
     await client.db("admin").command({ ping: 1 });

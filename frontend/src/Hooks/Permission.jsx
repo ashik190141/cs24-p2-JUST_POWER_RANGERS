@@ -12,7 +12,6 @@ const Permission = () => {
     let axiosPublic = useAxiosPublic();
     const { data: UserRole, isPending: isUserRoleLoading } = useQuery({
         queryKey: [user?.email, 'UserRole'],
-        // enabled: !loading,
         queryFn: async () => {
             const res = await axiosPublic.post('/rbac/permissions', info);
             return res.data.message;

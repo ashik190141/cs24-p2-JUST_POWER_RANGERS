@@ -9,7 +9,6 @@ const Navbar = () => {
     let { user } = useAuth();
     let { logout } = useLogout();
     let [UserRole] = Permission();
-    console.log("UserRole: ", UserRole);
 
     let [theme, setTheme] = useState(localStorage.getItem('theme') ? localStorage.getItem('theme') : 'light')
 
