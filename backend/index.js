@@ -104,7 +104,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
 
     const usersCollection = client.db("DNCC").collection("user");
     const resetPasswordOTPCollection = client.db("DNCC").collection("reset");
@@ -115,7 +115,9 @@ async function run() {
     const truckDumpingCollection = client.db("DNCC").collection("truckDumping");
     const rolesCollection = client.db("DNCC").collection("roles");
     const citizenCollection = client.db("DNCC").collection("citizen");
-
+    const contractorCompanyCollection = client.db("DNCC").collection("contractorCompany");
+    const issueCollection = client.db("DNCC").collection("issue");
+    const questionCollection = client.db("DNCC").collection("question");
 
     // ===================== Verify Token👇 ==========================>
     const verifyToken = async (req, res, next) => {
@@ -298,30 +300,49 @@ async function run() {
     app.post("/auth/login", async (req, res) => {
       try {
         const { email, password } = req.body;
-        const user = await usersCollection.findOne({ email });
-        if (!user) {
+        let user = [];
+        const exist = await usersCollection.findOne({ email });
+        let userManager = await contractorManagerCollection.findOne({ email });
+        let employee = await employeeCollection.findOne({ email: email });
+        if (exist) {
+          user.push(exist);
+        }
+        if (userManager) {
+          user.push(userManager);
+        }
+        if (employee) {
+          user.push(employee);
+        }
+        if (!user && !userManager && !employee) {
           return res.json({
             result: false,
-            message: "Invalid email or password"
+            message: "Invalid email or password",
           });
         }
-        if (user.role == 'unassigned') {
+        if (user[0]?.role == "unassigned") {
           return res.json({
             result: false,
-            message: "You are unassigned now!"
-          })
+            message: "You are unassigned now!",
+          });
         }
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await bcrypt.compare(
+          password,
+          user[0]?.password
+        );
         if (!isPasswordValid) {
           return res.json({
             result: false,
-            message: "Invalid password"
+            message: "Invalid password",
           });
         }
 
-        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
-          expiresIn: process.env.EXPIRES_IN,
-        });
+        const token = jwt.sign(
+          { email: user[0]?.email },
+          process.env.JWT_SECRET,
+          {
+            expiresIn: process.env.EXPIRES_IN,
+          }
+        );
 
         res
           .cookie("token", token, {
@@ -338,8 +359,7 @@ async function run() {
         res.json({
           success: false,
           message: error.message,
-        })
-
+        });
       }
     });
 
@@ -1741,9 +1761,17 @@ async function run() {
       })
     });
 
+    app.get("/sts-constructor/:stsName", async (req, res) => {
+      const name = req.params.stsName;
+      const query = { stsName: name };
+      const result = await contractorCompanyCollection.find(query).toArray();
+      res.send(result);
+    })
+
     app.post("/app/register", async (req, res) => {
       const userInfoBody = req.body;
-      const userEmail = { email: user.email };
+      // console.log(userInfoBody);
+      const userEmail = { email: userInfoBody.email };
       const findUser = await citizenCollection.findOne(userEmail);
       if (findUser) {
         return res.json({
@@ -1760,6 +1788,131 @@ async function run() {
           result: true,
           message: "User Created Successfully",
         });
+      }
+    })
+
+    app.post("/app/login", async (req, res) => {
+      try {
+        const { email, password } = req.body;
+        const user = await citizenCollection.findOne({ email });
+        if (!user) {
+          return res.json({
+            result: false,
+            message: "Invalid email or password",
+          });
+        }
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+          return res.json({
+            result: false,
+            message: "Invalid password",
+          });
+        }
+
+        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
+          expiresIn: process.env.EXPIRES_IN,
+        });
+
+        res
+          .cookie("token", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+          })
+          .json({
+            success: true,
+            message: "Login successful",
+            token,
+            email:email
+          });
+      } catch (error) {
+        res.json({
+          success: false,
+          message: error.message,
+        });
+      }
+    })
+
+    app.get("/app/profile", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await citizenCollection.findOne(query);
+      res.send(result);
+    });
+
+    app.post("/app/create-issue", async (req, res) => {
+      const issueBody = req.body;
+      const result = await issueCollection.insertOne(issueBody);
+      if (result.insertedId) {
+        res.json({
+          result: true,
+          message: "issue created",
+        });
+      }
+    })
+
+    app.post("/app/feedback", async (req, res) => {
+      const feedBackBody = req.body;
+      const result = await questionCollection.insertOne(feedBackBody);
+      if (result.insertedId) {
+        res.json({
+          result: true,
+        });
+      }
+    });
+
+    app.get("/app/feedback", async (req, res) => {
+      const allQuestions = await questionCollection.find().toArray();
+      let result = [];
+      for (let i = 0; i < allQuestions.length; i++){
+        let nameComment = [];
+        let email = allQuestions[i].email;
+        const query = { email: email };
+        const userInfo = await citizenCollection.findOne(query);
+        const name = userInfo.name;
+        const comments = allQuestions[i].comment
+        for (let j = 0; j < comments.length; j++){
+          const email = comments[j].email;
+          const userInfo1 = await citizenCollection.findOne({email:email});
+          const name1 = userInfo1.name;
+          const obj = {
+            nameComment: name1,
+            comment: comments[j].question
+          }
+          nameComment.push(obj)
+        }
+        result.push({
+          name: name,
+          question: allQuestions[i].feedback,
+          email: allQuestions[i].email,
+          _id: allQuestions[i]._id,
+          comment: nameComment
+        })
+      }
+      res.send(result);
+    })
+    
+    app.put("/app/comment", async (req, res) => {
+      const feedBackBody = req.body;
+      const questionId = feedBackBody.id;
+      const query = { _id: new ObjectId(questionId) };
+      const body = {
+        email: feedBackBody.email,
+        question: feedBackBody.feedback,
+      };
+      console.log(query,questionId);
+      const options = {upsert:true}
+      const updateComment = {
+        $push: {
+          comment : body
+        },
+      };
+      const result = await questionCollection.updateOne(query, updateComment,options);
+      console.log("object",result);
+      if (result.modifiedCount > 0) {
+        res.json({
+          result:true
+        })
       }
     })
 
