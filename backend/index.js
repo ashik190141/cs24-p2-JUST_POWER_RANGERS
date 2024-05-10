@@ -118,6 +118,7 @@ async function run() {
     const contractorManagerCollection = client.db("DNCC").collection("contractorManagers");
     const employeeCollection = client.db("DNCC").collection("employees");
     const receivedWasteCollection = client.db("DNCC").collection("receivedWaste");
+    const collectionPlanCollection = client.db("DNCC").collection("CollectionPlan");
 
 
     // ===================== Verify Token👇 ==========================>
@@ -1915,6 +1916,22 @@ async function run() {
         res.json({
           result: false,
           message: "Waste Not Received"
+        })
+      }
+    });
+
+    app.post('/collection-plan', async(req, res)=>{
+      const planInfo = req.body;
+      const result = await collectionPlanCollection.insertOne(planInfo);
+      if(result.insertedId){
+        res.json({
+          result: true,
+          message: "Collection Plan Created Successfully"
+        })
+      }else{
+        res.json({
+          result: false,
+          message: "Collection Plan Not Created"
         })
       }
     })
