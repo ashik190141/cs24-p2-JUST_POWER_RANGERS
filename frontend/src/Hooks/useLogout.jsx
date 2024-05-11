@@ -6,12 +6,13 @@ import { useNavigate } from "react-router-dom";
 const useLogout = () => {
   const { setLoading, setUser } = useAuth();
   let axiosPublic = useAxiosPublic();
+  let { user } = useAuth();
   let navigate = useNavigate();
 
   const logout = async () => {
     setLoading(true);
     try {
-      let res = await axiosPublic.get("/auth/logout")
+      let res = await axiosPublic.get(`/auth/logout/${user?.email}`)
       Swal.fire({
         position: "center",
         icon: "success",

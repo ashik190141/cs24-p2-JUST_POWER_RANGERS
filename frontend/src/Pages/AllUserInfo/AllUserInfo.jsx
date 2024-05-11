@@ -129,7 +129,7 @@ const AllUserInfo = () => {
                         <span className="loading loading-spinner loading-lg"></span>
                     </div>
                 </> : <>
-                    <div className='my-10 w-full mx-auto px-2 md:px-5 max-w-[425px] md:max-w-full overflow-auto max-h-screen'>
+                    <div className='my-10 w-full mx-auto px-2 md:px-3 max-w-[425px] md:max-w-full overflow-auto max-h-screen'>
                         <div className='min-h-20 text-center mx-auto my-5 max-w-[400px]'>
                             <input
                                 type="text"

@@ -42,6 +42,7 @@ import WorkforceRegistration from "../Pages/Workforce Registration/WorkforceRegi
 import ReceivedWasteEntry from "../Pages/ReceivedWasteEntry/ReceivedWasteEntry";
 import CollectionPlan from "../Pages/CollectionPlan/CollectionPlan";
 import STSGenerateBill from "../Pages/STSGenerateBill/STSGenerateBill";
+import WorkforceTracking from "../Pages/WorkforceTracking/WorkforceTracking";
 
 const router = createBrowserRouter([
     {
@@ -228,6 +229,11 @@ const router = createBrowserRouter([
                 //This will be Land Manager Route
                 path: "collection-plan",
                 element: <CManagerRoute><CollectionPlan></CollectionPlan></CManagerRoute>
+            },
+            {
+                //This will be Land Manager Route
+                path: "workforce-tracking",
+                element: <CManagerRoute><WorkforceTracking></WorkforceTracking></CManagerRoute>
             },
         ]
     }

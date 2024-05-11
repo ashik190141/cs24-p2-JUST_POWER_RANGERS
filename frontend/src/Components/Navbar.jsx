@@ -45,7 +45,7 @@ const Navbar = () => {
             UserRole === 'Sts Manager' && <li><NavLink to={'/dashboard/my-sts-info'}>Dashboard</NavLink></li>
         }
         {
-            UserRole === 'Contractor Manager' && <li><NavLink to={'/dashboard/comtractor-home'}>Dashboard</NavLink></li>
+            UserRole === 'Contractor Manager' && <li><NavLink to={'/dashboard/workforce-tracking'}>Dashboard</NavLink></li>
         }
     </>
     return (

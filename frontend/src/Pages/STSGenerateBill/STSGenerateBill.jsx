@@ -164,7 +164,7 @@ const STSGenerateBill = () => {
             </Helmet>
             <SectionTitle title={"Generate Bill"} subTitle={"Need Money Update?"}></SectionTitle>
 
-            <div className={`w-full px-4 max-w-[425px] md:max-w-full overflow-x-auto mx-auto pt-5 text-${theme == "dark" ? "white" : "black"}`}>
+            <div className={`w-full px-4 md:px-5 max-w-[425px] md:max-w-full overflow-x-auto mx-auto pt-5 text-${theme == "dark" ? "white" : "black"}`}>
                 <Box sx={{ height: 400, width: "100%" }}>
                     <DataGrid
                         sx={{ color: `${theme == "dark" ? "white" : "dark"}` }}

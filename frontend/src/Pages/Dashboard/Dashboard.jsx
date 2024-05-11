@@ -6,7 +6,7 @@ import Permission from '../../Hooks/Permission';
 import useAuth from '../../Hooks/useAuth';
 import { CgProfile } from "react-icons/cg";
 import { VscThreeBars } from "react-icons/vsc";
-import { FcManager, FcIdea } from "react-icons/fc";
+import { FcManager, FcIdea, FcMindMap } from "react-icons/fc";
 
 const Dashboard = () => {
     let [userRole] = Permission();
@@ -126,8 +126,8 @@ const Dashboard = () => {
     let ContractorManager = <>
         <li >
             <NavLink className='flex items-center font-bold gap-2'
-                to='comtractor-home' >
-                <FaHome></FaHome>Manager Home</NavLink>
+                to='workforce-tracking' >
+                <FcMindMap></FcMindMap>Contractor Home</NavLink>
         </li>
         <li >
             <NavLink className='flex items-center font-bold gap-2'
@@ -139,6 +139,7 @@ const Dashboard = () => {
                 to='collection-plan' >
                 <FcIdea></FcIdea>Collection Plan</NavLink>
         </li>
+
     </>
 
     return (

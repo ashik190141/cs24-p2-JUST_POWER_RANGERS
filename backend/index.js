@@ -89,6 +89,21 @@ let mm = today.getMonth() + 1;
 let yyyy = today.getFullYear();
 let currentDate = `${dd}/${mm}/${yyyy}`;
 
+const hours = today.getHours();
+const minutes = today.getMinutes();
+const seconds = today.getSeconds();
+let currentTime = `${hours}/${minutes}/${seconds}`;
+
+function getDifference(sTime, eTime) {
+  const startTime = new Date(sTime);
+  const endTime = new Date(eTime);
+  const differenceMs = endTime - startTime;
+
+  // Convert milliseconds to seconds
+  const differenceSeconds = Math.floor(differenceMs / 1000);
+  return differenceSeconds
+}
+
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 const uri =
@@ -120,6 +135,7 @@ async function run() {
     const receivedWasteCollection = client.db("DNCC").collection("receivedWaste");
     const collectionPlanCollection = client.db("DNCC").collection("CollectionPlan");
     const citizenCollection = client.db("DNCC").collection("citizen");
+    const employeeLoggedData = client.db("DNCC").collection("loggedData");
 
 
     // ===================== Verify Token👇 ==========================>
@@ -315,6 +331,18 @@ async function run() {
         }
         if (employee) {
           user.push(employee);
+          const employeeLoggedData = await employeeLoggedData.findOne({ email: email })
+          if (employeeLoggedData) {
+            let employeeDataManage = {
+              loggedInTime: `${currentTime}`,
+              loggedInDate: `${currentDate}`,
+              email: email,
+              time: employeeLoggedData.time || 0,
+              loggedOutDate: null,
+              loggedInDate: null,
+            };
+            await employeeLoggedData.insertOne(employeeDataManage);
+          }
         }
         if (!user && !userManager && !employee) {
           return res.json({
@@ -362,7 +390,26 @@ async function run() {
 
 
     // ======================Logout User👇============================>
-    app.get("/auth/logout", (req, res) => {
+    app.get("/auth/logout/:email",async (req, res) => {
+      const email = req.params.email;
+      const exist = await employeeLoggedData.findOne({ email: email });
+      if (exist) {
+        let newTime = exist.time
+        loggedOutDate = currentDate,
+        loggedOutTime = currentTime,
+        loggedInTime = exist.loggedInTime,
+        loggedInDate = exist.loggedInDate
+        getDifference(loggedInTime, loggedOutTime)
+        await employeeLoggedData.deleteOne({
+          $and: [{ email: email }, { loggedInDate: currentDate }],
+        });
+        await employeeLoggedData.insertOne({
+          time: getDifference+newTime,
+          email: email,
+          loggedOutTime: `${currentTime}`,
+          loggedOutDate: `${currentDate}`
+        })
+      }
       res.clearCookie("token");
       res.json({
         success: true,
@@ -2008,6 +2055,28 @@ async function run() {
             result: true,
             data: allCotractorList,
         });
+    });
+
+    app.get('/workforce-tracking', async(req, res)=>{
+      const allEmployee = await employeeCollection.find().toArray();
+      let employeeTracking = [];
+
+      for(let i = 0; i < allEmployee.length; i++){
+        let stsName = allEmployee[i].collectionRoute;
+        let stsInfo = await stsCollection.findOne({name: stsName});
+        employeeTracking.push({
+          name: allEmployee[i].fullName,
+          email: allEmployee[i].email,
+          role: allEmployee[i].jobTitle,
+          lat: stsInfo.lat,
+          lng: stsInfo.lng,
+          location: stsInfo.name
+        })
+      };
+      res.json({
+        result: true,
+        data: employeeTracking
+      });
     });
 
 
