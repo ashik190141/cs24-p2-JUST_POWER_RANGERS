@@ -89,6 +89,21 @@ let mm = today.getMonth() + 1;
 let yyyy = today.getFullYear();
 let currentDate = `${dd}/${mm}/${yyyy}`;
 
+const hours = today.getHours();
+const minutes = today.getMinutes();
+const seconds = today.getSeconds();
+let currentTime = `${hours}/${minutes}/${seconds}`;
+
+function getDifference(startTime, endTime) {
+  const startTime1 = new Date(startTime);
+  const endTime1 = new Date(endTime);
+  const differenceMs = endTime1 - startTime1;
+
+  // Convert milliseconds to seconds
+  const differenceSeconds = Math.floor(differenceMs / 1000);
+  return differenceSeconds
+}
+
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 const uri =
@@ -118,6 +133,8 @@ async function run() {
     const contractorCompanyCollection = client.db("DNCC").collection("contractorCompany");
     const issueCollection = client.db("DNCC").collection("issue");
     const questionCollection = client.db("DNCC").collection("question");
+    const messageCollection = client.db("DNCC").collection("message");
+    const employeeLoggedData = client.db("DNCC").collection("loggedData");
 
     // ===================== Verify Token👇 ==========================>
     const verifyToken = async (req, res, next) => {
@@ -302,7 +319,7 @@ async function run() {
         const { email, password } = req.body;
         let user = [];
         const exist = await usersCollection.findOne({ email });
-        let userManager = await contractorManagerCollection.findOne({ email });
+        let userManager = await contractorCompanyCollection.findOne({ email });
         let employee = await employeeCollection.findOne({ email: email });
         if (exist) {
           user.push(exist);
@@ -312,6 +329,18 @@ async function run() {
         }
         if (employee) {
           user.push(employee);
+          const employeeLoggedData = await employeeLoggedData.findOne({ email: email })
+          if (employeeLoggedData) {
+            let employeeDataManage = {
+              loggedInTime: `${currentTime}`,
+              loggedInDate: `${currentDate}`,
+              email: email,
+              time: employeeLoggedData.time || 0,
+              loggedOutDate: null,
+              loggedInDate: null,
+            };
+            await employeeLoggedData.insertOne(employeeDataManage);
+          }
         }
         if (!user && !userManager && !employee) {
           return res.json({
@@ -365,7 +394,26 @@ async function run() {
 
 
     // ======================Logout User👇============================>
-    app.get("/auth/logout", (req, res) => {
+    app.get("/auth/logout/:email", async(req, res) => {
+      const email = req.params.email;
+      const exist = await employeeLoggedData.findOne({ email: email });
+      if (exist) {
+        let newTime = exist.time
+        loggedOutDate = currentDate,
+        loggedOutTime = currentTime,
+        loggedInTime = exist.loggedInTime,
+        loggedInDate = exist.loggedInDate
+        getDifference(loggedInTime, loggedOutTime)
+        await employeeLoggedData.deleteOne({
+          $and: [{ email: email }, { loggedInDate: currentDate }],
+        });
+        await employeeLoggedData.insertOne({
+          time: getDifference+newTime,
+          email: email,
+          loggedOutTime: `${currentTime}`,
+          loggedOutDate: `${currentDate}`
+        })
+      }
       res.clearCookie("token");
       res.json({
         success: true,
@@ -1840,6 +1888,10 @@ async function run() {
       res.send(result);
     });
 
+    app.post("/app/sendMessage", async (req, res) => {
+      
+    })
+
     app.post("/app/create-issue", async (req, res) => {
       const issueBody = req.body;
       const result = await issueCollection.insertOne(issueBody);
@@ -1915,6 +1967,13 @@ async function run() {
         })
       }
     })
+
+    app.get("/app/citizen/users", async (req, res) => {
+      const allUsers = await citizenCollection.find().toArray();
+      res.json({
+        data: allUsers,
+      });
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
